@@ -2,12 +2,12 @@ import React from 'react';
 import { FormControl, Input } from 'native-base';
 
 type Props = {
-  handleChange: (v: string) => void;
+  onChange: (v: string) => void;
   value: string;
 };
 
 export const GlobalTableFilterComponent: React.FC<Props> = ({
-  handleChange,
+  onChange,
   value,
 }) => {
   return (
@@ -17,7 +17,7 @@ export const GlobalTableFilterComponent: React.FC<Props> = ({
         type="text"
         placeholder="Search"
         value={value || ''}
-        onChangeText={handleChange}
+        onChangeText={onChange}
       />
     </FormControl>
   );

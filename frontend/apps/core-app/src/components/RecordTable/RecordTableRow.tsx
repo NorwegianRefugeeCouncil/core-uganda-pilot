@@ -27,6 +27,7 @@ export const RecordTableRow: React.FC<Props<RecordTableEntry>> = ({
               bg="white"
             >
               {cell.render(Text, {
+                variant: 'body',
                 level: '2',
                 children: cell.value,
               })}

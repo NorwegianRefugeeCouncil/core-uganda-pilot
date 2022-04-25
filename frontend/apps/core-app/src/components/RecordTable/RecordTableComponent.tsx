@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import { Box, HStack, Text, VStack, FlatList } from 'native-base';
+import { Row } from 'react-table';
 
 import { RecordTableContext } from './RecordTableContext';
 import { RecordTableRow } from './RecordTableRow';
@@ -18,6 +19,11 @@ export const RecordTableComponent: React.FC<Props> = ({ onItemClick }) => {
 
   const { rows, columns, prepareRow, globalFilteredRows } = tableInstance;
 
+  const renderRow = ({ item }: { item: Row }) => {
+    prepareRow(item);
+    return <RecordTableRow key={item.id} row={item} onRowClick={onItemClick} />;
+  };
+
   return (
     <Box maxWidth="100%" overflowX="scroll">
       <Text level="2">{globalFilteredRows.length} beneficiaries</Text>
@@ -27,19 +33,7 @@ export const RecordTableComponent: React.FC<Props> = ({ onItemClick }) => {
         ))}
       </HStack>
       <VStack>
-        <FlatList
-          data={rows}
-          renderItem={({ item }) => {
-            prepareRow(item);
-            return (
-              <RecordTableRow
-                key={item.id}
-                row={item}
-                onRowClick={onItemClick}
-              />
-            );
-          }}
-        />
+        <FlatList data={rows} renderItem={renderRow} />
       </VStack>
     </Box>
   );

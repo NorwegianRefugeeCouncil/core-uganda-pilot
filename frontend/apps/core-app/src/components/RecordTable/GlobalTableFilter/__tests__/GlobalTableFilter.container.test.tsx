@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { render } from '../../../../testUtils/render';
 import { GlobalTableFilterContainer } from '../GlobalTableFilter.container';
 

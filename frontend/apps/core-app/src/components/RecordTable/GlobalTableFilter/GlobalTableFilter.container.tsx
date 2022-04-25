@@ -26,7 +26,5 @@ export const GlobalTableFilterContainer: React.FC<Props<RecordTableEntry>> = ({
     setValue(v);
   }, 20);
 
-  return (
-    <GlobalTableFilterComponent handleChange={handleChange} value={value} />
-  );
+  return <GlobalTableFilterComponent onChange={handleChange} value={value} />;
 };

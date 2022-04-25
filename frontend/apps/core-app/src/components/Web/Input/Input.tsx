@@ -32,6 +32,7 @@ const StyledInput =
         color: inherit;
         background-color: transparent;
         border: none;
+        outline: none;
       `
     : null;
 

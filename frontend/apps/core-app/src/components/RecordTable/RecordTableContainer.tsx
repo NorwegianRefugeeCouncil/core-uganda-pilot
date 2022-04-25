@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { FormWithRecord, Record } from 'core-api-client';
 import { useGlobalFilter, useSortBy, useTable } from 'react-table';
 
@@ -17,7 +17,7 @@ export const RecordTableContainer: React.FC<Props<Record>> = ({
   data,
   onItemClick,
 }) => {
-  const context = useContext(RecordTableContext);
+  const context = React.useContext(RecordTableContext);
 
   const memoizedData = React.useMemo(
     () => mapRecordsToRecordTableData(data),

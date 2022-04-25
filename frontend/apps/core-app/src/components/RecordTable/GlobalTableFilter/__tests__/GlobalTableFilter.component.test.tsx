@@ -7,7 +7,7 @@ import { GlobalTableFilterComponent } from '../GlobalTableFilter.component';
 describe('GlobalTableFilterComponent', () => {
   it('should match the snapshot', () => {
     const { toJSON } = render(
-      <GlobalTableFilterComponent handleChange={jest.fn()} value="test" />,
+      <GlobalTableFilterComponent onChange={jest.fn()} value="test" />,
     );
     expect(toJSON()).toMatchSnapshot();
   });
@@ -16,10 +16,7 @@ describe('GlobalTableFilterComponent', () => {
     const setGlobalFilterSpy = jest.fn();
 
     const { getByPlaceholderText } = render(
-      <GlobalTableFilterComponent
-        handleChange={setGlobalFilterSpy}
-        value="test"
-      />,
+      <GlobalTableFilterComponent onChange={setGlobalFilterSpy} value="test" />,
     );
 
     const input = getByPlaceholderText('Search');

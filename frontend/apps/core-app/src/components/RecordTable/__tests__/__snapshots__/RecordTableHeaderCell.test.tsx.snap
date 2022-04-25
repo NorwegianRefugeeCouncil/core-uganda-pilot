@@ -30,8 +30,15 @@ exports[`should match the snapshot 1`] = `
     }
   >
     <View
+      _text={
+        Object {
+          "color": "lightText",
+        }
+      }
+      accessibilityRole="button"
       accessible={true}
       collapsable={false}
+      colorScheme="secondary"
       dataSet={Object {}}
       focusable={true}
       onBlur={[Function]}
@@ -47,6 +54,8 @@ exports[`should match the snapshot 1`] = `
       onStartShouldSetResponder={[Function]}
       style={
         Object {
+          "backgroundColor": "transparent",
+          "borderRadius": 4,
           "paddingBottom": 4,
           "paddingLeft": 4,
           "paddingRight": 4,
@@ -57,15 +66,15 @@ exports[`should match the snapshot 1`] = `
       <RNSVGSvgView
         accessibilityRole="image"
         align="xMidYMid"
-        bbHeight={12}
-        bbWidth={12}
+        bbHeight={20}
+        bbWidth={20}
         color={4280690214}
         dataSet={Object {}}
         fill="currentColor"
         focusable={false}
         meetOrSlice={0}
-        minX={10}
-        minY={10}
+        minX={0}
+        minY={0}
         stroke=""
         style={
           Array [
@@ -75,13 +84,13 @@ exports[`should match the snapshot 1`] = `
             },
             Object {
               "color": "#262626",
-              "height": 12,
-              "width": 12,
+              "height": 20,
+              "width": 20,
             },
             Object {
               "flex": 0,
-              "height": 12,
-              "width": 12,
+              "height": 20,
+              "width": 20,
             },
           ]
         }

@@ -1,4 +1,4 @@
-import { HStack, Pressable, Text } from 'native-base';
+import { HStack, IconButton, Pressable, Text } from 'native-base';
 import { Icon } from 'core-design-system';
 import React from 'react';
 import { ColumnInstance, UseSortByColumnProps } from 'react-table';
@@ -12,7 +12,7 @@ type Props<T extends Record<string, any>> = {
 export const RecordTableHeaderCell: React.FC<Props<RecordTableEntry>> = ({
   column,
 }) => {
-  const { onClick } = column.getSortByToggleProps();
+  const { onClick: handleOnClick } = column.getSortByToggleProps();
   const sortIcon = column.isSorted
     ? column.isSortedDesc
       ? 'more'
@@ -34,10 +34,14 @@ export const RecordTableHeaderCell: React.FC<Props<RecordTableEntry>> = ({
         fontWeight: '700',
         children: column.Header,
       })}
-      {onClick && (
-        <Pressable onPress={(e) => onClick(e)} p="1">
-          <Icon size="3" viewBox="10 10 20 20" name={sortIcon} />
-        </Pressable>
+      {handleOnClick && (
+        <IconButton
+          onPress={(e) => handleOnClick(e)}
+          colorScheme="secondary"
+          variant="ghost"
+          size="sm"
+          icon={<Icon size={5} name={sortIcon} />}
+        />
       )}
     </HStack>
   );
