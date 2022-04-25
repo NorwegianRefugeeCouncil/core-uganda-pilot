@@ -29,8 +29,6 @@ export default {
     },
     _web: {
       ...textTheme.variants.body({ level: '1' }),
-      overflow: 'visible',
-      // outlineWidth: undefined,
     },
     _invalid: {
       borderColor: 'signalDanger',
