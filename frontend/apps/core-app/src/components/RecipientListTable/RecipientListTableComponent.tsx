@@ -33,7 +33,7 @@ export const RecipientListTableComponent: React.FC<Props> = ({
   };
 
   return (
-    <Box maxWidth="100%" width="100%" overflowX="scroll">
+    <Box maxWidth="100%" width="100%" overflowX="auto">
       <Text level="2">{globalFilteredRows.length} beneficiaries</Text>
       <HStack>
         {columns.map((column) => (

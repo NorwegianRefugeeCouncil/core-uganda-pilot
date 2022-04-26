@@ -12,9 +12,11 @@ type Props<T extends Record<string, any>> = {
 export const RecipientListTableRow: React.FC<
   Props<RecipientListTableEntry>
 > = ({ row, onRowClick }) => {
+  const handleRowClick = () => onRowClick(row.id);
+
   return (
     <Pressable
-      onPress={() => onRowClick(row.id)}
+      onPress={handleRowClick}
       bg="white"
       _hover={{ backgroundColor: 'primary.100' }}
     >
