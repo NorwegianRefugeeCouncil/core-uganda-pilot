@@ -49,6 +49,7 @@ export const useTokenResponse = (): [
     () => Platform.select({ web: false, default: false }),
     [],
   );
+
   const redirectUri = React.useMemo(
     () => makeRedirectUri({ scheme: Constants.manifest?.scheme }),
     [],
@@ -116,7 +117,6 @@ export const useTokenResponse = (): [
         setTokenResponse(resp);
       } catch (err) {
         setTokenResponse(undefined);
-        throw err;
       }
     };
 
