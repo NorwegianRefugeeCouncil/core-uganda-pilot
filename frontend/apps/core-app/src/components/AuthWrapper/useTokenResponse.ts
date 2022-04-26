@@ -135,7 +135,11 @@ export const useTokenResponse = (): [
       if (refreshTokenInterval.current)
         clearInterval(refreshTokenInterval.current);
     };
-  }, [tokenResponse?.refreshToken, tokenResponse?.expiresIn]);
+  }, [
+    tokenResponse?.refreshToken,
+    tokenResponse?.expiresIn,
+    JSON.stringify(discovery),
+  ]);
 
   React.useEffect(() => {
     if (tokenResponse) storeTokenResponse(tokenResponse);
