@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Box, HStack, Text, VStack, FlatList, ScrollView } from 'native-base';
+import { Box, HStack, VStack, FlatList, ScrollView } from 'native-base';
 import { Row } from 'react-table';
 
 import { RecipientListTableContext } from './RecipientListTableContext';
@@ -19,7 +19,7 @@ export const RecipientListTableComponent: React.FC<Props> = ({
   const { tableInstance } = tableContext;
   if (!tableInstance) return null;
 
-  const { rows, columns, prepareRow, globalFilteredRows } = tableInstance;
+  const { rows, columns, prepareRow } = tableInstance;
 
   const renderRow = ({ item }: { item: Row }) => {
     prepareRow(item);
@@ -40,7 +40,6 @@ export const RecipientListTableComponent: React.FC<Props> = ({
       }}
     >
       <Box width="100%">
-        <Text level="2">{globalFilteredRows.length} beneficiaries</Text>
         <HStack>
           {columns.map((column) => (
             <RecipientListTableHeaderCell column={column} key={column.id} />
