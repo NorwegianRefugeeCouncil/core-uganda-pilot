@@ -50,8 +50,6 @@ export const RecipientListScreenContainer: React.FC<Props> = ({
     true,
   );
 
-  console.log('recipientsState.data', recipientsState.data, formState);
-
   return (
     <RecipientListTableContext.Provider
       value={{ tableInstance, setTableInstance }}
@@ -59,7 +57,7 @@ export const RecipientListScreenContainer: React.FC<Props> = ({
       <RecipientListScreenComponent
         onItemClick={handleItemClick}
         data={recipientsState.data}
-        form={formState.data}
+        forms={formState.data}
         isLoading={formState.loading || recipientsState.loading}
         error={undefined}
       />

@@ -12,16 +12,62 @@ exports[`should match the snapshot 1`] = `
     ]
   }
 >
-  <View
-    dataSet={Object {}}
-    style={
+  <RCTScrollView
+    _text={
+      Object {
+        "color": "darkText",
+      }
+    }
+    contentContainerStyle={
       Array [
         Object {},
-        Array [
-          Object {},
-        ],
+        Object {
+          "dataSet": Object {},
+        },
       ]
     }
-  />
+    dataSet={Object {}}
+    style={
+      Object {
+        "backgroundColor": "#FFFFFF",
+      }
+    }
+  >
+    <View>
+      <View
+        dataSet={Object {}}
+        style={
+          Object {
+            "backgroundColor": "#F6F6F7",
+            "marginBottom": 16,
+            "marginTop": 16,
+            "width": "100%",
+          }
+        }
+      >
+        <View
+          dataSet={Object {}}
+          style={
+            Object {
+              "marginBottom": 42,
+              "marginLeft": 130,
+              "marginRight": 130,
+              "marginTop": 26,
+              "maxWidth": 580,
+            }
+          }
+        />
+      </View>
+      <View
+        dataSet={Object {}}
+        style={
+          Object {
+            "paddingLeft": 130,
+            "paddingRight": 130,
+          }
+        }
+      />
+    </View>
+  </RCTScrollView>
 </RNCSafeAreaProvider>
 `;

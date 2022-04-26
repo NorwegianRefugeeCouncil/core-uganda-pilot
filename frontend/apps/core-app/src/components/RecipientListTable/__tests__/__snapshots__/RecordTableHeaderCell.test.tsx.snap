@@ -17,9 +17,6 @@ exports[`should match the snapshot 1`] = `
     style={
       Object {
         "alignItems": "center",
-        "backgroundColor": "#E1E1E1",
-        "borderBottomColor": "#404040",
-        "borderBottomWidth": 1,
         "flexDirection": "row",
         "flexGrow": 1,
         "justifyContent": "space-between",

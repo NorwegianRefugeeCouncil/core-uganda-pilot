@@ -1,7 +1,7 @@
 import { FormType } from 'core-api-client';
 
 import { createTableColumns } from '../createTableColumns';
-import { makeField, makeForm, makeRecord } from '../../../testUtils/mockData';
+import { makeField, makeForm } from '../../../testUtils/mockData';
 
 describe('createTableColumns', () => {
   const fields = [
@@ -10,24 +10,9 @@ describe('createTableColumns', () => {
   ];
   const form = makeForm(1, FormType.DefaultFormType, fields);
 
-  const record = makeRecord(1, form);
-
   it('should create the correct columns', () => {
-    expect(
-      createTableColumns([
-        [
-          {
-            record: {
-              ...record,
-              values: [
-                ...record.values,
-                { fieldId: 'non-field', value: 'non-value' },
-              ],
-            },
-            form,
-          },
-        ],
-      ]),
-    ).toEqual([{ Header: 'field 1', accessor: 'field1' }]);
+    expect(createTableColumns(form)).toEqual([
+      { Header: 'field 1', accessor: 'field1' },
+    ]);
   });
 });

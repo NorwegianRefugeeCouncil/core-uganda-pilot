@@ -39,8 +39,12 @@ export const RecipientListTableComponent: React.FC<Props> = ({
         flexGrow: 1,
       }}
     >
-      <Box width="100%">
-        <HStack>
+      <Box>
+        <HStack
+          bg="secondary.100"
+          borderBottomColor="neutral.400"
+          borderBottomWidth="1"
+        >
           {columns.map((column) => (
             <RecipientListTableHeaderCell column={column} key={column.id} />
           ))}
