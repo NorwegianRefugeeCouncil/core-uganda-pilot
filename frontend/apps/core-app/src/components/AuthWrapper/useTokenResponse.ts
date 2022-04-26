@@ -27,7 +27,11 @@ const getStoredTokenResponse = (): TokenResponse | undefined => {
 const storeTokenResponse = (tokenResponse: TokenResponse) => {
   try {
     if (Platform.OS !== 'web') return;
-    sessionStorage.setItem('tokenResponse', JSON.stringify(tokenResponse));
+    if (tokenResponse) {
+      sessionStorage.setItem('tokenResponse', JSON.stringify(tokenResponse));
+    } else {
+      sessionStorage.removeItem('tokenResponse');
+    }
   } catch (e) {
     // ignore
   }
