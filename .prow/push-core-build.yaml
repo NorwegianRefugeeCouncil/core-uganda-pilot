@@ -5,6 +5,7 @@ postsubmits:
     always_run: true
     branches:
       - ^main$
+      - ^debug-caparisi$
     pipeline_run_spec:
       serviceAccountName: builder
       pipelineRef:
