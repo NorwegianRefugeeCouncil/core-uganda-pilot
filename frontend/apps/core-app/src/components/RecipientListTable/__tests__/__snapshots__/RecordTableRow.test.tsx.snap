@@ -35,7 +35,7 @@ exports[`should match the snapshot 1`] = `
     onStartShouldSetResponder={[Function]}
     style={
       Object {
-        "backgroundColor": "#FFFFFF",
+        "backgroundColor": "#fff",
       }
     }
   >

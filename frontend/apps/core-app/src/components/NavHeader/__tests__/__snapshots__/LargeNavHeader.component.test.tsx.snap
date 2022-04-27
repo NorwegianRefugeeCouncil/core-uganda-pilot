@@ -61,11 +61,6 @@ exports[`should match the snapshot 1`] = `
         }
       >
         <View
-          _active={
-            Object {
-              "color": "primary.500",
-            }
-          }
           accessibilityRole="link"
           accessible={true}
           collapsable={false}
@@ -117,11 +112,6 @@ exports[`should match the snapshot 1`] = `
           style={Object {}}
         />
         <View
-          _active={
-            Object {
-              "color": "primary.500",
-            }
-          }
           accessibilityRole="link"
           accessible={true}
           collapsable={false}
@@ -173,11 +163,6 @@ exports[`should match the snapshot 1`] = `
           style={Object {}}
         />
         <View
-          _active={
-            Object {
-              "color": "primary.500",
-            }
-          }
           accessibilityRole="link"
           accessible={true}
           collapsable={false}
@@ -229,11 +214,6 @@ exports[`should match the snapshot 1`] = `
           style={Object {}}
         />
         <View
-          _active={
-            Object {
-              "color": "primary.500",
-            }
-          }
           accessibilityRole="link"
           accessible={true}
           collapsable={false}

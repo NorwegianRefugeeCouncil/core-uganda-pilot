@@ -202,7 +202,7 @@ exports[`should match the snapshot edit mode 1`] = `
                   style={
                     Object {
                       "backgroundColor": undefined,
-                      "color": "#FFFFFF",
+                      "color": "#fff",
                       "fontFamily": "Roboto_500Medium",
                       "fontSize": 20,
                       "fontStyle": undefined,
@@ -456,7 +456,7 @@ exports[`should match the snapshot review mode 1`] = `
                   style={
                     Object {
                       "backgroundColor": undefined,
-                      "color": "#FFFFFF",
+                      "color": "#fff",
                       "fontFamily": "Roboto_500Medium",
                       "fontSize": 20,
                       "fontStyle": undefined,

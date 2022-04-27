@@ -94,7 +94,7 @@ exports[`should match the snapshot no selected value 1`] = `
         style={
           Object {
             "alignItems": "center",
-            "backgroundColor": "#FFFFFF",
+            "backgroundColor": "#fff",
             "borderColor": "#666666",
             "borderRadius": 3,
             "borderStyle": "solid",
@@ -1030,7 +1030,7 @@ exports[`should match the snapshot selected value 1`] = `
         style={
           Object {
             "alignItems": "center",
-            "backgroundColor": "#FFFFFF",
+            "backgroundColor": "#fff",
             "borderColor": "#666666",
             "borderRadius": 3,
             "borderStyle": "solid",
