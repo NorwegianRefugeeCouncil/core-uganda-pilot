@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Box, HStack, Text, VStack, FlatList } from 'native-base';
+import { Box, HStack, Text, VStack, FlatList, ScrollView } from 'native-base';
 import { Row } from 'react-table';
 
 import { RecipientListTableContext } from './RecipientListTableContext';
@@ -33,16 +33,23 @@ export const RecipientListTableComponent: React.FC<Props> = ({
   };
 
   return (
-    <Box maxWidth="100%" width="100%" overflowX="auto">
-      <Text level="2">{globalFilteredRows.length} beneficiaries</Text>
-      <HStack>
-        {columns.map((column) => (
-          <RecipientListTableHeaderCell column={column} key={column.id} />
-        ))}
-      </HStack>
-      <VStack>
-        <FlatList data={rows} renderItem={renderRow} />
-      </VStack>
-    </Box>
+    <ScrollView
+      horizontal
+      contentContainerStyle={{
+        flexGrow: 1,
+      }}
+    >
+      <Box width="100%">
+        <Text level="2">{globalFilteredRows.length} beneficiaries</Text>
+        <HStack>
+          {columns.map((column) => (
+            <RecipientListTableHeaderCell column={column} key={column.id} />
+          ))}
+        </HStack>
+        <VStack>
+          <FlatList data={rows} renderItem={renderRow} />
+        </VStack>
+      </Box>
+    </ScrollView>
   );
 };
