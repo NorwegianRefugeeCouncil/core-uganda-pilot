@@ -150,7 +150,7 @@ exports[`should match the snapshot checked by default 1`] = `
                   },
                   Object {
                     "backgroundColor": "#FF7602",
-                    "color": "#FFFFFF",
+                    "color": "#fff",
                     "height": 16,
                     "width": 16,
                   },
@@ -452,7 +452,7 @@ exports[`should match the snapshot invalid value 1`] = `
             style={
               Object {
                 "alignItems": "center",
-                "backgroundColor": "#FFFFFF",
+                "backgroundColor": "#fff",
                 "borderColor": "#666666",
                 "borderRadius": 3,
                 "borderStyle": "solid",
@@ -730,7 +730,7 @@ exports[`should match the snapshot unchecked by default 1`] = `
             style={
               Object {
                 "alignItems": "center",
-                "backgroundColor": "#FFFFFF",
+                "backgroundColor": "#fff",
                 "borderColor": "#666666",
                 "borderRadius": 3,
                 "borderStyle": "solid",

@@ -90,7 +90,7 @@ exports[`should match the snapshot a single selected value 1`] = `
         style={
           Object {
             "alignItems": "center",
-            "backgroundColor": "#FFFFFF",
+            "backgroundColor": "#fff",
             "borderColor": "#666666",
             "borderRadius": 3,
             "borderStyle": "solid",
@@ -680,7 +680,7 @@ exports[`should match the snapshot a single selected value 1`] = `
                           style={
                             Object {
                               "alignItems": "center",
-                              "backgroundColor": "#FFFFFF",
+                              "backgroundColor": "#fff",
                               "borderColor": "#666666",
                               "borderRadius": 3,
                               "borderStyle": "solid",
@@ -818,7 +818,7 @@ exports[`should match the snapshot a single selected value 1`] = `
                           style={
                             Object {
                               "alignItems": "center",
-                              "backgroundColor": "#FFFFFF",
+                              "backgroundColor": "#fff",
                               "borderColor": "#666666",
                               "borderRadius": 3,
                               "borderStyle": "solid",
@@ -956,7 +956,7 @@ exports[`should match the snapshot a single selected value 1`] = `
                           style={
                             Object {
                               "alignItems": "center",
-                              "backgroundColor": "#FFFFFF",
+                              "backgroundColor": "#fff",
                               "borderColor": "#666666",
                               "borderRadius": 3,
                               "borderStyle": "solid",
@@ -1179,7 +1179,7 @@ exports[`should match the snapshot a single selected value 1`] = `
                       style={
                         Object {
                           "backgroundColor": undefined,
-                          "color": "#FFFFFF",
+                          "color": "#fff",
                           "fontFamily": "Roboto_500Medium",
                           "fontSize": 20,
                           "fontStyle": undefined,
@@ -1295,7 +1295,7 @@ exports[`should match the snapshot multiple selected values 1`] = `
         style={
           Object {
             "alignItems": "center",
-            "backgroundColor": "#FFFFFF",
+            "backgroundColor": "#fff",
             "borderColor": "#666666",
             "borderRadius": 3,
             "borderStyle": "solid",
@@ -1885,7 +1885,7 @@ exports[`should match the snapshot multiple selected values 1`] = `
                           style={
                             Object {
                               "alignItems": "center",
-                              "backgroundColor": "#FFFFFF",
+                              "backgroundColor": "#fff",
                               "borderColor": "#666666",
                               "borderRadius": 3,
                               "borderStyle": "solid",
@@ -2023,7 +2023,7 @@ exports[`should match the snapshot multiple selected values 1`] = `
                           style={
                             Object {
                               "alignItems": "center",
-                              "backgroundColor": "#FFFFFF",
+                              "backgroundColor": "#fff",
                               "borderColor": "#666666",
                               "borderRadius": 3,
                               "borderStyle": "solid",
@@ -2161,7 +2161,7 @@ exports[`should match the snapshot multiple selected values 1`] = `
                           style={
                             Object {
                               "alignItems": "center",
-                              "backgroundColor": "#FFFFFF",
+                              "backgroundColor": "#fff",
                               "borderColor": "#666666",
                               "borderRadius": 3,
                               "borderStyle": "solid",
@@ -2384,7 +2384,7 @@ exports[`should match the snapshot multiple selected values 1`] = `
                       style={
                         Object {
                           "backgroundColor": undefined,
-                          "color": "#FFFFFF",
+                          "color": "#fff",
                           "fontFamily": "Roboto_500Medium",
                           "fontSize": 20,
                           "fontStyle": undefined,
@@ -2500,7 +2500,7 @@ exports[`should match the snapshot no selected value 1`] = `
         style={
           Object {
             "alignItems": "center",
-            "backgroundColor": "#FFFFFF",
+            "backgroundColor": "#fff",
             "borderColor": "#666666",
             "borderRadius": 3,
             "borderStyle": "solid",
@@ -3090,7 +3090,7 @@ exports[`should match the snapshot no selected value 1`] = `
                           style={
                             Object {
                               "alignItems": "center",
-                              "backgroundColor": "#FFFFFF",
+                              "backgroundColor": "#fff",
                               "borderColor": "#666666",
                               "borderRadius": 3,
                               "borderStyle": "solid",
@@ -3228,7 +3228,7 @@ exports[`should match the snapshot no selected value 1`] = `
                           style={
                             Object {
                               "alignItems": "center",
-                              "backgroundColor": "#FFFFFF",
+                              "backgroundColor": "#fff",
                               "borderColor": "#666666",
                               "borderRadius": 3,
                               "borderStyle": "solid",
@@ -3366,7 +3366,7 @@ exports[`should match the snapshot no selected value 1`] = `
                           style={
                             Object {
                               "alignItems": "center",
-                              "backgroundColor": "#FFFFFF",
+                              "backgroundColor": "#fff",
                               "borderColor": "#666666",
                               "borderRadius": 3,
                               "borderStyle": "solid",
@@ -3589,7 +3589,7 @@ exports[`should match the snapshot no selected value 1`] = `
                       style={
                         Object {
                           "backgroundColor": undefined,
-                          "color": "#FFFFFF",
+                          "color": "#fff",
                           "fontFamily": "Roboto_500Medium",
                           "fontSize": 20,
                           "fontStyle": undefined,

@@ -57,7 +57,7 @@ exports[`should match the snapshot 1`] = `
           style={
             Object {
               "backgroundColor": undefined,
-              "color": "#FFFFFF",
+              "color": "#fff",
               "fontFamily": "Roboto_400Regular",
               "fontSize": 18,
               "fontStyle": undefined,
@@ -164,7 +164,7 @@ exports[`should match the snapshot 1`] = `
           style={
             Object {
               "backgroundColor": undefined,
-              "color": "#FFFFFF",
+              "color": "#fff",
               "fontFamily": "Roboto_400Regular",
               "fontSize": 18,
               "fontStyle": undefined,

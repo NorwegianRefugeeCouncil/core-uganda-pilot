@@ -10,6 +10,7 @@ import FormControlErrorMessage from './FormControlErrorMessage';
 import FormControlHelperText from './FormControlHelperText';
 import FormControlLabel from './FormControlLabel';
 import Checkbox from './Checkbox';
+import Link from './Link';
 
 export default extendTheme({
   colors: tokens.colors,
@@ -22,11 +23,12 @@ export default extendTheme({
   components: {
     Button,
     Checkbox,
-    Icon,
-    Input,
     FormControlErrorMessage,
     FormControlHelperText,
     FormControlLabel,
+    Icon,
+    Input,
+    Link,
     Text,
   },
   space: {

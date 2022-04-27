@@ -1,7 +1,7 @@
 type Route = {
   name: string;
-  headerTitle: string;
-  pageTitle: string;
+  title: string;
+  linkLabel?: string;
 };
 
 type Routes = {
@@ -13,23 +13,21 @@ type Routes = {
 
 export const routes: Routes = {
   recipientsRoot: {
-    name: 'Recipients',
-    headerTitle: 'Recipient List',
-    pageTitle: 'Recipient List',
+    name: 'recipientsRoot',
+    title: 'Beneficiaries',
   },
   recipientsList: {
-    name: 'RecipientList',
-    pageTitle: 'Recipient List',
-    headerTitle: 'Recipient List',
+    name: 'recipientsList',
+    title: 'Beneficiaries',
+    linkLabel: 'Beneficiaries',
   },
   recipientsRegistration: {
-    name: 'RecipientRegistration',
-    headerTitle: 'Recipient Registration',
-    pageTitle: 'Recipient Registration',
+    name: 'recipientsRegistration',
+    title: 'Beneficiary Registration',
+    linkLabel: 'Register Beneficiary',
   },
   recipientsProfile: {
-    name: 'RecipientProfile',
-    headerTitle: 'Recipient Profile',
-    pageTitle: 'Recipient Profile',
+    name: 'recipientsProfile',
+    title: 'Beneficiary Profile',
   },
 };

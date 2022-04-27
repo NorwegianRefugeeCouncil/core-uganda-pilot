@@ -69,6 +69,7 @@ export const RecipientRegistrationScreenComponent: React.FC<Props> = ({
           {mode === 'review' && <RecipientViewer data={data} />}
           <HStack space={4} justifyContent="flex-end">
             <Button
+              key={`cancel-${mode}`}
               testID="recipient-registration-cancel-button"
               onPress={onCancel}
               colorScheme="secondary"
@@ -77,6 +78,7 @@ export const RecipientRegistrationScreenComponent: React.FC<Props> = ({
               {mode === 'edit' ? 'Cancel' : 'Back'}
             </Button>
             <Button
+              key={`save-${mode}`}
               testID="recipient-registration-submit-button"
               onPress={handleSubmit}
               colorScheme="primary"

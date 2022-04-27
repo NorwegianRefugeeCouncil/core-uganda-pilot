@@ -14,26 +14,17 @@ export const RecipientNavigator: React.FC = () => {
       <Stack.Screen
         name={routes.recipientsList.name}
         component={RecipientListScreen}
-        options={{
-          title: routes.recipientsList.pageTitle,
-          header: () => <></>,
-        }}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name={routes.recipientsProfile.name}
         component={RecipientProfileScreen}
-        options={{
-          title: routes.recipientsProfile.pageTitle,
-          headerTitle: routes.recipientsProfile.headerTitle,
-        }}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name={routes.recipientsRegistration.name}
         component={RecipientRegistrationScreen}
-        options={{
-          title: routes.recipientsRegistration.pageTitle,
-          headerTitle: routes.recipientsRegistration.headerTitle,
-        }}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );

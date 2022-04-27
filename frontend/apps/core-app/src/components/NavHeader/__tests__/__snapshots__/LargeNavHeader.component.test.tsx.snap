@@ -1,0 +1,293 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should match the snapshot 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    Array [
+      Object {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    dataSet={Object {}}
+    style={
+      Object {
+        "marginLeft": "auto",
+        "marginRight": "auto",
+        "maxWidth": 1180,
+        "paddingBottom": 40,
+        "paddingTop": 40,
+        "width": "100%",
+      }
+    }
+  >
+    <View
+      dataSet={Object {}}
+      style={
+        Object {
+          "alignItems": "center",
+          "flexDirection": "row",
+          "justifyContent": "space-between",
+          "width": "100%",
+        }
+      }
+    >
+      <Image
+        dataSet={Object {}}
+        onError={[Function]}
+        source={1}
+        style={
+          Object {
+            "height": 65,
+            "maxWidth": "100%",
+            "width": 65,
+          }
+        }
+      />
+      <View
+        dataSet={Object {}}
+        style={Object {}}
+      />
+      <View
+        dataSet={Object {}}
+        style={
+          Object {
+            "flexDirection": "row",
+          }
+        }
+      >
+        <View
+          accessibilityRole="link"
+          accessible={true}
+          collapsable={false}
+          dataSet={Object {}}
+          focusable={true}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onHoverIn={[Function]}
+          onHoverOut={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            Object {
+              "flexDirection": "row",
+              "height": "auto",
+              "marginRight": 32,
+              "width": "auto",
+            }
+          }
+        >
+          <Text
+            dataSet={Object {}}
+            level="1"
+            style={
+              Object {
+                "backgroundColor": undefined,
+                "color": "#24303E",
+                "fontFamily": "Roboto_500Medium",
+                "fontSize": 18,
+                "fontStyle": undefined,
+                "fontWeight": undefined,
+                "letterSpacing": 0,
+                "lineHeight": 26,
+                "textAlign": "auto",
+                "textDecorationLine": "none",
+              }
+            }
+          >
+            Beneficiaries
+          </Text>
+        </View>
+        <View
+          dataSet={Object {}}
+          style={Object {}}
+        />
+        <View
+          accessibilityRole="link"
+          accessible={true}
+          collapsable={false}
+          dataSet={Object {}}
+          focusable={true}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onHoverIn={[Function]}
+          onHoverOut={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            Object {
+              "flexDirection": "row",
+              "height": "auto",
+              "marginRight": 32,
+              "width": "auto",
+            }
+          }
+        >
+          <Text
+            dataSet={Object {}}
+            level="1"
+            style={
+              Object {
+                "backgroundColor": undefined,
+                "color": "#24303E",
+                "fontFamily": "Roboto_500Medium",
+                "fontSize": 18,
+                "fontStyle": undefined,
+                "fontWeight": undefined,
+                "letterSpacing": 0,
+                "lineHeight": 26,
+                "textAlign": "auto",
+                "textDecorationLine": "none",
+              }
+            }
+          >
+            Register Beneficiary
+          </Text>
+        </View>
+        <View
+          dataSet={Object {}}
+          style={Object {}}
+        />
+        <View
+          accessibilityRole="link"
+          accessible={true}
+          collapsable={false}
+          dataSet={Object {}}
+          focusable={true}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onHoverIn={[Function]}
+          onHoverOut={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            Object {
+              "flexDirection": "row",
+              "height": "auto",
+              "marginRight": 32,
+              "width": "auto",
+            }
+          }
+        >
+          <Text
+            dataSet={Object {}}
+            level="1"
+            style={
+              Object {
+                "backgroundColor": undefined,
+                "color": "#24303E",
+                "fontFamily": "Roboto_500Medium",
+                "fontSize": 18,
+                "fontStyle": undefined,
+                "fontWeight": undefined,
+                "letterSpacing": 0,
+                "lineHeight": 26,
+                "textAlign": "auto",
+                "textDecorationLine": "none",
+              }
+            }
+          >
+            Settings
+          </Text>
+        </View>
+        <View
+          dataSet={Object {}}
+          style={Object {}}
+        />
+        <View
+          accessibilityRole="link"
+          accessible={true}
+          collapsable={false}
+          dataSet={Object {}}
+          focusable={true}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onHoverIn={[Function]}
+          onHoverOut={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            Object {
+              "flexDirection": "row",
+              "height": "auto",
+              "marginRight": 32,
+              "width": "auto",
+            }
+          }
+        >
+          <Text
+            dataSet={Object {}}
+            level="1"
+            style={
+              Object {
+                "backgroundColor": undefined,
+                "color": "#24303E",
+                "fontFamily": "Roboto_500Medium",
+                "fontSize": 18,
+                "fontStyle": undefined,
+                "fontWeight": undefined,
+                "letterSpacing": 0,
+                "lineHeight": 26,
+                "textAlign": "auto",
+                "textDecorationLine": "none",
+              }
+            }
+          >
+            Log out
+          </Text>
+        </View>
+      </View>
+    </View>
+    <View
+      dataSet={Object {}}
+      style={Object {}}
+    />
+    <Text
+      dataSet={Object {}}
+      level="1"
+      style={
+        Object {
+          "backgroundColor": undefined,
+          "color": "#000000",
+          "fontFamily": "Roboto_700Bold",
+          "fontSize": 44,
+          "fontStyle": undefined,
+          "fontWeight": undefined,
+          "letterSpacing": 0,
+          "lineHeight": 52,
+          "marginTop": 48,
+          "textAlign": "auto",
+          "textDecorationLine": undefined,
+        }
+      }
+      testID="nav-header"
+    >
+      Beneficiaries
+    </Text>
+  </View>
+</RNCSafeAreaProvider>
+`;

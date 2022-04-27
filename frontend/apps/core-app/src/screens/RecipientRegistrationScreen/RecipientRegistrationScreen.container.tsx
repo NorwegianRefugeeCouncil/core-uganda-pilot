@@ -29,6 +29,15 @@ export const RecipientRegistrationScreenContainer: React.FC = () => {
   );
 
   React.useEffect(() => {
+    const unsubscribe = navigation.addListener('blur', () => {
+      setMode('edit');
+      setData([]);
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
+  React.useEffect(() => {
     setData(
       (getRecipientFormsState.data || []).map((form) => ({
         form,
