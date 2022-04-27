@@ -1,4 +1,5 @@
 import { fireEvent } from '@testing-library/react-native';
+import { Linking } from 'react-native';
 
 import { render } from '../../../testUtils/render';
 import { LargeNavHeaderComponent } from '../LargeNavHeader.component';
@@ -63,6 +64,10 @@ it('should render the recipients registration route header', () => {
 });
 
 it('should call the logout function', () => {
+  jest
+    .spyOn(Linking, 'openURL')
+    .mockImplementationOnce(() => Promise.resolve());
+
   const logoutSpy = jest.spyOn(logout, 'logout').mockImplementation(() => {});
 
   const { getByText } = render(
@@ -75,7 +80,8 @@ it('should call the logout function', () => {
     />,
   );
 
-  fireEvent(getByText('Log out'), 'press');
+  const logoutButton = getByText('Log out');
+  fireEvent.press(logoutButton);
 
   expect(logoutSpy).toHaveBeenCalled();
 });
