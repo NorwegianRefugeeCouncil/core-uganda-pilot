@@ -34,7 +34,7 @@ export const LargeNavHeaderComponent: React.FC<
             }}
             mr={8}
           >
-            Beneficiaries
+            {routes.recipientsList.linkLabel}
           </Link>
           <Link
             to={{
@@ -43,7 +43,7 @@ export const LargeNavHeaderComponent: React.FC<
             }}
             mr={8}
           >
-            Register beneficiary
+            {routes.recipientsRegistration.linkLabel}
           </Link>
           <Link
             to={{

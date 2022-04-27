@@ -1,6 +1,7 @@
 type Route = {
   name: string;
   title: string;
+  linkLabel?: string;
 };
 
 type Routes = {
@@ -18,10 +19,12 @@ export const routes: Routes = {
   recipientsList: {
     name: 'recipientsList',
     title: 'Beneficiaries',
+    linkLabel: 'Beneficiaries',
   },
   recipientsRegistration: {
     name: 'recipientsRegistration',
     title: 'Beneficiary Registration',
+    linkLabel: 'Register Beneficiary',
   },
   recipientsProfile: {
     name: 'recipientsProfile',
