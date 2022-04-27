@@ -42,6 +42,7 @@ const data = [makeFormWithRecord(0), makeFormWithRecord(1)];
 const mockSubmitData = [makeFormWithRecord(0)];
 
 const mockNavigate = jest.fn();
+const mockAddListener = jest.fn();
 
 jest.mock('@react-navigation/native', () => {
   const actualNav = jest.requireActual('@react-navigation/native');
@@ -49,6 +50,7 @@ jest.mock('@react-navigation/native', () => {
     ...actualNav,
     useNavigation: () => ({
       navigate: mockNavigate,
+      addListener: mockAddListener,
     }),
   };
 });
