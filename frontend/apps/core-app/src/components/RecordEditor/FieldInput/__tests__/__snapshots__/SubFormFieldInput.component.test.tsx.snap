@@ -173,7 +173,7 @@ exports[`should match the snapshot no sub records 1`] = `
         <View
           _text={
             Object {
-              "color": "lightText",
+              "color": "darkText",
             }
           }
           accessibilityRole="button"
@@ -196,7 +196,7 @@ exports[`should match the snapshot no sub records 1`] = `
           style={
             Object {
               "alignItems": "center",
-              "backgroundColor": "transparent",
+              "backgroundColor": "#FFFFFF",
               "borderColor": "#24303E",
               "borderRadius": 3,
               "borderStyle": "solid",
@@ -900,7 +900,7 @@ exports[`should match the snapshot no sub records 1`] = `
               <View
                 _text={
                   Object {
-                    "color": "lightText",
+                    "color": "darkText",
                   }
                 }
                 accessibilityRole="button"
@@ -923,7 +923,7 @@ exports[`should match the snapshot no sub records 1`] = `
                 style={
                   Object {
                     "alignItems": "center",
-                    "backgroundColor": "transparent",
+                    "backgroundColor": "#FFFFFF",
                     "borderColor": "#24303E",
                     "borderRadius": 3,
                     "borderStyle": "solid",
@@ -1250,7 +1250,7 @@ exports[`should match the snapshot sub records 1`] = `
         <View
           _text={
             Object {
-              "color": "lightText",
+              "color": "darkText",
             }
           }
           accessibilityRole="button"
@@ -1273,7 +1273,7 @@ exports[`should match the snapshot sub records 1`] = `
           style={
             Object {
               "alignItems": "center",
-              "backgroundColor": "transparent",
+              "backgroundColor": "#FFFFFF",
               "borderColor": "#24303E",
               "borderRadius": 3,
               "borderStyle": "solid",
@@ -1977,7 +1977,7 @@ exports[`should match the snapshot sub records 1`] = `
               <View
                 _text={
                   Object {
-                    "color": "lightText",
+                    "color": "darkText",
                   }
                 }
                 accessibilityRole="button"
@@ -2000,7 +2000,7 @@ exports[`should match the snapshot sub records 1`] = `
                 style={
                   Object {
                     "alignItems": "center",
-                    "backgroundColor": "transparent",
+                    "backgroundColor": "#FFFFFF",
                     "borderColor": "#24303E",
                     "borderRadius": 3,
                     "borderStyle": "solid",

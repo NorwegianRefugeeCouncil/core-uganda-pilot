@@ -3,11 +3,13 @@ import {
   FieldType,
   FieldValue,
   FormDefinition,
-  FormType,
   FormWithRecord,
   Record,
+  RecordListRequest,
 } from '../../types';
 import { Client } from '../Client';
+import { makeField, makeForm, makeRecord } from '../../testUtils/mockData';
+import { FormType } from '../../../lib/esm';
 
 const client = new Client('https://www.testUrl.no');
 
@@ -349,6 +351,182 @@ describe('createWithSubRecords', () => {
         createdRecord,
         result,
       );
+    });
+  });
+});
+
+describe('list', () => {
+  const textfield1 = makeField(1, false, false, { text: {} });
+  const textfield2 = makeField(2, false, false, { text: {} });
+  const form = makeForm(1, FormType.DefaultFormType, [textfield1, textfield2]);
+  const record1 = makeRecord(1, form);
+  const record2 = makeRecord(2, form);
+
+  const formGetSpy = jest.spyOn(client.Form, 'get').mockResolvedValue({
+    success: true,
+    error: undefined,
+    response: form,
+    request: { id: form.id },
+    status: 'ok',
+    statusCode: 200,
+  });
+  const doSpy = jest.spyOn(client, 'do');
+
+  describe('success', () => {
+    beforeEach(() => {
+      doSpy.mockReset();
+    });
+
+    const setDoSpySuccessResponse = (
+      request: RecordListRequest,
+      returnValue: any,
+    ) => {
+      return doSpy.mockResolvedValueOnce({
+        success: true,
+        error: undefined,
+        response: returnValue,
+        request,
+        status: 'ok',
+        statusCode: 200,
+      });
+    };
+
+    it('should return an empty array when no records exist', async () => {
+      setDoSpySuccessResponse(
+        {
+          formId: form.id,
+          databaseId: form.databaseId,
+        },
+        { items: [] },
+      );
+
+      const result = await client.Record.list({
+        formId: form.id,
+        databaseId: form.databaseId,
+        subforms: false,
+      });
+
+      expect(result.response?.items).toEqual([]);
+      expect(doSpy).toHaveBeenCalledWith(
+        {
+          formId: form.id,
+          databaseId: form.databaseId,
+        },
+        '/records?databaseId=databaseId&formId=form1',
+        'get',
+        undefined,
+        200,
+      );
+      expect(formGetSpy).not.toHaveBeenCalled();
+    });
+
+    it('should return all records', async () => {
+      setDoSpySuccessResponse(
+        {
+          formId: form.id,
+          databaseId: form.databaseId,
+        },
+        { items: [record1] },
+      );
+
+      const result = await client.Record.list({
+        formId: form.id,
+        databaseId: form.databaseId,
+        subforms: false,
+      });
+
+      expect(result.response?.items).toEqual([record1]);
+      expect(doSpy).toHaveBeenCalledWith(
+        {
+          formId: form.id,
+          databaseId: form.databaseId,
+        },
+        '/records?databaseId=databaseId&formId=form1',
+        'get',
+        undefined,
+        200,
+      );
+      expect(formGetSpy).not.toHaveBeenCalled();
+    });
+
+    it('should return all records, including subrecords', async () => {
+      setDoSpySuccessResponse(
+        {
+          formId: form.id,
+          databaseId: form.databaseId,
+        },
+        { items: [record1, record2] },
+      );
+
+      const result = await client.Record.list({
+        formId: form.id,
+        databaseId: form.databaseId,
+        subforms: true,
+      });
+
+      expect(result.response?.items).toEqual([record1, record2]);
+      expect(doSpy).toHaveBeenCalledWith(
+        {
+          formId: form.id,
+          databaseId: form.databaseId,
+        },
+        '/records?databaseId=databaseId&formId=form1',
+        'get',
+        undefined,
+        200,
+      );
+      expect(formGetSpy).toHaveBeenCalledWith({ id: form.id });
+      expect(formGetSpy).toBeCalledTimes(2);
+      expect(result).toEqual({
+        success: true,
+        error: undefined,
+        response: { items: [record1, record2] },
+        request: { formId: form.id, databaseId: form.databaseId },
+        status: 'ok',
+        statusCode: 200,
+      });
+    });
+  });
+
+  describe('error', () => {
+    beforeEach(() => {
+      doSpy.mockReset();
+    });
+
+    const setDoSpyErrorResponse = (request: RecordListRequest) => {
+      return doSpy.mockResolvedValueOnce({
+        success: false,
+        error: 'errorMessage',
+        response: undefined,
+        request,
+        status: 'Error Status',
+        statusCode: 500,
+      });
+    };
+
+    it('should return an error response if client returns error', async () => {
+      setDoSpyErrorResponse({
+        formId: form.id,
+        databaseId: form.databaseId,
+      });
+
+      const result = await client.Record.list({
+        formId: form.id,
+        databaseId: form.databaseId,
+      });
+
+      expect(doSpy).toHaveBeenCalled();
+      expect(result).toEqual({
+        success: false,
+        error: 'errorMessage',
+        response: undefined,
+        request: {
+          formId: form.id,
+          databaseId: form.databaseId,
+        },
+        status: 'Error Status',
+        statusCode: 500,
+      });
     });
   });
 });

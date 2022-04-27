@@ -62,8 +62,7 @@ exports[`should match the snapshot 1`] = `
         dataSet={Object {}}
         style={
           Object {
-            "paddingLeft": 130,
-            "paddingRight": 130,
+            "maxWidth": 1180,
           }
         }
       />
