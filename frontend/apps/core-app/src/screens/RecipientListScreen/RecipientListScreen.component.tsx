@@ -1,44 +1,31 @@
 import * as React from 'react';
-import { Button, Text, VStack } from 'native-base';
-import { RouteProp, useNavigation } from '@react-navigation/native';
 
-import { RootParamList } from '../../navigation/types';
-import { routes } from '../../constants/routes';
+import { RecipientListTableContext } from '../../components/RecipientListTable/RecipientListTableContext';
+import { data } from '../../components/RecipientListTable/data.tmp';
+import { RecipientListTable } from '../../components/RecipientListTable';
+import { RecipientListTableFilter } from '../../components/RecipientListTable/RecipientListTableFilter';
 
 import * as Styles from './RecipientListScreen.styles';
 
 type Props = {
-  route: RouteProp<RootParamList, 'RecipientList'>;
-  handleItemClick: (id: string) => void;
+  onItemClick: (id: string) => void;
 };
 
-const IDS = [
-  '8090092f-c983-4ff4-8599-214429218eb0',
-  '30e683fa-2dd7-479f-98a3-9477d0079383',
-  'fake-id',
-]; // TODO remove when actual list available
-
 export const RecipientListScreenComponent: React.FC<Props> = ({
-  route,
-  handleItemClick,
+  onItemClick,
 }) => {
-  const navigation = useNavigation();
+  const tableContext = React.useContext(RecipientListTableContext);
+
   return (
     <Styles.Container>
-      <Text variant="display">{route.name}</Text>
-      <Button
-        variant="major"
-        onPress={() => navigation.navigate(routes.recipientsRegistration.name)}
-      >
-        Register
-      </Button>
-      <VStack space={2} width="sm">
-        {IDS.map((id) => (
-          <Button variant="major" onPress={() => handleItemClick(id)} key={id}>
-            Recipient {id}
-          </Button>
-        ))}
-      </VStack>
+      {tableContext?.tableInstance && (
+        <RecipientListTableFilter
+          table={tableContext.tableInstance}
+          globalFilter={tableContext.tableInstance.globalFilter}
+          setGlobalFilter={tableContext.tableInstance.setGlobalFilter}
+        />
+      )}
+      <RecipientListTable data={data} onItemClick={onItemClick} />
     </Styles.Container>
   );
 };

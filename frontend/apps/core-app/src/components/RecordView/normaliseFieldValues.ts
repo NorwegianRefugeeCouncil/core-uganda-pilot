@@ -2,7 +2,7 @@ import {
   FieldKind,
   FormDefinition,
   getFieldKind,
-  Record,
+  Record as CoreRecord,
 } from 'core-api-client';
 
 import { formatFieldValue } from './formatFieldValue';
@@ -10,12 +10,11 @@ import {
   NormalisedBasicField,
   NormalisedFieldValue,
   NormalisedSubFormField,
-  NormalisedSubFormFieldValue,
 } from './RecordView.types';
 
 export const normaliseFieldValues = (
   form: FormDefinition,
-  record: Record,
+  record: CoreRecord,
 ): NormalisedFieldValue[] =>
   record.values.reduce<NormalisedFieldValue[]>((acc, cur) => {
     const field = form.fields.find((f) => f.id === cur.fieldId);
@@ -24,39 +23,33 @@ export const normaliseFieldValues = (
 
     if (fieldType === FieldKind.SubForm) {
       if (!Array.isArray(cur.value)) return acc;
-      const values: NormalisedSubFormFieldValue[][] = cur.value.map(
-        (subRecord) => {
-          if (!Array.isArray(subRecord)) return [];
-          return subRecord.map((subFieldValue) => {
-            const subField = field.fieldType.subForm?.fields.find(
-              (f) => f.id === subFieldValue.fieldId,
-            );
-            if (!subField) throw new Error('subField not found');
-            const subFieldType = getFieldKind(subField.fieldType);
-            if (subFieldType === FieldKind.SubForm)
-              throw new Error('subField is a subform');
-            return {
-              key: field.key,
-              value: subFieldValue.value as string | string[] | null,
-              formattedValue: formatFieldValue(
-                subFieldValue.value as string | string[] | null,
-                subField,
-              ),
-              fieldType: subFieldType,
-            };
-          });
-        },
-      );
-
-      const labels =
-        field.fieldType.subForm?.fields.map((subField) => subField.name) ?? [];
-
       const item: NormalisedSubFormField = {
         key: field.key,
-        fieldType,
         header: field.name,
-        labels,
-        values,
+        fieldType: FieldKind.SubForm,
+        columns:
+          field.fieldType.subForm?.fields.map((f) => ({
+            Header: f.name,
+            accessor: f.id,
+          })) ?? [],
+        data: cur.value.map((subRecord) => {
+          if (!Array.isArray(subRecord)) return {};
+          return subRecord.reduce<Record<string, string>>((a, c) => {
+            const subField = field.fieldType.subForm?.fields.find(
+              (f) => f.id === c.fieldId,
+            );
+            if (!subField) throw new Error('subField not found');
+            if (getFieldKind(subField.fieldType) === FieldKind.SubForm)
+              throw new Error('Nested subforms are not supported');
+            return {
+              ...a,
+              [c.fieldId]: formatFieldValue(
+                c.value as string | string[] | null,
+                subField,
+              ),
+            };
+          }, {});
+        }),
       };
 
       return [...acc, item];

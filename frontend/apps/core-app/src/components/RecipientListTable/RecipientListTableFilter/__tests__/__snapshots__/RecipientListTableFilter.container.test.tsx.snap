@@ -1,0 +1,120 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GlobalTableFilterContainer should match the snapshot 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    Array [
+      Object {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    dataSet={Object {}}
+    style={
+      Object {
+        "width": "100%",
+      }
+    }
+  >
+    <View
+      dataSet={Object {}}
+      feedbackId="field-react-aria-1-feedback"
+      hasFeedbackText={false}
+      hasHelpText={false}
+      helpTextId="field-react-aria-1-helptext"
+      isDisabled={false}
+      isInvalid={false}
+      isReadOnly={false}
+      isRequired={false}
+      labelId="field-react-aria-1-label"
+      nativeID="field-react-aria-1-label"
+      setHasFeedbackText={[Function]}
+      setHasHelpText={[Function]}
+      style={
+        Object {
+          "flexDirection": "row",
+          "justifyContent": "flex-start",
+          "marginBottom": 2,
+          "marginRight": 12,
+        }
+      }
+    >
+      <Text
+        dataSet={Object {}}
+        level="1"
+        style={
+          Object {
+            "backgroundColor": undefined,
+            "color": "#666666",
+            "fontFamily": "Roboto_500Medium",
+            "fontSize": 18,
+            "fontStyle": undefined,
+            "fontWeight": undefined,
+            "letterSpacing": 0,
+            "lineHeight": 26,
+            "textAlign": "auto",
+            "textDecorationLine": undefined,
+          }
+        }
+      >
+        Beneficiary Name
+      </Text>
+    </View>
+    <TextInput
+      _text={
+        Object {
+          "color": "darkText",
+        }
+      }
+      accessible={true}
+      allowFontScaling={true}
+      dataSet={Object {}}
+      disabled={false}
+      editable={true}
+      isRequired={false}
+      nativeID="field-react-aria-1"
+      onBlur={[Function]}
+      onChangeText={[Function]}
+      onFocus={[Function]}
+      onKeyPress={[Function]}
+      placeholder="Search"
+      placeholderTextColor="#a3a3a3"
+      readOnly={false}
+      rejectResponderTermination={true}
+      required={false}
+      secureTextEntry={false}
+      selectionColor="#1f2937"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "#FFFFFF",
+            "borderColor": "#666666",
+            "borderRadius": 3,
+            "borderStyle": "solid",
+            "borderWidth": 1,
+            "color": "#666666",
+            "fontFamily": "Roboto_400Regular",
+            "fontSize": 18,
+            "fontStyle": undefined,
+            "fontWeight": undefined,
+            "lineHeight": 26,
+            "overflow": "hidden",
+            "paddingBottom": 12,
+            "paddingLeft": 12,
+            "paddingRight": 12,
+            "paddingTop": 12,
+            "width": undefined,
+          },
+          Object {},
+        ]
+      }
+      underlineColorAndroid="transparent"
+      value=""
+    />
+  </View>
+</RNCSafeAreaProvider>
+`;

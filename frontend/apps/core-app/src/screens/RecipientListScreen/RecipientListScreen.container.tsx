@@ -1,17 +1,17 @@
 import * as React from 'react';
-import {
-  NavigationProp,
-  RouteProp,
-  useNavigation,
-  useRoute,
-} from '@react-navigation/native';
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { Button } from 'native-base';
 
 import { RootParamList } from '../../navigation/types';
+import { RecipientListTableContext } from '../../components/RecipientListTable/RecipientListTableContext';
+import {
+  RecipientListTableEntry,
+  SortedFilteredTable,
+} from '../../components/RecipientListTable/types';
 
 import { RecipientListScreenComponent } from './RecipientListScreen.component';
 
 export const RecipientListScreenContainer: React.FC = () => {
-  const route = useRoute<RouteProp<RootParamList, 'RecipientList'>>();
   const navigation = useNavigation<NavigationProp<RootParamList>>();
 
   const handleItemClick = (id: string) => {
@@ -20,10 +20,21 @@ export const RecipientListScreenContainer: React.FC = () => {
     });
   };
 
+  const [tableInstance, setTableInstance] =
+    React.useState<SortedFilteredTable<RecipientListTableEntry> | null>(null);
+
   return (
-    <RecipientListScreenComponent
-      route={route}
-      handleItemClick={handleItemClick}
-    />
+    <RecipientListTableContext.Provider
+      value={{ tableInstance, setTableInstance }}
+    >
+      <Button
+        variant="major"
+        color="primary"
+        onPress={() => navigation.navigate('RecipientRegistration', {})}
+      >
+        Register
+      </Button>
+      <RecipientListScreenComponent onItemClick={handleItemClick} />
+    </RecipientListTableContext.Provider>
   );
 };

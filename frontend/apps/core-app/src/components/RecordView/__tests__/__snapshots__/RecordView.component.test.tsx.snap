@@ -18,7 +18,7 @@ exports[`should match the snapshot 1`] = `
   >
     <View>
       <Text>
-        {"label":"label-1","fieldType":"text","value":"test-1","formattedValue":"format-test-1"}
+        {"label":"label-1","fieldType":"text","value":"test-1","formattedValue":"format-test-1","key":false}
       </Text>
     </View>
     <View
@@ -34,10 +34,10 @@ exports[`should match the snapshot 1`] = `
         header-1
       </Text>
       <Text>
-        ["label-1","label-2"]
+        [{"label-1":"value-1","label-2":"value-2"},{"label-1":"value-3","label-2":"value-4"}]
       </Text>
       <Text>
-        [[{"fieldType":"text","value":"test-2","formattedValue":"format-test-2"}]]
+        [{"Header":"label-1","accessor":"label-1"},{"Header":"label-2","accessor":"label-2"}]
       </Text>
     </View>
   </View>
