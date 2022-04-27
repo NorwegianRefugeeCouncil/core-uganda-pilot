@@ -155,7 +155,7 @@ exports[`should match the snapshot 1`] = `
               }
             }
           >
-            Register beneficiary
+            Register Beneficiary
           </Text>
         </View>
         <View
