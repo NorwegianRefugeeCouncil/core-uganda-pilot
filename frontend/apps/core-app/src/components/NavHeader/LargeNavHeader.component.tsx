@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { HStack, Image, Text, VStack, Button } from 'native-base';
+import { HStack, Image, Text, VStack } from 'native-base';
 import { StackHeaderProps } from '@react-navigation/stack';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 
@@ -15,9 +15,9 @@ const getHeaderTitle = (route: StackHeaderProps['route']): string => {
   return routes[routeName as keyof typeof routes].title;
 };
 
-export const LargeNavHeaderComponent: React.FC<StackHeaderProps> = ({
-  route,
-}) => {
+export const LargeNavHeaderComponent: React.FC<
+  Pick<StackHeaderProps, 'route'>
+> = ({ route }) => {
   return (
     <VStack width="100%" pt={10} pb={10} maxWidth={1180} ml="auto" mr="auto">
       <HStack width="100%" alignItems="center" justifyContent="space-between">
@@ -59,7 +59,7 @@ export const LargeNavHeaderComponent: React.FC<StackHeaderProps> = ({
           </Link>
         </HStack>
       </HStack>
-      <Text variant="display" level="1" mt={12}>
+      <Text testID="nav-header" variant="display" level="1" mt={12}>
         {getHeaderTitle(route)}
       </Text>
     </VStack>
