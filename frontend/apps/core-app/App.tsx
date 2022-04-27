@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as WebBrowser from 'expo-web-browser';
 import { NativeBaseProvider } from 'native-base';
-import { theme } from 'core-design-system';
+import { theme, tokens } from 'core-design-system';
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import {
   // eslint-disable-next-line camelcase
@@ -24,7 +24,7 @@ const navTheme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    background: '#fff',
+    background: tokens.colors.white,
   },
 };
 
