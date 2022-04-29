@@ -63,8 +63,8 @@ export const RecipientRegistrationScreenComponent: React.FC<Props> = ({
 
   return (
     <FormProvider {...f}>
-      <ScrollView ref={scrollRef} width="100%" maxWidth="1180px" marginX="auto">
-        <VStack space={4}>
+      <ScrollView ref={scrollRef} width="100%">
+        <VStack space={4} width="100%" maxWidth="1180px" marginX="auto">
           {mode === 'edit' && <RecipientEditor data={data} />}
           {mode === 'review' && <RecipientViewer data={data} />}
           <HStack space={4} justifyContent="flex-end">
