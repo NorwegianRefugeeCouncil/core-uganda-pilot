@@ -39,7 +39,7 @@ export const RecipientListScreenContainer: React.FC<Props> = ({
     true,
   );
 
-  const [_, recipientsState] = useAPICall(
+  const [__, recipientState] = useAPICall(
     formsClient.Recipient.list,
     [
       {
@@ -56,10 +56,10 @@ export const RecipientListScreenContainer: React.FC<Props> = ({
     >
       <RecipientListScreenComponent
         onItemClick={handleItemClick}
-        data={recipientsState.data}
+        data={recipientState.data}
         forms={formState.data}
-        isLoading={formState.loading || recipientsState.loading}
-        error={undefined}
+        isLoading={recipientState.loading || formState.loading}
+        error={recipientState.error || formState.error}
       />
     </RecipientListTableContext.Provider>
   );

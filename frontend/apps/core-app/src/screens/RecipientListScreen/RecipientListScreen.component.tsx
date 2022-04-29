@@ -12,7 +12,7 @@ type Props = {
   data: FormWithRecord<Recipient>[][] | null;
   forms: FormDefinition[] | null;
   isLoading: boolean;
-  error?: string;
+  error: string | null;
 };
 
 export const RecipientListScreenComponent: React.FC<Props> = ({
@@ -38,7 +38,7 @@ export const RecipientListScreenComponent: React.FC<Props> = ({
           )}
         </Box>
       </Box>
-      <Box maxWidth="1180px">
+      <Box mx="130px">
         {data &&
           forms &&
           forms.map((form) => (

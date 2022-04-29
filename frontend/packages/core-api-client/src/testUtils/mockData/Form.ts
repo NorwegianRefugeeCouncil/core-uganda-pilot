@@ -1,4 +1,4 @@
-import { FieldDefinition, FormDefinition, FormType } from 'core-api-client';
+import { FieldDefinition, FormDefinition, FormType } from '../../types';
 
 export const makeForm = (
   index: number,

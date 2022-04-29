@@ -1,4 +1,4 @@
-import { FieldDefinition, FieldType } from 'core-api-client';
+import { FieldDefinition, FieldType } from '../../types';
 
 export const makeField = (
   index: number,

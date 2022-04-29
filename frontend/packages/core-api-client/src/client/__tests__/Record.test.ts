@@ -3,13 +3,13 @@ import {
   FieldType,
   FieldValue,
   FormDefinition,
+  FormType,
   FormWithRecord,
   Record,
   RecordListRequest,
 } from '../../types';
 import { Client } from '../Client';
 import { makeField, makeForm, makeRecord } from '../../testUtils/mockData';
-import { FormType } from '../../../lib/esm';
 
 const client = new Client('https://www.testUrl.no');
 

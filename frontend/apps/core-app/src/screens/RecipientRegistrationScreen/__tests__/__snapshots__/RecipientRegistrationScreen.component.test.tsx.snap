@@ -65,7 +65,7 @@ exports[`should match the snapshot edit mode 1`] = `
           <View
             _text={
               Object {
-                "color": "darkText",
+                "color": "lightText",
               }
             }
             accessibilityRole="button"
@@ -88,7 +88,7 @@ exports[`should match the snapshot edit mode 1`] = `
             style={
               Object {
                 "alignItems": "center",
-                "backgroundColor": "#FFFFFF",
+                "backgroundColor": "transparent",
                 "borderColor": "#24303E",
                 "borderRadius": 3,
                 "borderStyle": "solid",
@@ -323,7 +323,7 @@ exports[`should match the snapshot review mode 1`] = `
           <View
             _text={
               Object {
-                "color": "darkText",
+                "color": "lightText",
               }
             }
             accessibilityRole="button"
@@ -346,7 +346,7 @@ exports[`should match the snapshot review mode 1`] = `
             style={
               Object {
                 "alignItems": "center",
-                "backgroundColor": "#FFFFFF",
+                "backgroundColor": "transparent",
                 "borderColor": "#24303E",
                 "borderRadius": 3,
                 "borderStyle": "solid",

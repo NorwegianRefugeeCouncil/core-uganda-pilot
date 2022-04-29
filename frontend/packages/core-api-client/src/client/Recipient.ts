@@ -17,7 +17,6 @@ import * as Tree from '../utils/tree';
 
 import { RecordClient } from './Record';
 import { FormClient } from './Form';
-import * as console from "console";
 
 export class RecipientClient implements RecipientClientDefinition {
   private recordClient: RecordClient;

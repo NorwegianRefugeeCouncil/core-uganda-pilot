@@ -1,4 +1,4 @@
-import { FormDefinition, Record } from 'core-api-client';
+import { FormDefinition, Record } from '../../types';
 
 export const makeRecord = (index: number, form: FormDefinition): Record => ({
   id: `record${index}`,

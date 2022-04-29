@@ -29,7 +29,7 @@ jest.mock('../../../components/Recipient/RecipientViewer', () => {
   };
 });
 
-const makeFormWithRecord = (i: number): FormWithRecord<Recipient> => {
+export const makeFormWithRecord = (i: number): FormWithRecord<Recipient> => {
   const form = {
     id: `form-id-${i}`,
     code: 'form-code',

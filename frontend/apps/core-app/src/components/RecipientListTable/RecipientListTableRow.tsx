@@ -19,6 +19,7 @@ export const RecipientListTableRow: React.FC<
       onPress={handleRowClick}
       bg="white"
       _hover={{ backgroundColor: 'primary.100' }}
+      testID={`recipient-list-table-row-${row.id}`}
     >
       <HStack>
         {row.cells.map((cell: Cell, i) => {
