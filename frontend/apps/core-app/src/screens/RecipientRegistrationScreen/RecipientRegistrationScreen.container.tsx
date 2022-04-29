@@ -1,24 +1,30 @@
 import * as React from 'react';
 import { FormWithRecord } from 'core-api-client';
 import { Recipient } from 'core-api-client/src/types/client/Recipient';
-import { useNavigation } from '@react-navigation/native';
+import { StackScreenProps } from '@react-navigation/stack';
 
 import { formsClient } from '../../clients/formsClient';
-import configuration from '../../config';
 import { useAPICall } from '../../hooks/useAPICall';
 import { routes } from '../../constants/routes';
+import { RecipientNavigatorParamList } from '../../navigation/recipients';
 
 import { RecipientRegistrationScreenComponent } from './RecipientRegistrationScreen.component';
 
-export const RecipientRegistrationScreenContainer: React.FC = () => {
-  const navigation = useNavigation();
+type Props = StackScreenProps<
+  RecipientNavigatorParamList,
+  'recipientsRegistration'
+>;
 
+export const RecipientRegistrationScreenContainer: React.FC<Props> = ({
+  route,
+  navigation,
+}) => {
   const [mode, setMode] = React.useState<'edit' | 'review'>('edit');
   const [data, setData] = React.useState<FormWithRecord<Recipient>[]>([]);
 
   const [_, getRecipientFormsState] = useAPICall(
     formsClient.Form.getAncestors,
-    [configuration.recipient.registrationForm.formId],
+    [route.params.formId],
     true,
   );
 
@@ -49,8 +55,10 @@ export const RecipientRegistrationScreenContainer: React.FC = () => {
   React.useEffect(() => {
     if (saveRecipientState.data) {
       navigation.navigate(routes.recipientsProfile.name, {
-        id: saveRecipientState.data[saveRecipientState.data.length - 1].record
-          .id,
+        recordId:
+          saveRecipientState.data[saveRecipientState.data.length - 1].record.id,
+        formId: route.params.formId,
+        databaseId: route.params.databaseId,
       });
     }
   }, [JSON.stringify(saveRecipientState.data)]);

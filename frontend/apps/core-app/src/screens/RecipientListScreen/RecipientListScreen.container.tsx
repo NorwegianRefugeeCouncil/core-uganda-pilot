@@ -1,22 +1,29 @@
 import * as React from 'react';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
-import { Button } from 'native-base';
+import { StackScreenProps } from '@react-navigation/stack';
 
-import { RootParamList } from '../../navigation/types';
 import { RecipientListTableContext } from '../../components/RecipientListTable/RecipientListTableContext';
 import {
   RecipientListTableEntry,
   SortedFilteredTable,
 } from '../../components/RecipientListTable/types';
+import { RecipientNavigatorParamList } from '../../navigation/recipients';
+import { routes } from '../../constants/routes';
+import { useRecipientForms } from '../../contexts/RecipientForms';
 
 import { RecipientListScreenComponent } from './RecipientListScreen.component';
 
-export const RecipientListScreenContainer: React.FC = () => {
-  const navigation = useNavigation<NavigationProp<RootParamList>>();
+type Props = StackScreenProps<RecipientNavigatorParamList, 'recipientsList'>;
+
+export const RecipientListScreenContainer: React.FC<Props> = ({
+  navigation,
+}) => {
+  const recipientForms = useRecipientForms();
 
   const handleItemClick = (id: string) => {
-    navigation.navigate('RecipientProfile', {
-      id,
+    navigation.navigate(routes.recipientsProfile.name, {
+      recordId: id,
+      formId: recipientForms[0]?.id,
+      databaseId: recipientForms[0]?.databaseId,
     });
   };
 
@@ -27,13 +34,6 @@ export const RecipientListScreenContainer: React.FC = () => {
     <RecipientListTableContext.Provider
       value={{ tableInstance, setTableInstance }}
     >
-      <Button
-        variant="major"
-        color="primary"
-        onPress={() => navigation.navigate('RecipientRegistration', {})}
-      >
-        Register
-      </Button>
       <RecipientListScreenComponent onItemClick={handleItemClick} />
     </RecipientListTableContext.Provider>
   );
