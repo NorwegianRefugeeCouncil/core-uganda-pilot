@@ -24,9 +24,6 @@ exports[`should match the snapshot default 1`] = `
     dataSet={Object {}}
     style={
       Object {
-        "marginLeft": "auto",
-        "marginRight": "auto",
-        "maxWidth": 1180,
         "width": "100%",
       }
     }
@@ -36,7 +33,12 @@ exports[`should match the snapshot default 1`] = `
         dataSet={Object {}}
         style={
           Array [
-            Object {},
+            Object {
+              "marginLeft": "auto",
+              "marginRight": "auto",
+              "maxWidth": 1180,
+              "width": "100%",
+            },
             Array [
               Object {},
             ],
@@ -78,9 +80,6 @@ exports[`should match the snapshot error 1`] = `
     dataSet={Object {}}
     style={
       Object {
-        "marginLeft": "auto",
-        "marginRight": "auto",
-        "maxWidth": 1180,
         "width": "100%",
       }
     }
@@ -90,7 +89,12 @@ exports[`should match the snapshot error 1`] = `
         dataSet={Object {}}
         style={
           Array [
-            Object {},
+            Object {
+              "marginLeft": "auto",
+              "marginRight": "auto",
+              "maxWidth": 1180,
+              "width": "100%",
+            },
             Array [
               Object {},
             ],
@@ -152,9 +156,6 @@ exports[`should match the snapshot loading 1`] = `
     dataSet={Object {}}
     style={
       Object {
-        "marginLeft": "auto",
-        "marginRight": "auto",
-        "maxWidth": 1180,
         "width": "100%",
       }
     }
@@ -164,7 +165,12 @@ exports[`should match the snapshot loading 1`] = `
         dataSet={Object {}}
         style={
           Array [
-            Object {},
+            Object {
+              "marginLeft": "auto",
+              "marginRight": "auto",
+              "maxWidth": 1180,
+              "width": "100%",
+            },
             Array [
               Object {},
             ],
