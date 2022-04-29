@@ -6,7 +6,20 @@ import { RecipientProfileScreen } from '../screens/RecipientProfileScreen';
 import { RecipientRegistrationScreen } from '../screens/RecipientRegistrationScreen';
 import { routes } from '../constants/routes';
 
-const Stack = createStackNavigator();
+export type RecipientNavigatorParamList = {
+  recipientsList: undefined;
+  recipientsRegistration: {
+    formId: string;
+    databaseId: string;
+  };
+  recipientsProfile: {
+    recordId: string;
+    formId: string;
+    databaseId: string;
+  };
+};
+
+const Stack = createStackNavigator<RecipientNavigatorParamList>();
 
 export const RecipientNavigator: React.FC = () => {
   return (

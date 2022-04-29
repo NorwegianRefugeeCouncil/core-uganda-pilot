@@ -8,7 +8,11 @@ import { LargeNavHeader } from '../components/NavHeader';
 
 import { RecipientNavigator } from './recipients';
 
-const Drawer = createDrawerNavigator();
+export type RootStackParamList = {
+  recipientsRoot: undefined;
+};
+
+const Drawer = createDrawerNavigator<RootStackParamList>();
 
 const SmallRootNavigator: React.FC = () => {
   return (
@@ -22,7 +26,7 @@ const SmallRootNavigator: React.FC = () => {
   );
 };
 
-const Stack = createStackNavigator();
+const Stack = createStackNavigator<RootStackParamList>();
 
 const LargeRootNavigator: React.FC = () => {
   return (
