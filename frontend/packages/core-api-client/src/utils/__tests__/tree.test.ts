@@ -107,11 +107,6 @@ describe('getLeafNodes', () => {
     const tree = createDataTree(dataset, 'id', 'parentId');
     expect(getLeafNodes(tree)).toEqual([
       {
-        id: '3',
-        parentId: '1',
-        childNodes: [],
-      },
-      {
         id: '4',
         parentId: '2',
         childNodes: [],
@@ -119,6 +114,11 @@ describe('getLeafNodes', () => {
       {
         id: '5',
         parentId: '2',
+        childNodes: [],
+      },
+      {
+        id: '3',
+        parentId: '1',
         childNodes: [],
       },
     ]);

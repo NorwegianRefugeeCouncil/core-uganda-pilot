@@ -28,7 +28,7 @@ export const getLeafNodes = <T>(
     if (!nodes[i].childNodes || nodes[i].childNodes.length === 0) {
       result.push(nodes[i]);
     } else {
-      return getLeafNodes(nodes[i].childNodes, result);
+      result = getLeafNodes(nodes[i].childNodes, result);
     }
   }
   return result;
