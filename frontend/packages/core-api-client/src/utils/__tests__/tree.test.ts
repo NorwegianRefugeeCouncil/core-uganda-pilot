@@ -4,7 +4,7 @@ describe('createDataTree', () => {
   const makeTree = (parentIds: (string | null)[]) =>
     createDataTree(
       parentIds.map((id, index) => ({
-        id: index,
+        id: (index + 1).toString(),
         parentId: id,
       })),
       'id',
