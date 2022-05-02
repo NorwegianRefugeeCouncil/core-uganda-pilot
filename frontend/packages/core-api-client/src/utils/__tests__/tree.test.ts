@@ -1,15 +1,18 @@
 import { createDataTree, getLeafNodes } from '../tree';
 
 describe('createDataTree', () => {
+  const makeTree = (parentIds: (string | null)[]) =>
+    createDataTree(
+      parentIds.map((id, index) => ({
+        id: index,
+        parentId: id,
+      })),
+      'id',
+      'parentId',
+    );
+
   it('should create a tree with a single root', () => {
-    const dataset = [
-      { id: '1', parentId: null },
-      { id: '2', parentId: '1' },
-      { id: '3', parentId: '1' },
-      { id: '4', parentId: '2' },
-      { id: '5', parentId: '2' },
-    ];
-    const tree = createDataTree(dataset, 'id', 'parentId');
+    const tree = makeTree([null, '1', '1', '2', '2']);
     expect(tree).toEqual([
       {
         id: '1',
@@ -42,16 +45,7 @@ describe('createDataTree', () => {
   });
 
   it('should create a tree with multiple roots', () => {
-    const dataset = [
-      { id: '1', parentId: null },
-      { id: '2', parentId: null },
-      { id: '3', parentId: '1' },
-      { id: '4', parentId: '1' },
-      { id: '5', parentId: '2' },
-      { id: '6', parentId: '2' },
-      { id: '7', parentId: '5' },
-    ];
-    const tree = createDataTree(dataset, 'id', 'parentId');
+    const tree = makeTree([null, null, '1', '1', '2', '2', '5']);
     expect(tree).toEqual([
       {
         id: '1',
