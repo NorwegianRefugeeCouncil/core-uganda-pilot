@@ -22,7 +22,7 @@ describe('Recipient', () => {
     databaseId: 'database-id',
     folderId: 'folder-id',
     name: `form-name-${i}`,
-    formType: FormType.DefaultFormType,
+    formType: FormType.RecipientFormType,
     fields:
       i > 0
         ? [
@@ -633,6 +633,101 @@ describe('Recipient', () => {
         await expect(
           recipientClient.create(recipientDefinition),
         ).rejects.toThrowError('error');
+      });
+    });
+  });
+
+  describe('getRecipientForms', () => {
+    describe('success', () => {
+      it('should filter out non-recipient forms', async () => {
+        jest.spyOn(client.Form, 'list').mockImplementationOnce(() =>
+          Promise.resolve({
+            request: {},
+            status: 'ok',
+            statusCode: 200,
+            error: undefined,
+            success: true,
+            response: {
+              items: [
+                makeForm(0),
+                makeForm(1),
+                { ...makeForm(2), formType: FormType.DefaultFormType },
+              ],
+            },
+          }),
+        );
+
+        const result = await recipientClient.getRecipientForms();
+        expect(result).toEqual([makeForm(1)]);
+      });
+
+      it('should return the leaf node', async () => {
+        jest.spyOn(client.Form, 'list').mockImplementationOnce(() =>
+          Promise.resolve({
+            request: {},
+            status: 'ok',
+            statusCode: 200,
+            error: undefined,
+            success: true,
+            response: {
+              items: [makeForm(0), makeForm(1), makeForm(2)],
+            },
+          }),
+        );
+
+        const result = await recipientClient.getRecipientForms();
+        expect(result).toEqual([makeForm(2)]);
+      });
+
+      it('should return multiple leaf nodes', async () => {
+        jest.spyOn(client.Form, 'list').mockImplementationOnce(() =>
+          Promise.resolve({
+            request: {},
+            status: 'ok',
+            statusCode: 200,
+            error: undefined,
+            success: true,
+            response: {
+              items: [
+                makeForm(0),
+                makeForm(1),
+                makeForm(2),
+                {
+                  ...makeForm(2),
+                  id: 'other-leaf-node-id',
+                },
+              ],
+            },
+          }),
+        );
+
+        const result = await recipientClient.getRecipientForms();
+        expect(result).toEqual([
+          makeForm(2),
+          {
+            ...makeForm(2),
+            id: 'other-leaf-node-id',
+          },
+        ]);
+      });
+    });
+
+    describe('failure', () => {
+      it('should fail if the forms cannot be retrieved', async () => {
+        jest.spyOn(client.Form, 'list').mockImplementationOnce(() =>
+          Promise.resolve({
+            request: {},
+            status: 'error',
+            statusCode: 500,
+            error: 'error',
+            success: false,
+            response: undefined,
+          }),
+        );
+
+        await expect(recipientClient.getRecipientForms()).rejects.toThrowError(
+          'error',
+        );
       });
     });
   });
