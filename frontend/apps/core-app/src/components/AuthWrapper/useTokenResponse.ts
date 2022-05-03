@@ -27,7 +27,11 @@ const getStoredTokenResponse = (): TokenResponse | undefined => {
 const storeTokenResponse = (tokenResponse: TokenResponse) => {
   try {
     if (Platform.OS !== 'web') return;
-    sessionStorage.setItem('tokenResponse', JSON.stringify(tokenResponse));
+    if (tokenResponse) {
+      sessionStorage.setItem('tokenResponse', JSON.stringify(tokenResponse));
+    } else {
+      sessionStorage.removeItem('tokenResponse');
+    }
   } catch (e) {
     // ignore
   }
@@ -45,6 +49,7 @@ export const useTokenResponse = (): [
     () => Platform.select({ web: false, default: false }),
     [],
   );
+
   const redirectUri = React.useMemo(
     () => makeRedirectUri({ scheme: Constants.manifest?.scheme }),
     [],
@@ -112,7 +117,6 @@ export const useTokenResponse = (): [
         setTokenResponse(resp);
       } catch (err) {
         setTokenResponse(undefined);
-        throw err;
       }
     };
 
@@ -131,7 +135,11 @@ export const useTokenResponse = (): [
       if (refreshTokenInterval.current)
         clearInterval(refreshTokenInterval.current);
     };
-  }, [tokenResponse?.refreshToken, tokenResponse?.expiresIn]);
+  }, [
+    tokenResponse?.refreshToken,
+    tokenResponse?.expiresIn,
+    JSON.stringify(discovery),
+  ]);
 
   React.useEffect(() => {
     if (tokenResponse) storeTokenResponse(tokenResponse);
