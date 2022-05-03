@@ -2,7 +2,7 @@ import React from 'react';
 
 import { render } from '../../../testUtils/render';
 import { RecipientListScreenComponent } from '../RecipientListScreen.component';
-import { makeFormWithRecord } from '../../RecipientRegistrationScreen/__tests__/RecipientRegistrationScreen.component.test';
+import { makeFormWithRecord } from '../../../testUtils/mockData';
 
 describe('RecipientListScreenComponent', () => {
   describe('should match the snapshot', () => {

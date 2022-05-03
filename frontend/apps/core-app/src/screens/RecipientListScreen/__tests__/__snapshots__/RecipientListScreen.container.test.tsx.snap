@@ -29,7 +29,7 @@ exports[`RecipientListScreenContainer should match the snapshot data 1`] = `
     dataSet={Object {}}
     style={
       Object {
-        "backgroundColor": "#FFFFFF",
+        "backgroundColor": "#fff",
       }
     }
   >
@@ -136,7 +136,7 @@ exports[`RecipientListScreenContainer should match the snapshot data 1`] = `
               style={
                 Array [
                   Object {
-                    "backgroundColor": "#FFFFFF",
+                    "backgroundColor": "#fff",
                     "borderColor": "#666666",
                     "borderRadius": 3,
                     "borderStyle": "solid",
@@ -236,7 +236,7 @@ exports[`RecipientListScreenContainer should match the snapshot data 1`] = `
                 style={
                   Object {
                     "backgroundColor": undefined,
-                    "color": "#FFFFFF",
+                    "color": "#fff",
                     "fontFamily": "Roboto_500Medium",
                     "fontSize": 14,
                     "fontStyle": undefined,
@@ -1607,7 +1607,7 @@ exports[`RecipientListScreenContainer should match the snapshot data 1`] = `
                           onStartShouldSetResponder={[Function]}
                           style={
                             Object {
-                              "backgroundColor": "#FFFFFF",
+                              "backgroundColor": "#fff",
                             }
                           }
                           testID="recipient-list-table-row-0"
@@ -2775,7 +2775,7 @@ exports[`RecipientListScreenContainer should match the snapshot data 1`] = `
                           onStartShouldSetResponder={[Function]}
                           style={
                             Object {
-                              "backgroundColor": "#FFFFFF",
+                              "backgroundColor": "#fff",
                             }
                           }
                           testID="recipient-list-table-row-1"
@@ -3990,7 +3990,7 @@ exports[`RecipientListScreenContainer should match the snapshot data 1`] = `
                 style={
                   Object {
                     "backgroundColor": undefined,
-                    "color": "#FFFFFF",
+                    "color": "#fff",
                     "fontFamily": "Roboto_500Medium",
                     "fontSize": 14,
                     "fontStyle": undefined,
@@ -5361,7 +5361,7 @@ exports[`RecipientListScreenContainer should match the snapshot data 1`] = `
                           onStartShouldSetResponder={[Function]}
                           style={
                             Object {
-                              "backgroundColor": "#FFFFFF",
+                              "backgroundColor": "#fff",
                             }
                           }
                           testID="recipient-list-table-row-0"
@@ -6529,7 +6529,7 @@ exports[`RecipientListScreenContainer should match the snapshot data 1`] = `
                           onStartShouldSetResponder={[Function]}
                           style={
                             Object {
-                              "backgroundColor": "#FFFFFF",
+                              "backgroundColor": "#fff",
                             }
                           }
                           testID="recipient-list-table-row-1"
@@ -7715,7 +7715,7 @@ exports[`RecipientListScreenContainer should match the snapshot error 1`] = `
     dataSet={Object {}}
     style={
       Object {
-        "backgroundColor": "#FFFFFF",
+        "backgroundColor": "#fff",
       }
     }
   >
@@ -7808,7 +7808,7 @@ exports[`RecipientListScreenContainer should match the snapshot loading 1`] = `
     dataSet={Object {}}
     style={
       Object {
-        "backgroundColor": "#FFFFFF",
+        "backgroundColor": "#fff",
       }
     }
   >

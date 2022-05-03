@@ -1,7 +1,7 @@
 import { FormDefinition, Record } from 'core-api-client';
 
 export const makeRecord = (index: number, form: FormDefinition): Record => ({
-  id: `record${index}`,
+  id: `record-${index}`,
   values: form.fields.map((f) => {
     return {
       value: `value-${f.id}`,
@@ -9,6 +9,6 @@ export const makeRecord = (index: number, form: FormDefinition): Record => ({
     };
   }),
   formId: form.id,
-  databaseId: 'databaseId',
+  databaseId: 'database-id',
   ownerId: undefined,
 });

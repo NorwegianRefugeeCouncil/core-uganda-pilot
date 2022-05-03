@@ -16,7 +16,7 @@ describe('mapRecordsToTableData', () => {
   it('should map records correctly', () => {
     expect(mapRecordsToRecordTableData([[{ record: record1, form }]])).toEqual([
       {
-        field1: 'value-field1',
+        'field-1': 'value-field-1',
       },
     ]);
   });
@@ -31,7 +31,7 @@ describe('mapRecordsToTableData', () => {
       ]),
     ).toEqual([
       {
-        field1: 'value-field1',
+        'field-1': 'value-field-1',
       },
     ]);
   });
@@ -54,7 +54,7 @@ describe('mapRecordsToTableData', () => {
       ]),
     ).toEqual([
       {
-        field1: 'value-field1',
+        'field-1': 'value-field-1',
       },
     ]);
   });

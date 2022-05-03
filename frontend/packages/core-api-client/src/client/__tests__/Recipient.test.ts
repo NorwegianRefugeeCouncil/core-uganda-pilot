@@ -814,6 +814,28 @@ describe('Recipient', () => {
         });
         expect(result).toEqual('Error Message');
       });
+
+      it('should return an error if request unsuccessful', async () => {
+        listSpy.mockImplementationOnce(() => {
+          throw new Error('Error Message');
+        });
+
+        try {
+          await client.Recipient.list({
+            formId: form.id,
+            databaseId: form.databaseId,
+          });
+        } catch (e) {
+          expect(e).toEqual('Error Message');
+        }
+
+        // expect(listSpy).toHaveBeenCalledWith({
+        //   formId: form.id,
+        //   databaseId: form.databaseId,
+        //   subforms: false,
+        // });
+        // expect(result).toEqual('Error Message');
+      });
     });
   });
 });

@@ -12,7 +12,7 @@ describe('createTableColumns', () => {
 
   it('should create the correct columns', () => {
     expect(createTableColumns(form)).toEqual([
-      { Header: 'field 1', accessor: 'field1' },
+      { Header: 'field-name-1', accessor: 'field-1' },
     ]);
   });
 });

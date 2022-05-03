@@ -403,7 +403,7 @@ describe('list', () => {
       const result = await client.Record.list({
         formId: form.id,
         databaseId: form.databaseId,
-        subforms: false,
+        fetchSubforms: false,
       });
 
       expect(result.response?.items).toEqual([]);
@@ -432,7 +432,7 @@ describe('list', () => {
       const result = await client.Record.list({
         formId: form.id,
         databaseId: form.databaseId,
-        subforms: false,
+        fetchSubforms: false,
       });
 
       expect(result.response?.items).toEqual([record1]);
@@ -461,7 +461,7 @@ describe('list', () => {
       const result = await client.Record.list({
         formId: form.id,
         databaseId: form.databaseId,
-        subforms: true,
+        fetchSubforms: true,
       });
 
       expect(result.response?.items).toEqual([record1, record2]);

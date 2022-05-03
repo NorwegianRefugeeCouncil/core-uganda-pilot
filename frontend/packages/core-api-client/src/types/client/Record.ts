@@ -13,7 +13,7 @@ export type RecordLookup = FormLookup & { recordId: string };
 export type RecordListRequest = {
   databaseId: string;
   formId: string;
-  subforms?: boolean;
+  fetchSubforms?: boolean;
 };
 
 export type RecordGetRequest = {

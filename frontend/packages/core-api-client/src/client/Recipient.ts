@@ -74,10 +74,10 @@ export class RecipientClient implements RecipientClientDefinition {
     const response = await this.recordClient.list({
       formId,
       databaseId,
-      subforms: false,
+      fetchSubforms: false,
     });
     if (!response.response) {
-      return response.error;
+      throw new Error(response.error);
     }
     return Promise.all(
       response.response?.items.map((item) => {
@@ -148,7 +148,7 @@ export class RecipientClient implements RecipientClientDefinition {
       throw new Error(formResponse.error);
     }
 
-    const recipeintForms = formResponse.response.items
+    const recipientForms = formResponse.response.items
       .filter((f) => f.formType === FormType.RecipientFormType)
       .map((f) => {
         const referenceKey = f.fields.find(
@@ -160,7 +160,7 @@ export class RecipientClient implements RecipientClientDefinition {
         };
       });
 
-    const tree = Tree.createDataTree(recipeintForms, 'id', 'parentId');
+    const tree = Tree.createDataTree(recipientForms, 'id', 'parentId');
     const leaves = Tree.getLeafNodes(tree);
     return leaves.map((l) => {
       const { parentId: _, childNodes: __, ...f } = l;

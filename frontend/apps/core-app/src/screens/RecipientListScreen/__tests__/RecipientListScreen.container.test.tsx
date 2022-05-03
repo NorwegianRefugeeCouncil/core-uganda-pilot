@@ -9,6 +9,11 @@ import * as hooks from '../../../hooks/useAPICall';
 import { formsClient } from '../../../clients/formsClient';
 import configuration from '../../../config';
 import { routes } from '../../../constants/routes';
+import {
+  makeField,
+  makeForm,
+  makeFormWithRecord,
+} from '../../../testUtils/mockData';
 
 const mockNavigate = jest.fn();
 
@@ -22,37 +27,12 @@ jest.mock('@react-navigation/native', () => {
   };
 });
 
-const makeForm = (i: number): FormDefinition => ({
-  id: `form-id-${i}`,
-  code: 'form-code',
-  databaseId: 'database-id',
-  folderId: 'folder-id',
-  name: `form-name-${i}`,
-  formType: FormType.DefaultFormType,
-  fields: [
-    {
-      id: `field-id-${i}`,
-      name: `field-name-${i}`,
-      code: '',
-      description: '',
-      required: false,
-      key: false,
-      fieldType: { text: {} },
-    },
-  ],
-});
-
-const makeFormWithRecord = (i: number): FormWithRecord<Recipient>[] => {
-  const form = makeForm(i);
-  return [
-    {
-      form,
-      record: formsClient.Record.buildDefaultRecord(form),
-    },
-  ];
-};
-
-const forms = [makeForm(0), makeForm(1)];
+const field0 = makeField(0, false, false, { text: {} });
+const field1 = makeField(0, false, false, { text: {} });
+const forms = [
+  makeForm(0, FormType.RecipientFormType, [field0]),
+  makeForm(1, FormType.RecipientFormType, [field1]),
+];
 const data = [makeFormWithRecord(0), makeFormWithRecord(1)];
 
 describe('RecipientListScreenContainer', () => {
@@ -65,7 +45,7 @@ describe('RecipientListScreenContainer', () => {
   describe('should match the snapshot', () => {
     it('data', () => {
       useAPICallSpy.mockImplementation((func, _, __) =>
-        func === formsClient.Form.getAncestors
+        func === formsClient.Recipient.getRecipientForms
           ? [
               () => Promise.resolve(),
               { data: forms, loading: false, error: null },
@@ -83,7 +63,10 @@ describe('RecipientListScreenContainer', () => {
               () => Promise.resolve(),
               { data: null, loading: true, error: null },
             ]
-          : [() => Promise.resolve(), { data: null, loading: false, error: null }],
+          : [
+              () => Promise.resolve(),
+              { data: null, loading: false, error: null },
+            ],
       );
       const { toJSON } = render(<RecipientListScreenContainer />);
       expect(toJSON()).toMatchSnapshot();
@@ -96,7 +79,10 @@ describe('RecipientListScreenContainer', () => {
               () => Promise.resolve(),
               { data: null, loading: false, error: 'formError' },
             ]
-          : [() => Promise.resolve(), { data: null, loading: false, error: null }],
+          : [
+              () => Promise.resolve(),
+              { data: null, loading: false, error: null },
+            ],
       );
       const { toJSON } = render(<RecipientListScreenContainer />);
       expect(toJSON()).toMatchSnapshot();

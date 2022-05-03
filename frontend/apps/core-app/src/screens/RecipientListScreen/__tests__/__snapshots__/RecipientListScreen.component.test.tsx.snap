@@ -29,7 +29,7 @@ exports[`RecipientListScreenComponent should match the snapshot data 1`] = `
     dataSet={Object {}}
     style={
       Object {
-        "backgroundColor": "#FFFFFF",
+        "backgroundColor": "#fff",
       }
     }
   >
@@ -56,7 +56,112 @@ exports[`RecipientListScreenComponent should match the snapshot data 1`] = `
               "maxWidth": 580,
             }
           }
-        />
+        >
+          <View
+            dataSet={Object {}}
+            style={
+              Object {
+                "width": "100%",
+              }
+            }
+          >
+            <View
+              dataSet={Object {}}
+              feedbackId="field-react-aria-1-feedback"
+              hasFeedbackText={false}
+              hasHelpText={false}
+              helpTextId="field-react-aria-1-helptext"
+              isDisabled={false}
+              isInvalid={false}
+              isReadOnly={false}
+              isRequired={false}
+              labelId="field-react-aria-1-label"
+              nativeID="field-react-aria-1-label"
+              setHasFeedbackText={[Function]}
+              setHasHelpText={[Function]}
+              style={
+                Object {
+                  "flexDirection": "row",
+                  "justifyContent": "flex-start",
+                  "marginBottom": 2,
+                  "marginRight": 12,
+                }
+              }
+            >
+              <Text
+                dataSet={Object {}}
+                level="1"
+                style={
+                  Object {
+                    "backgroundColor": undefined,
+                    "color": "#666666",
+                    "fontFamily": "Roboto_500Medium",
+                    "fontSize": 18,
+                    "fontStyle": undefined,
+                    "fontWeight": undefined,
+                    "letterSpacing": 0,
+                    "lineHeight": 26,
+                    "textAlign": "auto",
+                    "textDecorationLine": undefined,
+                  }
+                }
+              >
+                Beneficiary Name
+              </Text>
+            </View>
+            <TextInput
+              _text={
+                Object {
+                  "color": "darkText",
+                }
+              }
+              accessible={true}
+              allowFontScaling={true}
+              dataSet={Object {}}
+              disabled={false}
+              editable={true}
+              isRequired={false}
+              nativeID="field-react-aria-1"
+              onBlur={[Function]}
+              onChangeText={[Function]}
+              onFocus={[Function]}
+              onKeyPress={[Function]}
+              placeholder="Search"
+              placeholderTextColor="#a3a3a3"
+              readOnly={false}
+              rejectResponderTermination={true}
+              required={false}
+              secureTextEntry={false}
+              selectionColor="#1f2937"
+              style={
+                Array [
+                  Object {
+                    "backgroundColor": "#fff",
+                    "borderColor": "#666666",
+                    "borderRadius": 3,
+                    "borderStyle": "solid",
+                    "borderWidth": 1,
+                    "color": "#666666",
+                    "fontFamily": "Roboto_400Regular",
+                    "fontSize": 18,
+                    "fontStyle": undefined,
+                    "fontWeight": undefined,
+                    "lineHeight": 26,
+                    "overflow": "hidden",
+                    "paddingBottom": 12,
+                    "paddingLeft": 12,
+                    "paddingRight": 12,
+                    "paddingTop": 12,
+                    "width": undefined,
+                  },
+                  Object {},
+                ]
+              }
+              underlineColorAndroid="transparent"
+              value=""
+            />
+          </View>
+        </View>
       </View>
       <View
         dataSet={Object {}}
@@ -66,7 +171,28 @@ exports[`RecipientListScreenComponent should match the snapshot data 1`] = `
             "marginRight": 130,
           }
         }
-      />
+      >
+        <Text
+          dataSet={Object {}}
+          level="1"
+          style={
+            Object {
+              "backgroundColor": undefined,
+              "color": "#000000",
+              "fontFamily": "Roboto_400Regular",
+              "fontSize": 18,
+              "fontStyle": undefined,
+              "fontWeight": undefined,
+              "letterSpacing": 0,
+              "lineHeight": 26,
+              "textAlign": "auto",
+              "textDecorationLine": undefined,
+            }
+          }
+        >
+          0
+        </Text>
+      </View>
     </View>
   </RCTScrollView>
 </RNCSafeAreaProvider>
@@ -101,7 +227,7 @@ exports[`RecipientListScreenComponent should match the snapshot empty tables 1`]
     dataSet={Object {}}
     style={
       Object {
-        "backgroundColor": "#FFFFFF",
+        "backgroundColor": "#fff",
       }
     }
   >
@@ -128,7 +254,112 @@ exports[`RecipientListScreenComponent should match the snapshot empty tables 1`]
               "maxWidth": 580,
             }
           }
-        />
+        >
+          <View
+            dataSet={Object {}}
+            style={
+              Object {
+                "width": "100%",
+              }
+            }
+          >
+            <View
+              dataSet={Object {}}
+              feedbackId="field-react-aria-1-feedback"
+              hasFeedbackText={false}
+              hasHelpText={false}
+              helpTextId="field-react-aria-1-helptext"
+              isDisabled={false}
+              isInvalid={false}
+              isReadOnly={false}
+              isRequired={false}
+              labelId="field-react-aria-1-label"
+              nativeID="field-react-aria-1-label"
+              setHasFeedbackText={[Function]}
+              setHasHelpText={[Function]}
+              style={
+                Object {
+                  "flexDirection": "row",
+                  "justifyContent": "flex-start",
+                  "marginBottom": 2,
+                  "marginRight": 12,
+                }
+              }
+            >
+              <Text
+                dataSet={Object {}}
+                level="1"
+                style={
+                  Object {
+                    "backgroundColor": undefined,
+                    "color": "#666666",
+                    "fontFamily": "Roboto_500Medium",
+                    "fontSize": 18,
+                    "fontStyle": undefined,
+                    "fontWeight": undefined,
+                    "letterSpacing": 0,
+                    "lineHeight": 26,
+                    "textAlign": "auto",
+                    "textDecorationLine": undefined,
+                  }
+                }
+              >
+                Beneficiary Name
+              </Text>
+            </View>
+            <TextInput
+              _text={
+                Object {
+                  "color": "darkText",
+                }
+              }
+              accessible={true}
+              allowFontScaling={true}
+              dataSet={Object {}}
+              disabled={false}
+              editable={true}
+              isRequired={false}
+              nativeID="field-react-aria-1"
+              onBlur={[Function]}
+              onChangeText={[Function]}
+              onFocus={[Function]}
+              onKeyPress={[Function]}
+              placeholder="Search"
+              placeholderTextColor="#a3a3a3"
+              readOnly={false}
+              rejectResponderTermination={true}
+              required={false}
+              secureTextEntry={false}
+              selectionColor="#1f2937"
+              style={
+                Array [
+                  Object {
+                    "backgroundColor": "#fff",
+                    "borderColor": "#666666",
+                    "borderRadius": 3,
+                    "borderStyle": "solid",
+                    "borderWidth": 1,
+                    "color": "#666666",
+                    "fontFamily": "Roboto_400Regular",
+                    "fontSize": 18,
+                    "fontStyle": undefined,
+                    "fontWeight": undefined,
+                    "lineHeight": 26,
+                    "overflow": "hidden",
+                    "paddingBottom": 12,
+                    "paddingLeft": 12,
+                    "paddingRight": 12,
+                    "paddingTop": 12,
+                    "width": undefined,
+                  },
+                  Object {},
+                ]
+              }
+              underlineColorAndroid="transparent"
+              value=""
+            />
+          </View>
+        </View>
       </View>
       <View
         dataSet={Object {}}
@@ -138,7 +369,28 @@ exports[`RecipientListScreenComponent should match the snapshot empty tables 1`]
             "marginRight": 130,
           }
         }
-      />
+      >
+        <Text
+          dataSet={Object {}}
+          level="1"
+          style={
+            Object {
+              "backgroundColor": undefined,
+              "color": "#000000",
+              "fontFamily": "Roboto_400Regular",
+              "fontSize": 18,
+              "fontStyle": undefined,
+              "fontWeight": undefined,
+              "letterSpacing": 0,
+              "lineHeight": 26,
+              "textAlign": "auto",
+              "textDecorationLine": undefined,
+            }
+          }
+        >
+          0
+        </Text>
+      </View>
     </View>
   </RCTScrollView>
 </RNCSafeAreaProvider>
@@ -173,7 +425,7 @@ exports[`RecipientListScreenComponent should match the snapshot error 1`] = `
     dataSet={Object {}}
     style={
       Object {
-        "backgroundColor": "#FFFFFF",
+        "backgroundColor": "#fff",
       }
     }
   >
@@ -200,7 +452,112 @@ exports[`RecipientListScreenComponent should match the snapshot error 1`] = `
               "maxWidth": 580,
             }
           }
-        />
+        >
+          <View
+            dataSet={Object {}}
+            style={
+              Object {
+                "width": "100%",
+              }
+            }
+          >
+            <View
+              dataSet={Object {}}
+              feedbackId="field-react-aria-1-feedback"
+              hasFeedbackText={false}
+              hasHelpText={false}
+              helpTextId="field-react-aria-1-helptext"
+              isDisabled={false}
+              isInvalid={false}
+              isReadOnly={false}
+              isRequired={false}
+              labelId="field-react-aria-1-label"
+              nativeID="field-react-aria-1-label"
+              setHasFeedbackText={[Function]}
+              setHasHelpText={[Function]}
+              style={
+                Object {
+                  "flexDirection": "row",
+                  "justifyContent": "flex-start",
+                  "marginBottom": 2,
+                  "marginRight": 12,
+                }
+              }
+            >
+              <Text
+                dataSet={Object {}}
+                level="1"
+                style={
+                  Object {
+                    "backgroundColor": undefined,
+                    "color": "#666666",
+                    "fontFamily": "Roboto_500Medium",
+                    "fontSize": 18,
+                    "fontStyle": undefined,
+                    "fontWeight": undefined,
+                    "letterSpacing": 0,
+                    "lineHeight": 26,
+                    "textAlign": "auto",
+                    "textDecorationLine": undefined,
+                  }
+                }
+              >
+                Beneficiary Name
+              </Text>
+            </View>
+            <TextInput
+              _text={
+                Object {
+                  "color": "darkText",
+                }
+              }
+              accessible={true}
+              allowFontScaling={true}
+              dataSet={Object {}}
+              disabled={false}
+              editable={true}
+              isRequired={false}
+              nativeID="field-react-aria-1"
+              onBlur={[Function]}
+              onChangeText={[Function]}
+              onFocus={[Function]}
+              onKeyPress={[Function]}
+              placeholder="Search"
+              placeholderTextColor="#a3a3a3"
+              readOnly={false}
+              rejectResponderTermination={true}
+              required={false}
+              secureTextEntry={false}
+              selectionColor="#1f2937"
+              style={
+                Array [
+                  Object {
+                    "backgroundColor": "#fff",
+                    "borderColor": "#666666",
+                    "borderRadius": 3,
+                    "borderStyle": "solid",
+                    "borderWidth": 1,
+                    "color": "#666666",
+                    "fontFamily": "Roboto_400Regular",
+                    "fontSize": 18,
+                    "fontStyle": undefined,
+                    "fontWeight": undefined,
+                    "lineHeight": 26,
+                    "overflow": "hidden",
+                    "paddingBottom": 12,
+                    "paddingLeft": 12,
+                    "paddingRight": 12,
+                    "paddingTop": 12,
+                    "width": undefined,
+                  },
+                  Object {},
+                ]
+              }
+              underlineColorAndroid="transparent"
+              value=""
+            />
+          </View>
+        </View>
       </View>
       <View
         dataSet={Object {}}
@@ -210,28 +567,7 @@ exports[`RecipientListScreenComponent should match the snapshot error 1`] = `
             "marginRight": 130,
           }
         }
-      >
-        <Text
-          dataSet={Object {}}
-          level="1"
-          style={
-            Object {
-              "backgroundColor": undefined,
-              "color": "#CE3616",
-              "fontFamily": "Roboto_500Medium",
-              "fontSize": 32,
-              "fontStyle": undefined,
-              "fontWeight": undefined,
-              "letterSpacing": 0,
-              "lineHeight": 38,
-              "textAlign": "auto",
-              "textDecorationLine": undefined,
-            }
-          }
-        >
-          error
-        </Text>
-      </View>
+      />
     </View>
   </RCTScrollView>
 </RNCSafeAreaProvider>
@@ -266,39 +602,11 @@ exports[`RecipientListScreenComponent should match the snapshot loading 1`] = `
     dataSet={Object {}}
     style={
       Object {
-        "backgroundColor": "#FFFFFF",
+        "backgroundColor": "#fff",
       }
     }
   >
     <View>
-      <View
-        dataSet={Object {}}
-        fadeDuration={0.1}
-        speed={1}
-        style={
-          Object {
-            "backgroundColor": "transparent",
-            "height": 80,
-            "overflow": "hidden",
-            "paddingBottom": 16,
-            "paddingLeft": 16,
-            "paddingRight": 16,
-            "paddingTop": 16,
-            "width": "100%",
-          }
-        }
-      >
-        <View
-          style={
-            Object {
-              "backgroundColor": "#e5e5e5",
-              "height": "100%",
-              "opacity": 0,
-              "width": "100%",
-            }
-          }
-        />
-      </View>
       <View
         dataSet={Object {}}
         style={
@@ -321,7 +629,112 @@ exports[`RecipientListScreenComponent should match the snapshot loading 1`] = `
               "maxWidth": 580,
             }
           }
-        />
+        >
+          <View
+            dataSet={Object {}}
+            style={
+              Object {
+                "width": "100%",
+              }
+            }
+          >
+            <View
+              dataSet={Object {}}
+              feedbackId="field-react-aria-1-feedback"
+              hasFeedbackText={false}
+              hasHelpText={false}
+              helpTextId="field-react-aria-1-helptext"
+              isDisabled={false}
+              isInvalid={false}
+              isReadOnly={false}
+              isRequired={false}
+              labelId="field-react-aria-1-label"
+              nativeID="field-react-aria-1-label"
+              setHasFeedbackText={[Function]}
+              setHasHelpText={[Function]}
+              style={
+                Object {
+                  "flexDirection": "row",
+                  "justifyContent": "flex-start",
+                  "marginBottom": 2,
+                  "marginRight": 12,
+                }
+              }
+            >
+              <Text
+                dataSet={Object {}}
+                level="1"
+                style={
+                  Object {
+                    "backgroundColor": undefined,
+                    "color": "#666666",
+                    "fontFamily": "Roboto_500Medium",
+                    "fontSize": 18,
+                    "fontStyle": undefined,
+                    "fontWeight": undefined,
+                    "letterSpacing": 0,
+                    "lineHeight": 26,
+                    "textAlign": "auto",
+                    "textDecorationLine": undefined,
+                  }
+                }
+              >
+                Beneficiary Name
+              </Text>
+            </View>
+            <TextInput
+              _text={
+                Object {
+                  "color": "darkText",
+                }
+              }
+              accessible={true}
+              allowFontScaling={true}
+              dataSet={Object {}}
+              disabled={false}
+              editable={true}
+              isRequired={false}
+              nativeID="field-react-aria-1"
+              onBlur={[Function]}
+              onChangeText={[Function]}
+              onFocus={[Function]}
+              onKeyPress={[Function]}
+              placeholder="Search"
+              placeholderTextColor="#a3a3a3"
+              readOnly={false}
+              rejectResponderTermination={true}
+              required={false}
+              secureTextEntry={false}
+              selectionColor="#1f2937"
+              style={
+                Array [
+                  Object {
+                    "backgroundColor": "#fff",
+                    "borderColor": "#666666",
+                    "borderRadius": 3,
+                    "borderStyle": "solid",
+                    "borderWidth": 1,
+                    "color": "#666666",
+                    "fontFamily": "Roboto_400Regular",
+                    "fontSize": 18,
+                    "fontStyle": undefined,
+                    "fontWeight": undefined,
+                    "lineHeight": 26,
+                    "overflow": "hidden",
+                    "paddingBottom": 12,
+                    "paddingLeft": 12,
+                    "paddingRight": 12,
+                    "paddingTop": 12,
+                    "width": undefined,
+                  },
+                  Object {},
+                ]
+              }
+              underlineColorAndroid="transparent"
+              value=""
+            />
+          </View>
+        </View>
       </View>
       <View
         dataSet={Object {}}
@@ -331,485 +744,34 @@ exports[`RecipientListScreenComponent should match the snapshot loading 1`] = `
             "marginRight": 130,
           }
         }
-      />
-    </View>
-  </RCTScrollView>
-</RNCSafeAreaProvider>
-`;
-
-exports[`should match the snapshot edit mode 1`] = `
-<RNCSafeAreaProvider
-  onInsetsChange={[Function]}
-  style={
-    Array [
-      Object {
-        "flex": 1,
-      },
-      undefined,
-    ]
-  }
->
-  <RCTScrollView
-    contentContainerStyle={
-      Array [
-        Object {},
-        Object {
-          "dataSet": Object {},
-        },
-      ]
-    }
-    dataSet={Object {}}
-    style={
-      Object {
-        "marginLeft": "auto",
-        "marginRight": "auto",
-        "maxWidth": 1180,
-        "width": "100%",
-      }
-    }
-  >
-    <View>
-      <View
-        dataSet={Object {}}
-        style={Object {}}
       >
-        <View>
-          <Text>
-            [{"form":{"id":"form-id-1","code":"form-code","databaseId":"database-id","folderId":"folder-id","name":"form-name-1","formType":"default","fields":[{"id":"field-id-1","name":"field-name-1","code":"","description":"","required":false,"key":false,"fieldType":{"text":{}}}]},"record":{"id":"","databaseId":"database-id","formId":"form-id-1","values":[{"fieldId":"field-id-1","value":""}]}},{"form":{"id":"form-id-2","code":"form-code","databaseId":"database-id","folderId":"folder-id","name":"form-name-2","formType":"default","fields":[{"id":"field-id-2","name":"field-name-2","code":"","description":"","required":false,"key":false,"fieldType":{"text":{}}}]},"record":{"id":"","databaseId":"database-id","formId":"form-id-2","values":[{"fieldId":"field-id-2","value":""}]}},{"form":{"id":"form-id-3","code":"form-code","databaseId":"database-id","folderId":"folder-id","name":"form-name-3","formType":"default","fields":[{"id":"field-id-3","name":"field-name-3","code":"","description":"","required":false,"key":false,"fieldType":{"text":{}}}]},"record":{"id":"","databaseId":"database-id","formId":"form-id-3","values":[{"fieldId":"field-id-3","value":""}]}}]
-          </Text>
-        </View>
         <View
           dataSet={Object {}}
+          fadeDuration={0.1}
+          speed={1}
           style={
             Object {
-              "height": 16,
-            }
-          }
-        />
-        <View
-          dataSet={Object {}}
-          style={
-            Object {
-              "flexDirection": "row",
-              "justifyContent": "flex-end",
+              "backgroundColor": "transparent",
+              "height": 160,
+              "overflow": "hidden",
+              "paddingBottom": 16,
+              "paddingLeft": 16,
+              "paddingRight": 16,
+              "paddingTop": 16,
+              "width": "100%",
             }
           }
         >
           <View
-            _text={
-              Object {
-                "color": "lightText",
-              }
-            }
-            accessibilityRole="button"
-            accessible={true}
-            collapsable={false}
-            colorScheme="secondary"
-            dataSet={Object {}}
-            focusable={true}
-            onBlur={[Function]}
-            onClick={[Function]}
-            onFocus={[Function]}
-            onHoverIn={[Function]}
-            onHoverOut={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               Object {
-                "alignItems": "center",
-                "backgroundColor": "transparent",
-                "borderColor": "#24303E",
-                "borderRadius": 3,
-                "borderStyle": "solid",
-                "borderWidth": 1,
-                "flexDirection": "row",
-                "height": 50,
-                "justifyContent": "center",
-                "paddingBottom": 8,
-                "paddingLeft": 50,
-                "paddingRight": 50,
-                "paddingTop": 8,
-              }
-            }
-            testID="recipient-registration-cancel-button"
-          >
-            <View
-              dataSet={Object {}}
-              style={
-                Object {
-                  "alignItems": "center",
-                  "flexDirection": "row",
-                }
-              }
-            >
-              <View
-                dataSet={Object {}}
-                style={Object {}}
-              >
-                <Text
-                  dataSet={Object {}}
-                  level="1"
-                  style={
-                    Object {
-                      "backgroundColor": undefined,
-                      "color": "#24303E",
-                      "fontFamily": "Roboto_500Medium",
-                      "fontSize": 20,
-                      "fontStyle": undefined,
-                      "fontWeight": undefined,
-                      "letterSpacing": 0,
-                      "lineHeight": 24,
-                      "textAlign": "auto",
-                      "textDecorationLine": undefined,
-                    }
-                  }
-                >
-                  Cancel
-                </Text>
-              </View>
-            </View>
-          </View>
-          <View
-            dataSet={Object {}}
-            style={
-              Object {
-                "width": 16,
+                "backgroundColor": "#e5e5e5",
+                "height": "100%",
+                "opacity": 0,
+                "width": "100%",
               }
             }
           />
-          <View
-            _text={
-              Object {
-                "color": "lightText",
-              }
-            }
-            accessibilityRole="button"
-            accessible={true}
-            collapsable={false}
-            colorScheme="primary"
-            dataSet={Object {}}
-            focusable={true}
-            onBlur={[Function]}
-            onClick={[Function]}
-            onFocus={[Function]}
-            onHoverIn={[Function]}
-            onHoverOut={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
-            style={
-              Object {
-                "alignItems": "center",
-                "backgroundColor": "#FF7602",
-                "borderRadius": 3,
-                "flexDirection": "row",
-                "height": 50,
-                "justifyContent": "center",
-                "paddingBottom": 8,
-                "paddingLeft": 50,
-                "paddingRight": 50,
-                "paddingTop": 8,
-              }
-            }
-            testID="recipient-registration-submit-button"
-          >
-            <View
-              dataSet={Object {}}
-              style={
-                Object {
-                  "alignItems": "center",
-                  "flexDirection": "row",
-                }
-              }
-            >
-              <View
-                dataSet={Object {}}
-                style={Object {}}
-              >
-                <Text
-                  dataSet={Object {}}
-                  level="1"
-                  style={
-                    Object {
-                      "backgroundColor": undefined,
-                      "color": "#FFFFFF",
-                      "fontFamily": "Roboto_500Medium",
-                      "fontSize": 20,
-                      "fontStyle": undefined,
-                      "fontWeight": undefined,
-                      "letterSpacing": 0,
-                      "lineHeight": 24,
-                      "textAlign": "auto",
-                      "textDecorationLine": undefined,
-                    }
-                  }
-                >
-                  Review
-                </Text>
-              </View>
-            </View>
-          </View>
-        </View>
-      </View>
-    </View>
-  </RCTScrollView>
-</RNCSafeAreaProvider>
-`;
-
-exports[`should match the snapshot error 1`] = `
-<RNCSafeAreaProvider
-  onInsetsChange={[Function]}
-  style={
-    Array [
-      Object {
-        "flex": 1,
-      },
-      undefined,
-    ]
-  }
-/>
-`;
-
-exports[`should match the snapshot loading 1`] = `
-<RNCSafeAreaProvider
-  onInsetsChange={[Function]}
-  style={
-    Array [
-      Object {
-        "flex": 1,
-      },
-      undefined,
-    ]
-  }
-/>
-`;
-
-exports[`should match the snapshot review mode 1`] = `
-<RNCSafeAreaProvider
-  onInsetsChange={[Function]}
-  style={
-    Array [
-      Object {
-        "flex": 1,
-      },
-      undefined,
-    ]
-  }
->
-  <RCTScrollView
-    contentContainerStyle={
-      Array [
-        Object {},
-        Object {
-          "dataSet": Object {},
-        },
-      ]
-    }
-    dataSet={Object {}}
-    style={
-      Object {
-        "marginLeft": "auto",
-        "marginRight": "auto",
-        "maxWidth": 1180,
-        "width": "100%",
-      }
-    }
-  >
-    <View>
-      <View
-        dataSet={Object {}}
-        style={Object {}}
-      >
-        <View>
-          <Text>
-            [{"form":{"id":"form-id-1","code":"form-code","databaseId":"database-id","folderId":"folder-id","name":"form-name-1","formType":"default","fields":[{"id":"field-id-1","name":"field-name-1","code":"","description":"","required":false,"key":false,"fieldType":{"text":{}}}]},"record":{"id":"","databaseId":"database-id","formId":"form-id-1","values":[{"fieldId":"field-id-1","value":""}]}},{"form":{"id":"form-id-2","code":"form-code","databaseId":"database-id","folderId":"folder-id","name":"form-name-2","formType":"default","fields":[{"id":"field-id-2","name":"field-name-2","code":"","description":"","required":false,"key":false,"fieldType":{"text":{}}}]},"record":{"id":"","databaseId":"database-id","formId":"form-id-2","values":[{"fieldId":"field-id-2","value":""}]}},{"form":{"id":"form-id-3","code":"form-code","databaseId":"database-id","folderId":"folder-id","name":"form-name-3","formType":"default","fields":[{"id":"field-id-3","name":"field-name-3","code":"","description":"","required":false,"key":false,"fieldType":{"text":{}}}]},"record":{"id":"","databaseId":"database-id","formId":"form-id-3","values":[{"fieldId":"field-id-3","value":""}]}}]
-          </Text>
-        </View>
-        <View
-          dataSet={Object {}}
-          style={
-            Object {
-              "height": 16,
-            }
-          }
-        />
-        <View
-          dataSet={Object {}}
-          style={
-            Object {
-              "flexDirection": "row",
-              "justifyContent": "flex-end",
-            }
-          }
-        >
-          <View
-            _text={
-              Object {
-                "color": "lightText",
-              }
-            }
-            accessibilityRole="button"
-            accessible={true}
-            collapsable={false}
-            colorScheme="secondary"
-            dataSet={Object {}}
-            focusable={true}
-            onBlur={[Function]}
-            onClick={[Function]}
-            onFocus={[Function]}
-            onHoverIn={[Function]}
-            onHoverOut={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
-            style={
-              Object {
-                "alignItems": "center",
-                "backgroundColor": "transparent",
-                "borderColor": "#24303E",
-                "borderRadius": 3,
-                "borderStyle": "solid",
-                "borderWidth": 1,
-                "flexDirection": "row",
-                "height": 50,
-                "justifyContent": "center",
-                "paddingBottom": 8,
-                "paddingLeft": 50,
-                "paddingRight": 50,
-                "paddingTop": 8,
-              }
-            }
-            testID="recipient-registration-cancel-button"
-          >
-            <View
-              dataSet={Object {}}
-              style={
-                Object {
-                  "alignItems": "center",
-                  "flexDirection": "row",
-                }
-              }
-            >
-              <View
-                dataSet={Object {}}
-                style={Object {}}
-              >
-                <Text
-                  dataSet={Object {}}
-                  level="1"
-                  style={
-                    Object {
-                      "backgroundColor": undefined,
-                      "color": "#24303E",
-                      "fontFamily": "Roboto_500Medium",
-                      "fontSize": 20,
-                      "fontStyle": undefined,
-                      "fontWeight": undefined,
-                      "letterSpacing": 0,
-                      "lineHeight": 24,
-                      "textAlign": "auto",
-                      "textDecorationLine": undefined,
-                    }
-                  }
-                >
-                  Back
-                </Text>
-              </View>
-            </View>
-          </View>
-          <View
-            dataSet={Object {}}
-            style={
-              Object {
-                "width": 16,
-              }
-            }
-          />
-          <View
-            _text={
-              Object {
-                "color": "lightText",
-              }
-            }
-            accessibilityRole="button"
-            accessible={true}
-            collapsable={false}
-            colorScheme="primary"
-            dataSet={Object {}}
-            focusable={true}
-            onBlur={[Function]}
-            onClick={[Function]}
-            onFocus={[Function]}
-            onHoverIn={[Function]}
-            onHoverOut={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
-            style={
-              Object {
-                "alignItems": "center",
-                "backgroundColor": "#FF7602",
-                "borderRadius": 3,
-                "flexDirection": "row",
-                "height": 50,
-                "justifyContent": "center",
-                "paddingBottom": 8,
-                "paddingLeft": 50,
-                "paddingRight": 50,
-                "paddingTop": 8,
-              }
-            }
-            testID="recipient-registration-submit-button"
-          >
-            <View
-              dataSet={Object {}}
-              style={
-                Object {
-                  "alignItems": "center",
-                  "flexDirection": "row",
-                }
-              }
-            >
-              <View
-                dataSet={Object {}}
-                style={Object {}}
-              >
-                <Text
-                  dataSet={Object {}}
-                  level="1"
-                  style={
-                    Object {
-                      "backgroundColor": undefined,
-                      "color": "#FFFFFF",
-                      "fontFamily": "Roboto_500Medium",
-                      "fontSize": 20,
-                      "fontStyle": undefined,
-                      "fontWeight": undefined,
-                      "letterSpacing": 0,
-                      "lineHeight": 24,
-                      "textAlign": "auto",
-                      "textDecorationLine": undefined,
-                    }
-                  }
-                >
-                  Save
-                </Text>
-              </View>
-            </View>
-          </View>
         </View>
       </View>
     </View>

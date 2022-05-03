@@ -1,29 +1,43 @@
-import React from 'react';
-import { FormDefinition, FormWithRecord, Record } from 'core-api-client';
+import React, { useEffect } from 'react';
+import { FormDefinition } from 'core-api-client';
 import { useGlobalFilter, useSortBy, useTable } from 'react-table';
+import { useNavigation } from '@react-navigation/native';
+
+import { useAPICall } from '../../hooks/useAPICall';
+import { formsClient } from '../../clients/formsClient';
+import { routes } from '../../constants/routes';
 
 import { RecipientListTableComponent } from './RecipientListTableComponent';
-import { RecipientListTableContext } from './RecipientListTableContext';
 import { createTableColumns } from './createTableColumns';
 import { mapRecordsToRecordTableData } from './mapRecordsToRecordTableData';
 import { RecipientListTableEntry, SortedFilteredTable } from './types';
 
-type Props<T extends Record> = {
-  data: FormWithRecord<T>[][];
+type Props = {
   form: FormDefinition;
-  onItemClick: (id: string) => void;
+  // onItemClick: (id: string) => void;
+  filter: string;
 };
 
-export const RecipientListTableContainer: React.FC<Props<Record>> = ({
-  data,
+export const RecipientListTableContainer: React.FC<Props> = ({
   form,
-  onItemClick,
+  // onItemClick,
+  filter,
 }) => {
-  const context = React.useContext(RecipientListTableContext);
+  const navigation = useNavigation();
+  const [_, recipientState] = useAPICall(
+    formsClient.Recipient.list,
+    [
+      {
+        formId: form.id,
+        databaseId: form.databaseId,
+      },
+    ],
+    true,
+  );
 
   const memoizedData = React.useMemo(
-    () => mapRecordsToRecordTableData(data),
-    [JSON.stringify(data)],
+    () => mapRecordsToRecordTableData(recipientState.data || []),
+    [JSON.stringify(recipientState.data)],
   );
   const memoizedColumns = React.useMemo(
     () => createTableColumns(form),
@@ -39,11 +53,25 @@ export const RecipientListTableContainer: React.FC<Props<Record>> = ({
     useSortBy,
   );
 
-  React.useEffect(() => {
-    if (!context) return;
+  useEffect(() => {
+    table.setGlobalFilter(filter);
+  }, [filter]);
 
-    context.setTableInstance(table);
-  }, [context]);
+  const handleItemClick = (id: string) => {
+    navigation.navigate(routes.recipientsProfile.name, {
+      recordId: id,
+      formId: form.id,
+      databaseId: form.databaseId,
+    });
+  };
 
-  return <RecipientListTableComponent onItemClick={onItemClick} />;
+  return (
+    <RecipientListTableComponent
+      onItemClick={handleItemClick}
+      title={form.name}
+      table={table}
+      error={recipientState.error}
+      loading={recipientState.loading}
+    />
+  );
 };

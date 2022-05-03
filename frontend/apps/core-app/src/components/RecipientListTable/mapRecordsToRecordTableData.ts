@@ -4,8 +4,8 @@ import { RecipientListTableEntry } from './types';
 
 export const mapRecordsToRecordTableData = (
   data: FormWithRecord<Record>[][],
-): RecipientListTableEntry[] => {
-  return data.reduce((allEntries: RecipientListTableEntry[], item) => {
+): RecipientListTableEntry[] =>
+  data.reduce((allEntries: RecipientListTableEntry[], item) => {
     const completeEntry = item.reduce(
       (ce: RecipientListTableEntry, formWithRecord) => {
         const partialEntry = formWithRecord.record.values.reduce(
@@ -24,4 +24,3 @@ export const mapRecordsToRecordTableData = (
     );
     return allEntries.concat([completeEntry]);
   }, []);
-};
