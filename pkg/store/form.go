@@ -529,7 +529,7 @@ func (f FlatForms) Add(flatForm FlatForms) FlatForms {
 
 // hydrateForms will rehydrate a flattened types.FormDefinition
 func (f FlatForms) hydrateForms() ([]*types.FormDefinition, error) {
-	var forms []*types.FormDefinition
+	forms := make([]*types.FormDefinition, 0)
 	for _, form := range f.Forms {
 		if form.ID != form.RootOwnerID {
 			continue
