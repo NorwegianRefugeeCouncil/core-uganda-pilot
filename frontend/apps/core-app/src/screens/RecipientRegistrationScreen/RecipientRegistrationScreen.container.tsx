@@ -6,14 +6,11 @@ import { StackScreenProps } from '@react-navigation/stack';
 import { formsClient } from '../../clients/formsClient';
 import { useAPICall } from '../../hooks/useAPICall';
 import { routes } from '../../constants/routes';
-import { RecipientNavigatorParamList } from '../../navigation/recipients';
+import { RootNavigatorParamList } from '../../navigation/root';
 
 import { RecipientRegistrationScreenComponent } from './RecipientRegistrationScreen.component';
 
-type Props = StackScreenProps<
-  RecipientNavigatorParamList,
-  'recipientsRegistration'
->;
+type Props = StackScreenProps<RootNavigatorParamList, 'recipientsRegistration'>;
 
 export const RecipientRegistrationScreenContainer: React.FC<Props> = ({
   route,

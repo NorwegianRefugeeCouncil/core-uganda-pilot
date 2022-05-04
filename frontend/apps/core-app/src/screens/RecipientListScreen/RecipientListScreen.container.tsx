@@ -6,13 +6,13 @@ import {
   RecipientListTableEntry,
   SortedFilteredTable,
 } from '../../components/RecipientListTable/types';
-import { RecipientNavigatorParamList } from '../../navigation/recipients';
+import { RootNavigatorParamList } from '../../navigation/root';
 import { routes } from '../../constants/routes';
 import { useRecipientForms } from '../../contexts/RecipientForms';
 
 import { RecipientListScreenComponent } from './RecipientListScreen.component';
 
-type Props = StackScreenProps<RecipientNavigatorParamList, 'recipientsList'>;
+type Props = StackScreenProps<RootNavigatorParamList, 'recipientsList'>;
 
 export const RecipientListScreenContainer: React.FC<Props> = ({
   navigation,

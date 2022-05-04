@@ -1,8 +1,4 @@
 export const routes = {
-  recipientsRoot: {
-    name: 'recipientsRoot',
-    title: 'Beneficiaries',
-  },
   recipientsList: {
     name: 'recipientsList',
     title: 'Beneficiaries',

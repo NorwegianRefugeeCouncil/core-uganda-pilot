@@ -3,11 +3,11 @@ import { StackScreenProps } from '@react-navigation/stack';
 
 import { formsClient } from '../../clients/formsClient';
 import { useAPICall } from '../../hooks/useAPICall';
-import { RecipientNavigatorParamList } from '../../navigation/recipients';
+import { RootNavigatorParamList } from '../../navigation/root';
 
 import { RecipientProfileScreenComponent } from './RecipientProfileScreen.component';
 
-type Props = StackScreenProps<RecipientNavigatorParamList, 'recipientsProfile'>;
+type Props = StackScreenProps<RootNavigatorParamList, 'recipientsProfile'>;
 
 export const RecipientProfileScreenContainer: React.FC<Props> = ({ route }) => {
   const [_, state] = useAPICall(
