@@ -27,20 +27,14 @@ const Stack = createStackNavigator<RootNavigatorParamList>();
 
 const makeScreens = (Screen: typeof Drawer.Screen | typeof Stack.Screen) => (
   <>
-    <Screen
-      name={routes.recipientsList.name}
-      component={RecipientListScreen}
-      options={{ headerShown: false }}
-    />
+    <Screen name={routes.recipientsList.name} component={RecipientListScreen} />
     <Screen
       name={routes.recipientsProfile.name}
       component={RecipientProfileScreen}
-      options={{ headerShown: false }}
     />
     <Screen
       name={routes.recipientsRegistration.name}
       component={RecipientRegistrationScreen}
-      options={{ headerShown: false }}
     />
   </>
 );
