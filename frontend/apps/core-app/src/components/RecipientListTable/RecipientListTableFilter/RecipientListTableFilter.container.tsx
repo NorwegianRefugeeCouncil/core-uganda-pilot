@@ -4,18 +4,18 @@ import { FilterValue, useAsyncDebounce } from 'react-table';
 import { RecipientListTableFilterComponent } from './RecipientListTableFilter.component';
 
 type Props = {
-  globalFilter: FilterValue;
-  setGlobalFilter: (filterValue: FilterValue) => void;
+  filter: FilterValue;
+  setFilter: (filterValue: FilterValue) => void;
 };
 
 export const RecipientListTableFilterContainer: React.FC<Props> = ({
-  globalFilter,
-  setGlobalFilter,
+  filter,
+  setFilter,
 }) => {
-  const [value, setValue] = React.useState(globalFilter);
+  const [value, setValue] = React.useState(filter);
 
   const handleChange = useAsyncDebounce((v) => {
-    setGlobalFilter(v || undefined);
+    setFilter(v || undefined);
     setValue(v);
   }, 20);
 

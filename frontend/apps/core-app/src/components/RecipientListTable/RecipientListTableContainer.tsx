@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { FormDefinition } from 'core-api-client';
 import { useGlobalFilter, useSortBy, useTable } from 'react-table';
 import { useNavigation } from '@react-navigation/native';
-import database from 'core-pwa/src/reducers/database';
 
 import { useAPICall } from '../../hooks/useAPICall';
 import { formsClient } from '../../clients/formsClient';

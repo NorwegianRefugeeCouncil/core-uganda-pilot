@@ -34,11 +34,12 @@ export const RecipientListTableComponent: React.FC<Props> = ({
 
   const renderRow = ({ item }: { item: Row }) => {
     prepareRow(item);
+    const handleRowClick = () => onItemClick(item.values.recordId);
     return (
       <RecipientListTableRow
         key={item.id}
         row={item}
-        handleRowClick={() => onItemClick(item.values.recordId)}
+        handleRowClick={handleRowClick}
       />
     );
   };
