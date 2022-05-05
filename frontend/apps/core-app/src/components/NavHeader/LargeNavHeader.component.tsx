@@ -11,7 +11,7 @@ import { logout } from './logout';
 
 const getHeaderTitle = (route: StackHeaderProps['route']): string => {
   const routeName =
-    getFocusedRouteNameFromRoute(route) ?? routes.recipientsRoot.name;
+    getFocusedRouteNameFromRoute(route) ?? routes.recipientsList.name;
 
   return routes[routeName as keyof typeof routes].title;
 };
@@ -32,7 +32,7 @@ export const LargeNavHeaderComponent: React.FC<
         <HStack>
           <Link
             to={{
-              screen: routes.recipientsRoot.name,
+              screen: routes.recipientsList.name,
               params: { screen: routes.recipientsList.name },
             }}
             mr={8}
@@ -41,7 +41,7 @@ export const LargeNavHeaderComponent: React.FC<
           </Link>
           <Link
             to={{
-              screen: routes.recipientsRoot.name,
+              screen: routes.recipientsList.name,
               params: {
                 screen: routes.recipientsRegistration.name,
                 params: {
@@ -56,7 +56,7 @@ export const LargeNavHeaderComponent: React.FC<
           </Link>
           <Link
             to={{
-              screen: routes.recipientsRoot.name,
+              screen: routes.recipientsList.name,
               params: { screen: routes.recipientsList.name },
             }}
             mr={8}
