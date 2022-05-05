@@ -1,4 +1,4 @@
-import React  from 'react';
+import React from 'react';
 import {
   Box,
   HStack,
@@ -38,7 +38,7 @@ export const RecipientListTableComponent: React.FC<Props> = ({
       <RecipientListTableRow
         key={item.id}
         row={item}
-        onRowClick={onItemClick}
+        handleRowClick={() => onItemClick(item.values.recordId)}
       />
     );
   };
@@ -46,7 +46,11 @@ export const RecipientListTableComponent: React.FC<Props> = ({
   return (
     <Box mb="63px">
       <Box>
-        <Box flexDirection="row" alignItems="center">
+        <Box
+          flexDirection="row"
+          alignItems="center"
+          justifyContent="flex-start"
+        >
           <Text variant="heading" level="2">
             {title}
           </Text>
@@ -76,9 +80,14 @@ export const RecipientListTableComponent: React.FC<Props> = ({
               borderBottomColor="neutral.400"
               borderBottomWidth="1"
             >
-              {columns.map((column) => (
-                <RecipientListTableHeaderCell column={column} key={column.id} />
-              ))}
+              {columns
+                .filter((c) => !c.hidden)
+                .map((column) => (
+                  <RecipientListTableHeaderCell
+                    column={column}
+                    key={column.id}
+                  />
+                ))}
             </HStack>
             <VStack>
               <FlatList data={rows} renderItem={renderRow} />

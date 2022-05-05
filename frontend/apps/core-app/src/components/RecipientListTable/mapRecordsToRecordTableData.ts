@@ -4,14 +4,14 @@ import { RecipientListTableEntry } from './types';
 
 export const mapRecordsToRecordTableData = (
   data: FormWithRecord<Record>[][],
-): RecipientListTableEntry[] =>
-  data.reduce((allEntries: RecipientListTableEntry[], item) => {
+): RecipientListTableEntry[] => {
+  return data.reduce((allEntries: RecipientListTableEntry[], item) => {
     const completeEntry = item.reduce(
       (ce: RecipientListTableEntry, formWithRecord) => {
         const partialEntry = formWithRecord.record.values.reduce(
           (pe: RecipientListTableEntry, value: FieldValue) => {
             const field = formWithRecord.form.fields.find((f) => {
-              return !f.key && f.id === value.fieldId;
+              return f.id === value.fieldId;
             });
             if (field) return { ...pe, [field?.id]: value.value };
             return pe;
@@ -20,7 +20,8 @@ export const mapRecordsToRecordTableData = (
         );
         return { ...ce, ...partialEntry };
       },
-      {},
+      { recordId: item[item.length - 1].record.id },
     );
     return allEntries.concat([completeEntry]);
   }, []);
+};

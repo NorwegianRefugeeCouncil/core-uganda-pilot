@@ -29,12 +29,10 @@ export const RecipientListScreenComponent: React.FC<Props> = ({
         </Box>
       </Box>
 
-      <Box maxWidth={1180} mx="auto">
-        {forms?.length &&
-          forms.map((form) => (
-            <RecipientListTable key={form.id} form={form} filter={filter} />
-          ))}
-
+      <Box maxWidth={1180} mx="auto" width={'100%'}>
+        {forms?.map((form) => (
+          <RecipientListTable key={form.id} form={form} filter={filter} />
+        ))}
         {isLoading && <Skeleton h="40" p="4" />}
       </Box>
     </ScrollView>

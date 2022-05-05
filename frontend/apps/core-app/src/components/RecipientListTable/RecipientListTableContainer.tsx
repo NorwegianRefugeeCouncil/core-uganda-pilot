@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { FormDefinition } from 'core-api-client';
 import { useGlobalFilter, useSortBy, useTable } from 'react-table';
 import { useNavigation } from '@react-navigation/native';
+import database from 'core-pwa/src/reducers/database';
 
 import { useAPICall } from '../../hooks/useAPICall';
 import { formsClient } from '../../clients/formsClient';
@@ -14,13 +15,11 @@ import { RecipientListTableEntry, SortedFilteredTable } from './types';
 
 type Props = {
   form: FormDefinition;
-  // onItemClick: (id: string) => void;
   filter: string;
 };
 
 export const RecipientListTableContainer: React.FC<Props> = ({
   form,
-  // onItemClick,
   filter,
 }) => {
   const navigation = useNavigation();
@@ -40,14 +39,19 @@ export const RecipientListTableContainer: React.FC<Props> = ({
     [JSON.stringify(recipientState.data)],
   );
   const memoizedColumns = React.useMemo(
-    () => createTableColumns(form),
-    [JSON.stringify(form)],
+    () => createTableColumns(recipientState.data && recipientState.data[0]),
+    [JSON.stringify(recipientState.data)],
   );
 
   const table: SortedFilteredTable<RecipientListTableEntry> = useTable(
     {
       data: memoizedData,
       columns: memoizedColumns,
+      initialState: {
+        hiddenColumns: memoizedColumns
+          .filter((c) => c.hidden)
+          .map((c) => c.accessor),
+      },
     },
     useGlobalFilter,
     useSortBy,

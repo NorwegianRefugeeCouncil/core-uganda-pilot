@@ -12,6 +12,8 @@ type Props<T extends Record<string, any>> = {
 export const RecipientListTableHeaderCell: React.FC<
   Props<RecipientListTableEntry>
 > = ({ column }) => {
+  if (!column) return null;
+
   const sortIcon = column.isSorted
     ? column.isSortedDesc
       ? 'more'

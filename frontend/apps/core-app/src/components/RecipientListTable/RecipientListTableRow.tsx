@@ -6,17 +6,15 @@ import { RecipientListTableEntry } from './types';
 
 type Props<T extends Record<string, any>> = {
   row: Row<T>;
-  onRowClick: (id: string) => void;
+  handleRowClick: () => void;
 };
 
 export const RecipientListTableRow: React.FC<
   Props<RecipientListTableEntry>
-> = ({ row, onRowClick }) => {
-  const handleRowClick = () => onRowClick(row.id);
-
+> = ({ row, handleRowClick }) => {
   return (
     <Pressable
-      onPress={handleRowClick}
+      onPress={() => handleRowClick()}
       bg="white"
       _hover={{ backgroundColor: 'primary.100' }}
       testID={`recipient-list-table-row-${row.id}`}
