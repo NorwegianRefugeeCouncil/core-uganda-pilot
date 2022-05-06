@@ -33,7 +33,6 @@ export const LargeNavHeaderComponent: React.FC<
           <Link
             to={{
               screen: routes.recipientsList.name,
-              params: { screen: routes.recipientsList.name },
             }}
             mr={8}
           >
