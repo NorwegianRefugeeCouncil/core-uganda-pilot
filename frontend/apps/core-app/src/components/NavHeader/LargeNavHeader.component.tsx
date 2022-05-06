@@ -41,13 +41,10 @@ export const LargeNavHeaderComponent: React.FC<
           </Link>
           <Link
             to={{
-              screen: routes.recipientsList.name,
+              screen: routes.recipientsRegistration.name,
               params: {
-                screen: routes.recipientsRegistration.name,
-                params: {
                   formId: forms[0]?.id,
                   databaseId: forms[0]?.databaseId,
-                },
               },
             }}
             mr={8}
