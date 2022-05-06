@@ -9,7 +9,7 @@ import { routes } from '../../constants/routes';
 
 import { RecipientListTableComponent } from './RecipientListTableComponent';
 import { createTableColumns } from './createTableColumns';
-import { mapRecordsToRecordTableData } from './mapRecordsToRecordTableData';
+import { mapRecordsToRecipientTableData } from './mapRecordsToRecipientTableData';
 import { RecipientListTableEntry, SortedFilteredTable } from './types';
 
 type Props = {
@@ -34,7 +34,7 @@ export const RecipientListTableContainer: React.FC<Props> = ({
   );
 
   const memoizedData = React.useMemo(
-    () => mapRecordsToRecordTableData(recipientState.data || []),
+    () => mapRecordsToRecipientTableData(recipientState.data || []),
     [JSON.stringify(recipientState.data)],
   );
   const memoizedColumns = React.useMemo(

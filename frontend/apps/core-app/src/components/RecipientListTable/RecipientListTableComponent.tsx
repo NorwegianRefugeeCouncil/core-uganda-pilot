@@ -39,7 +39,7 @@ export const RecipientListTableComponent: React.FC<Props> = ({
       <RecipientListTableRow
         key={item.id}
         row={item}
-        handleRowClick={handleRowClick}
+        onRowClick={handleRowClick}
       />
     );
   };

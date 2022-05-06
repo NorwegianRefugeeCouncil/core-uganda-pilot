@@ -1,9 +1,10 @@
-import { FieldValue, FormWithRecord, Record } from 'core-api-client';
+import { FieldValue, FormWithRecord } from 'core-api-client';
+import { Recipient } from 'core-api-client/src/types/client/Recipient';
 
 import { RecipientListTableEntry } from './types';
 
-export const mapRecordsToRecordTableData = (
-  data: FormWithRecord<Record>[][],
+export const mapRecordsToRecipientTableData = (
+  data: FormWithRecord<Recipient>[][],
 ): RecipientListTableEntry[] => {
   return data.reduce((allEntries: RecipientListTableEntry[], item) => {
     const completeEntry = item.reduce(

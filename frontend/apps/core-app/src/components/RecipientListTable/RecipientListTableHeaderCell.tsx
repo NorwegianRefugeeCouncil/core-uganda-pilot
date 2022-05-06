@@ -12,7 +12,7 @@ type Props<T extends Record<string, any>> = {
 export const RecipientListTableHeaderCell: React.FC<
   Props<RecipientListTableEntry>
 > = ({ column }) => {
-  if (!column) return null;
+  // if (!column) return null;
 
   const sortIcon = column.isSorted
     ? column.isSortedDesc
@@ -41,7 +41,10 @@ export const RecipientListTableHeaderCell: React.FC<
         colorScheme="secondary"
         variant="ghost"
         size="sm"
-        icon={<Icon size={5} name={sortIcon} />}
+        testID="recipient-table-sort-button"
+        icon={
+          <Icon size={5} name={sortIcon} testID={`sort-icon-${sortIcon}`} />
+        }
       />
     </HStack>
   );

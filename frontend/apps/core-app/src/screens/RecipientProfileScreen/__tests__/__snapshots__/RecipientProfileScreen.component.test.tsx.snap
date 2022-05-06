@@ -108,12 +108,12 @@ exports[`should match the snapshot error 1`] = `
             Object {
               "backgroundColor": undefined,
               "color": "#CE3616",
-              "fontFamily": "Roboto_500Medium",
-              "fontSize": 32,
+              "fontFamily": "Roboto_400Regular",
+              "fontSize": 18,
               "fontStyle": undefined,
               "fontWeight": undefined,
               "letterSpacing": 0,
-              "lineHeight": 38,
+              "lineHeight": 26,
               "textAlign": "auto",
               "textDecorationLine": undefined,
             }
@@ -121,11 +121,6 @@ exports[`should match the snapshot error 1`] = `
         >
           error
         </Text>
-        <View>
-          <Text>
-            [{"form":{"id":"id","databaseId":"databaseId","formType":"recipient","name":"name","code":"code","folderId":"folderId","fields":[]},"record":{"id":"id","formId":"formId","databaseId":"databaseId","values":[]}}]
-          </Text>
-        </View>
       </View>
     </View>
   </RCTScrollView>
