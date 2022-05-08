@@ -1,6 +1,6 @@
 module github.com/nrc-no/core
 
-go 1.16
+go 1.18
 
 require (
 	github.com/boj/redistore v0.0.0-20180917114910-cd5dcc76aeff
