@@ -8,5 +8,28 @@ import (
 )
 
 func (d *entityPostgresStore) InsertEntityDefinition(ctx context.Context, db *gorm.DB, entity types.EntityDefinition) (*types.EntityDefinition, error) {
-	return nil, nil
+	ddl := d.sqlBuilder.InsertRow(
+		"",
+		"entity_definition",
+		[]string{
+			"id",
+			"name",
+			"description",
+			"constraint_custom",
+		},
+		[]any{
+			entity.ID,
+			entity.Name,
+			entity.Description,
+			entity.Constraints.Custom,
+		},
+	)
+
+	result := db.Exec(ddl.Query, ddl.Args...)
+
+	if err := result.Error; err != nil {
+		return nil, err
+	}
+
+	return &entity, nil
 }
