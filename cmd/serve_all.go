@@ -3,6 +3,7 @@ package cmd
 import (
 	authnzapiserver "github.com/nrc-no/core/pkg/server/authnzapi"
 	"github.com/nrc-no/core/pkg/server/authnzbouncer"
+	coreDBServer "github.com/nrc-no/core/pkg/server/core-db"
 	formsapiserver "github.com/nrc-no/core/pkg/server/formsapi"
 	"github.com/nrc-no/core/pkg/server/login"
 	"github.com/spf13/cobra"
@@ -14,6 +15,13 @@ var serveAllCmd = &cobra.Command{
 	Short: "Starts the admin, public and login servers",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if err := initStoreFactory(); err != nil {
+			return err
+		}
+		if err := serveCoreDBApi(ctx,
+			coreDBServer.Options{
+				ServerOptions: coreOptions.Serve.CoreDB,
+				StoreFactory:  factory,
+			}); err != nil {
 			return err
 		}
 		if err := serveFormsApi(ctx,
