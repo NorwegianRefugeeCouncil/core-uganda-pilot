@@ -8,5 +8,28 @@ import (
 )
 
 func (d *entityPostgresStore) InsertRelationship(ctx context.Context, db *gorm.DB, entityRelationship types.EntityRelationship) (*types.EntityRelationship, error) {
-	return nil, nil
+	ddl := d.sqlBuilder.InsertRow(
+		"",
+		"entity_relationship",
+		[]string{
+			"id",
+			"cardinality",
+			"source_entity_id",
+			"target_entity_id",
+		},
+		[]any{
+			entityRelationship.ID,
+			entityRelationship.Cardinality,
+			entityRelationship.SourceEntityID,
+			entityRelationship.TargetEntityID,
+		},
+	)
+
+	result := db.Exec(ddl.Query, ddl.Args...)
+
+	if err := result.Error; err != nil {
+		return nil, err
+	}
+
+	return &entityRelationship, nil
 }
