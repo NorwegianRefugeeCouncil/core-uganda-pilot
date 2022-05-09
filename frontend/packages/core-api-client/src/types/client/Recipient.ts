@@ -1,4 +1,4 @@
-import { FormWithRecord, Record, RecordList } from '../model';
+import { FormDefinition, FormWithRecord, Record, RecordList } from '../model';
 
 import { FormLookup } from './Form';
 import { DataOperation } from './utils';
@@ -14,4 +14,5 @@ export interface RecipientClientDefinition {
   >;
   list: DataOperation<FormLookup, RecipientList>;
   get: DataOperation<RecordLookup, FormWithRecord<Recipient>[]>;
+  getRecipientForms: () => Promise<FormDefinition[]>;
 }

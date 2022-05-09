@@ -1,9 +1,9 @@
 import { FieldDefinition, FormDefinition, FormType } from 'core-api-client';
 
 export const makeForm = (
-  index: number,
-  type: FormType,
-  fields: FieldDefinition[],
+  index = 0,
+  type: FormType = FormType.DefaultFormType,
+  fields: FieldDefinition[] = [],
 ): FormDefinition => ({
   id: `form${index}`,
   code: '',

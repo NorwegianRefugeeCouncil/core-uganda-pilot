@@ -19,6 +19,7 @@ import { AuthWrapper } from './src/components/AuthWrapper';
 import { formsClient } from './src/clients/formsClient';
 import { RootNavigator } from './src/navigation';
 import { linkingConfig } from './src/navigation/linking.config';
+import { RecipientFormsProvider } from './src/contexts/RecipientForms';
 
 const navTheme = {
   ...DefaultTheme,
@@ -44,7 +45,9 @@ const App: React.FC = () => {
     <NativeBaseProvider theme={theme}>
       <NavigationContainer linking={linkingConfig} theme={navTheme}>
         <AuthWrapper onTokenChange={formsClient.setToken}>
-          <RootNavigator />
+          <RecipientFormsProvider>
+            <RootNavigator />
+          </RecipientFormsProvider>
         </AuthWrapper>
       </NavigationContainer>
     </NativeBaseProvider>

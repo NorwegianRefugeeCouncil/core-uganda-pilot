@@ -5,9 +5,9 @@ import { Recipient } from 'core-api-client/src/types/client/Recipient';
 import { render } from '../../../testUtils/render';
 import { RecipientRegistrationScreenContainer } from '../RecipientRegistrationScreen.container';
 import * as hooks from '../../../hooks/useAPICall';
-import configuration from '../../../config';
 import { formsClient } from '../../../clients/formsClient';
 import { routes } from '../../../constants/routes';
+import { mockNavigationProp } from '../../../testUtils/navigation';
 
 const makeForm = (i: number): FormDefinition => ({
   id: `form-id-${i}`,
@@ -41,19 +41,11 @@ const forms = [makeForm(0), makeForm(1)];
 const data = [makeFormWithRecord(0), makeFormWithRecord(1)];
 const mockSubmitData = [makeFormWithRecord(0)];
 
-const mockNavigate = jest.fn();
-const mockAddListener = jest.fn();
-
-jest.mock('@react-navigation/native', () => {
-  const actualNav = jest.requireActual('@react-navigation/native');
-  return {
-    ...actualNav,
-    useNavigation: () => ({
-      navigate: mockNavigate,
-      addListener: mockAddListener,
-    }),
-  };
-});
+const route = {
+  key: 'recipientsRegistration',
+  name: 'recipientsRegistration',
+  params: { formId: 'form-id', databaseId: 'database-id' },
+} as const;
 
 jest.mock('../RecipientRegistrationScreen.component', () => {
   const { View, Text, Button } = jest.requireActual('react-native');
@@ -104,12 +96,17 @@ it('should call the api', () => {
           ],
     );
 
-  render(<RecipientRegistrationScreenContainer />);
+  render(
+    <RecipientRegistrationScreenContainer
+      navigation={mockNavigationProp}
+      route={route}
+    />,
+  );
 
   expect(hooks.useAPICall).toHaveBeenCalledTimes(4);
   expect(hooks.useAPICall).toHaveBeenCalledWith(
     formsClient.Form.getAncestors,
-    [configuration.recipient.registrationForm.formId],
+    ['form-id'],
     true,
   );
   expect(hooks.useAPICall).toHaveBeenCalledWith(
@@ -137,7 +134,10 @@ describe('mode', () => {
         );
 
       const { getByText, getByTestId } = render(
-        <RecipientRegistrationScreenContainer />,
+        <RecipientRegistrationScreenContainer
+          navigation={mockNavigationProp}
+          route={route}
+        />,
       );
 
       await waitFor(() => {
@@ -166,7 +166,10 @@ describe('mode', () => {
         );
 
       const { getByText, getByTestId } = render(
-        <RecipientRegistrationScreenContainer />,
+        <RecipientRegistrationScreenContainer
+          navigation={mockNavigationProp}
+          route={route}
+        />,
       );
 
       fireEvent.press(getByText('Submit'));
@@ -199,7 +202,17 @@ describe('mode', () => {
               ],
         );
 
-      const { getByText } = render(<RecipientRegistrationScreenContainer />);
+      const mockNavigate = jest.fn();
+
+      const { getByText } = render(
+        <RecipientRegistrationScreenContainer
+          navigation={{
+            ...mockNavigationProp,
+            navigate: mockNavigate,
+          }}
+          route={route}
+        />,
+      );
 
       fireEvent.press(getByText('Cancel'));
 
@@ -225,7 +238,10 @@ describe('review', () => {
       );
 
     const { getByText, getByTestId } = render(
-      <RecipientRegistrationScreenContainer />,
+      <RecipientRegistrationScreenContainer
+        navigation={mockNavigationProp}
+        route={route}
+      />,
     );
 
     fireEvent.press(getByText('Submit'));
@@ -270,12 +286,24 @@ describe('review', () => {
             ],
       );
 
-    const { getByText } = render(<RecipientRegistrationScreenContainer />);
+    const mockNavigate = jest.fn();
+
+    const { getByText } = render(
+      <RecipientRegistrationScreenContainer
+        navigation={{
+          ...mockNavigationProp,
+          navigate: mockNavigate,
+        }}
+        route={route}
+      />,
+    );
 
     fireEvent.press(getByText('Submit'));
 
     expect(mockNavigate).toHaveBeenCalledWith(routes.recipientsProfile.name, {
-      id: 'fake-id',
+      databaseId: 'database-id',
+      formId: 'form-id',
+      recordId: 'fake-id',
     });
   });
 
@@ -294,7 +322,12 @@ describe('review', () => {
             ],
       );
 
-    const { getByText } = render(<RecipientRegistrationScreenContainer />);
+    const { getByText } = render(
+      <RecipientRegistrationScreenContainer
+        navigation={mockNavigationProp}
+        route={route}
+      />,
+    );
 
     expect(getByText('edit')).toBeTruthy();
 
@@ -320,7 +353,12 @@ it('should handle loading', () => {
           ],
     );
 
-  const { getByText } = render(<RecipientRegistrationScreenContainer />);
+  const { getByText } = render(
+    <RecipientRegistrationScreenContainer
+      navigation={mockNavigationProp}
+      route={route}
+    />,
+  );
 
   expect(getByText('loading - true')).toBeTruthy();
 });
@@ -340,7 +378,12 @@ it('should handle error', () => {
           ],
     );
 
-  const { getByText } = render(<RecipientRegistrationScreenContainer />);
+  const { getByText } = render(
+    <RecipientRegistrationScreenContainer
+      navigation={mockNavigationProp}
+      route={route}
+    />,
+  );
 
   expect(getByText('error')).toBeTruthy();
 });

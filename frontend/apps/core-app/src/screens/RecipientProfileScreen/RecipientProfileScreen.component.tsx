@@ -19,8 +19,8 @@ export const RecipientProfileScreenComponent: React.FC<Props> = ({
   error,
 }) => {
   return (
-    <ScrollView width="100%" maxWidth="1180px" marginX="auto">
-      <Styles.Container>
+    <ScrollView width="100%">
+      <Styles.Container width="100%" maxWidth="1180px" marginX="auto">
         {isLoading && <Skeleton h="20" p="4" />}
         {error && (
           <Text variant="heading" color="signalDanger">

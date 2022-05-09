@@ -1,23 +1,22 @@
 import * as React from 'react';
-import { RouteProp, useRoute } from '@react-navigation/native';
+import { StackScreenProps } from '@react-navigation/stack';
 
-import { RootParamList } from '../../navigation/types';
 import { formsClient } from '../../clients/formsClient';
-import config from '../../config';
 import { useAPICall } from '../../hooks/useAPICall';
+import { RootNavigatorParamList } from '../../navigation/root';
 
 import { RecipientProfileScreenComponent } from './RecipientProfileScreen.component';
 
-export const RecipientProfileScreenContainer: React.FC = () => {
-  const route = useRoute<RouteProp<RootParamList, 'RecipientProfile'>>();
+type Props = StackScreenProps<RootNavigatorParamList, 'recipientsProfile'>;
 
+export const RecipientProfileScreenContainer: React.FC<Props> = ({ route }) => {
   const [_, state] = useAPICall(
     formsClient.Recipient.get,
     [
       {
-        recordId: route.params.id,
-        formId: config.recipient.registrationForm.formId,
-        databaseId: config.recipient.registrationForm.databaseId,
+        recordId: route.params.recordId,
+        formId: route.params.formId,
+        databaseId: route.params.databaseId,
       },
     ],
     true,

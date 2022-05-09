@@ -4,6 +4,8 @@ import {
   FormWithRecord,
   RecordLookup,
   Record,
+  FormDefinition,
+  FormType,
 } from '../types';
 import {
   Recipient,
@@ -11,6 +13,7 @@ import {
   RecipientList,
 } from '../types/client/Recipient';
 import { Validation } from '..';
+import * as Tree from '../utils/tree';
 
 import { RecordClient } from './Record';
 import { FormClient } from './Form';
@@ -121,5 +124,32 @@ export class RecipientClient implements RecipientClientDefinition {
         record: recipientGetResponse.response,
       },
     ];
+  };
+
+  public getRecipientForms = async (): Promise<FormDefinition[]> => {
+    const formResponse = await this.formClient.list(undefined);
+
+    if (!formResponse.response) {
+      throw new Error(formResponse.error);
+    }
+
+    const recipeintForms = formResponse.response.items
+      .filter((f) => f.formType === FormType.RecipientFormType)
+      .map((f) => {
+        const referenceKey = f.fields.find(
+          (field: FieldDefinition) => field.key && field.fieldType.reference,
+        );
+        return {
+          ...f,
+          parentId: referenceKey?.fieldType.reference?.formId || '',
+        };
+      });
+
+    const tree = Tree.createDataTree(recipeintForms, 'id', 'parentId');
+    const leaves = Tree.getLeafNodes(tree);
+    return leaves.map((l) => {
+      const { parentId: _, childNodes: __, ...f } = l;
+      return f;
+    });
   };
 }

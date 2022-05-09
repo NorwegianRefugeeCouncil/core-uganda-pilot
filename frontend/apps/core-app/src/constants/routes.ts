@@ -1,21 +1,4 @@
-type Route = {
-  name: string;
-  title: string;
-  linkLabel?: string;
-};
-
-type Routes = {
-  recipientsRoot: Route;
-  recipientsList: Route;
-  recipientsRegistration: Route;
-  recipientsProfile: Route;
-};
-
-export const routes: Routes = {
-  recipientsRoot: {
-    name: 'recipientsRoot',
-    title: 'Beneficiaries',
-  },
+export const routes = {
   recipientsList: {
     name: 'recipientsList',
     title: 'Beneficiaries',
@@ -30,4 +13,4 @@ export const routes: Routes = {
     name: 'recipientsProfile',
     title: 'Beneficiary Profile',
   },
-};
+} as const;

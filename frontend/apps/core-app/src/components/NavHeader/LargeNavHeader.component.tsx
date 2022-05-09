@@ -5,12 +5,13 @@ import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 
 import { Link } from '../Link';
 import { routes } from '../../constants/routes';
+import { useRecipientForms } from '../../contexts/RecipientForms';
 
 import { logout } from './logout';
 
 const getHeaderTitle = (route: StackHeaderProps['route']): string => {
   const routeName =
-    getFocusedRouteNameFromRoute(route) ?? routes.recipientsRoot.name;
+    getFocusedRouteNameFromRoute(route) ?? routes.recipientsList.name;
 
   return routes[routeName as keyof typeof routes].title;
 };
@@ -18,6 +19,8 @@ const getHeaderTitle = (route: StackHeaderProps['route']): string => {
 export const LargeNavHeaderComponent: React.FC<
   Pick<StackHeaderProps, 'route'>
 > = ({ route }) => {
+  const forms = useRecipientForms();
+
   return (
     <VStack width="100%" pt={10} pb={10} maxWidth={1180} ml="auto" mr="auto">
       <HStack width="100%" alignItems="center" justifyContent="space-between">
@@ -29,8 +32,7 @@ export const LargeNavHeaderComponent: React.FC<
         <HStack>
           <Link
             to={{
-              screen: routes.recipientsRoot.name,
-              params: { screen: routes.recipientsList.name },
+              screen: routes.recipientsList.name,
             }}
             mr={8}
           >
@@ -38,8 +40,11 @@ export const LargeNavHeaderComponent: React.FC<
           </Link>
           <Link
             to={{
-              screen: routes.recipientsRoot.name,
-              params: { screen: routes.recipientsRegistration.name },
+              screen: routes.recipientsRegistration.name,
+              params: {
+                  formId: forms[0]?.id,
+                  databaseId: forms[0]?.databaseId,
+              },
             }}
             mr={8}
           >
@@ -47,8 +52,7 @@ export const LargeNavHeaderComponent: React.FC<
           </Link>
           <Link
             to={{
-              screen: routes.recipientsRoot.name,
-              params: { screen: routes.recipientsList.name },
+              screen: routes.recipientsList.name,
             }}
             mr={8}
           >

@@ -24,9 +24,6 @@ exports[`should match the snapshot edit mode 1`] = `
     dataSet={Object {}}
     style={
       Object {
-        "marginLeft": "auto",
-        "marginRight": "auto",
-        "maxWidth": 1180,
         "width": "100%",
       }
     }
@@ -34,7 +31,14 @@ exports[`should match the snapshot edit mode 1`] = `
     <View>
       <View
         dataSet={Object {}}
-        style={Object {}}
+        style={
+          Object {
+            "marginLeft": "auto",
+            "marginRight": "auto",
+            "maxWidth": 1180,
+            "width": "100%",
+          }
+        }
       >
         <View>
           <Text>
@@ -278,9 +282,6 @@ exports[`should match the snapshot review mode 1`] = `
     dataSet={Object {}}
     style={
       Object {
-        "marginLeft": "auto",
-        "marginRight": "auto",
-        "maxWidth": 1180,
         "width": "100%",
       }
     }
@@ -288,7 +289,14 @@ exports[`should match the snapshot review mode 1`] = `
     <View>
       <View
         dataSet={Object {}}
-        style={Object {}}
+        style={
+          Object {
+            "marginLeft": "auto",
+            "marginRight": "auto",
+            "maxWidth": 1180,
+            "width": "100%",
+          }
+        }
       >
         <View>
           <Text>
