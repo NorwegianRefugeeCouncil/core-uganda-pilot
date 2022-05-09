@@ -94,11 +94,11 @@ exports[`should match the snapshot edit mode 1`] = `
                 "borderStyle": "solid",
                 "borderWidth": 1,
                 "flexDirection": "row",
-                "height": 50,
+                "height": "nrc_10",
                 "justifyContent": "center",
                 "paddingBottom": 8,
-                "paddingLeft": 50,
-                "paddingRight": 50,
+                "paddingLeft": "nrc_10",
+                "paddingRight": "nrc_10",
                 "paddingTop": 8,
               }
             }
@@ -177,11 +177,11 @@ exports[`should match the snapshot edit mode 1`] = `
                 "backgroundColor": "#FF7602",
                 "borderRadius": 3,
                 "flexDirection": "row",
-                "height": 50,
+                "height": "nrc_10",
                 "justifyContent": "center",
                 "paddingBottom": 8,
-                "paddingLeft": 50,
-                "paddingRight": 50,
+                "paddingLeft": "nrc_10",
+                "paddingRight": "nrc_10",
                 "paddingTop": 8,
               }
             }
@@ -352,11 +352,11 @@ exports[`should match the snapshot review mode 1`] = `
                 "borderStyle": "solid",
                 "borderWidth": 1,
                 "flexDirection": "row",
-                "height": 50,
+                "height": "nrc_10",
                 "justifyContent": "center",
                 "paddingBottom": 8,
-                "paddingLeft": 50,
-                "paddingRight": 50,
+                "paddingLeft": "nrc_10",
+                "paddingRight": "nrc_10",
                 "paddingTop": 8,
               }
             }
@@ -435,11 +435,11 @@ exports[`should match the snapshot review mode 1`] = `
                 "backgroundColor": "#FF7602",
                 "borderRadius": 3,
                 "flexDirection": "row",
-                "height": 50,
+                "height": "nrc_10",
                 "justifyContent": "center",
                 "paddingBottom": 8,
-                "paddingLeft": 50,
-                "paddingRight": 50,
+                "paddingLeft": "nrc_10",
+                "paddingRight": "nrc_10",
                 "paddingTop": 8,
               }
             }

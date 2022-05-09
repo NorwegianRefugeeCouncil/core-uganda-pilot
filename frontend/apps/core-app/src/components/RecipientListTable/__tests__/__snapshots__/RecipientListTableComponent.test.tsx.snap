@@ -16,7 +16,7 @@ exports[`RecipientListTableComponent should match the snapshot data 1`] = `
     dataSet={Object {}}
     style={
       Object {
-        "marginBottom": 63,
+        "marginBottom": 60,
       }
     }
   >
@@ -65,8 +65,8 @@ exports[`RecipientListTableComponent should match the snapshot data 1`] = `
               "borderRadius": 4,
               "borderWidth": 1,
               "height": 20,
-              "marginLeft": 12,
-              "marginRight": 12,
+              "marginLeft": 10,
+              "marginRight": 10,
               "paddingBottom": 2,
               "paddingLeft": 8,
               "paddingRight": 8,
@@ -143,6 +143,13 @@ exports[`RecipientListTableComponent should match the snapshot data 1`] = `
                 }
               }
             >
+              <div>
+                box
+              </div>
+              <View
+                dataSet={Object {}}
+                style={Object {}}
+              />
               <View
                 _text={
                   Object {
@@ -279,7 +286,9 @@ exports[`RecipientListTableComponent should match the snapshot data 1`] = `
                           "results": Array [
                             Object {
                               "type": "return",
-                              "value": undefined,
+                              "value": <div>
+                                box
+                              </div>,
                             },
                           ],
                         },
@@ -310,7 +319,9 @@ exports[`RecipientListTableComponent should match the snapshot data 1`] = `
                           "results": Array [
                             Object {
                               "type": "return",
-                              "value": undefined,
+                              "value": <div>
+                                box
+                              </div>,
                             },
                           ],
                         },
@@ -405,7 +416,11 @@ exports[`RecipientListTableComponent should match the snapshot data 1`] = `
                             "paddingTop": 8,
                           }
                         }
-                      />
+                      >
+                        <div>
+                          box
+                        </div>
+                      </View>
                       <View
                         dataSet={Object {}}
                         style={Object {}}
@@ -423,7 +438,11 @@ exports[`RecipientListTableComponent should match the snapshot data 1`] = `
                             "paddingTop": 8,
                           }
                         }
-                      />
+                      >
+                        <div>
+                          box
+                        </div>
+                      </View>
                     </View>
                   </View>
                 </View>
@@ -453,7 +472,7 @@ exports[`RecipientListTableComponent should match the snapshot error 1`] = `
     dataSet={Object {}}
     style={
       Object {
-        "marginBottom": 63,
+        "marginBottom": 60,
       }
     }
   >
@@ -502,8 +521,8 @@ exports[`RecipientListTableComponent should match the snapshot error 1`] = `
               "borderRadius": 4,
               "borderWidth": 1,
               "height": 20,
-              "marginLeft": 12,
-              "marginRight": 12,
+              "marginLeft": 10,
+              "marginRight": 10,
               "paddingBottom": 2,
               "paddingLeft": 8,
               "paddingRight": 8,
@@ -575,7 +594,7 @@ exports[`RecipientListTableComponent should match the snapshot loading 1`] = `
     dataSet={Object {}}
     style={
       Object {
-        "marginBottom": 63,
+        "marginBottom": 60,
       }
     }
   >
@@ -624,8 +643,8 @@ exports[`RecipientListTableComponent should match the snapshot loading 1`] = `
               "borderRadius": 4,
               "borderWidth": 1,
               "height": 20,
-              "marginLeft": 12,
-              "marginRight": 12,
+              "marginLeft": 10,
+              "marginRight": 10,
               "paddingBottom": 2,
               "paddingLeft": 8,
               "paddingRight": 8,
@@ -664,7 +683,7 @@ exports[`RecipientListTableComponent should match the snapshot loading 1`] = `
       style={
         Object {
           "backgroundColor": "transparent",
-          "height": 160,
+          "height": 40,
           "overflow": "hidden",
           "paddingBottom": 16,
           "paddingLeft": 16,

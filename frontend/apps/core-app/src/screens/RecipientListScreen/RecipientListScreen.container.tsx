@@ -14,7 +14,7 @@ export const RecipientListScreenContainer: React.FC<Props> = () => {
   return (
     <RecipientListScreenComponent
       forms={recipientForms}
-      isLoading={!recipientForms.length}
+      isLoading={!recipientForms || !recipientForms.length}
     />
   );
 };

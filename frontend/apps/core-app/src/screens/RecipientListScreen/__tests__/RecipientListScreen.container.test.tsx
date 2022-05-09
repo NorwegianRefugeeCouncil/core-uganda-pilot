@@ -2,41 +2,24 @@ import React from 'react';
 
 import { render } from '../../../testUtils/render';
 import { RecipientListScreenContainer } from '../RecipientListScreen.container';
-import * as hooks from '../../../hooks/useAPICall';
+import { mockNavigationProp } from '../../../testUtils/navigation';
 
-const mockNavigate = jest.fn();
-// const useRecipientFormsMock = jest.fn();
+const mockUseRecipientForms = jest.fn();
 
-jest.mock('@react-navigation/native', () => {
-  const actualNav = jest.requireActual('@react-navigation/native');
+jest.mock('../../../contexts/RecipientForms', () => {
   return {
-    ...actualNav,
-    useNavigation: () => ({
-      navigate: mockNavigate,
-    }),
+    useRecipientForms: () => mockUseRecipientForms(),
   };
 });
 
-// jest.mock('../../../contexts/RecipientForms', () => {
-//   return {
-//     useRecipientForms: useRecipientFormsMock,
-//   };
-// });
-
 describe('RecipientListScreenContainer', () => {
-  const useAPICallSpy = jest.spyOn(hooks, 'useAPICall');
-
-  afterEach(() => {
-    useAPICallSpy.mockReset();
+  it('should call useRecipientForms', () => {
+    render(
+      <RecipientListScreenContainer
+        navigation={mockNavigationProp}
+        route={{ key: 'key', name: 'recipientsList' }}
+      />,
+    );
+    expect(mockUseRecipientForms).toHaveBeenCalledTimes(1);
   });
-
-  it('should match the snapshot', () => {
-    const { toJSON } = render(<RecipientListScreenContainer />);
-    expect(toJSON()).toMatchSnapshot();
-  });
-
-  // it('should call useRecipientForms', () => {
-  //   render(<RecipientListScreenContainer />);
-  //   expect(useRecipientFormsMock).toHaveBeenCalledTimes(1);
-  // });
 });

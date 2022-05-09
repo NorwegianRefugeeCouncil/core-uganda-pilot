@@ -18,19 +18,20 @@ export const RecipientListScreenComponent: React.FC<Props> = ({
 
   return (
     <ScrollView bg="white">
-      <Box bg="secondary.100" width="100%" my="16px" alignItems="center">
-        <Box maxWidth={1180} width="100%">
-          <Box mr="auto" mt="26px" mb="42px" maxWidth={580} width="100%">
+      <Box bg="secondary.100" width="100%" my="2xs" alignItems="center">
+        <Box maxWidth="1180px" width="100%">
+          <Box mr="auto" mt="sm" mb="xl" maxWidth="580px" width="100%">
             <RecipientListTableFilter filter={filter} setFilter={setFilter} />
           </Box>
         </Box>
       </Box>
 
-      <Box maxWidth={1180} mx="auto" width="100%">
-        {forms?.map((form) => (
-          <RecipientListTable key={form.id} form={form} filter={filter} />
-        ))}
-        {isLoading && <Skeleton h="40" p="4" />}
+      <Box maxWidth="1180px" mx="auto" width="100%">
+        {!isLoading &&
+          forms?.map((form) => (
+            <RecipientListTable key={form.id} form={form} filter={filter} />
+          ))}
+        {isLoading && <Skeleton h="xl" />}
       </Box>
     </ScrollView>
   );

@@ -15,7 +15,7 @@ export const RecipientListTableFilterContainer: React.FC<Props> = ({
   const [value, setValue] = React.useState(filter);
 
   const handleChange = useAsyncDebounce((v) => {
-    setFilter(v || undefined);
+    setFilter(v);
     setValue(v);
   }, 20);
 

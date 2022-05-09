@@ -35,6 +35,7 @@ export const RecipientListTableComponent: React.FC<Props> = ({
   const renderRow = ({ item }: { item: Row }) => {
     prepareRow(item);
     const handleRowClick = () => onItemClick(item.values.recordId);
+
     return (
       <RecipientListTableRow
         key={item.id}
@@ -45,7 +46,7 @@ export const RecipientListTableComponent: React.FC<Props> = ({
   };
 
   return (
-    <Box mb="63px">
+    <Box mb="60px">
       <Box>
         <Box
           flexDirection="row"
@@ -60,7 +61,7 @@ export const RecipientListTableComponent: React.FC<Props> = ({
             height="5"
             width="7"
             borderRadius="4px"
-            mx="12px"
+            mx="3xs"
           >
             <Text variant="heading" level="5" color="white">
               {rows.length}
@@ -96,7 +97,7 @@ export const RecipientListTableComponent: React.FC<Props> = ({
           </Box>
         </ScrollView>
       )}
-      {loading && <Skeleton h="40" p="4" />}
+      {loading && <Skeleton h="xl" p="4" />}
       {error && <Text>{error}</Text>}
     </Box>
   );

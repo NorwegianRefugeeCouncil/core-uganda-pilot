@@ -1,12 +1,11 @@
 import React from 'react';
-import { Box } from 'native-base';
 import { act, fireEvent, waitFor } from '@testing-library/react-native';
 
 import { render } from '../../../testUtils/render';
 import { RecipientListTableComponent } from '../RecipientListTableComponent';
 
-const prepareRowMock = jest.fn();
-const clickHandlerMock = jest.fn();
+const mockPrepareRow = jest.fn();
+const mockClickHandler = jest.fn();
 const table = {
   rows: [
     {
@@ -19,18 +18,16 @@ const table = {
       cells: [
         {
           column: 'col1',
-          render: jest.fn().mockImplementation((a) => {
-            <Box>{a}</Box>;
-          }),
+          render: jest.fn().mockReturnValue(<div>box</div>),
+
           value: 'val1',
           row: 'row1',
           getCellProps: jest.fn(),
         },
         {
           column: 'col2',
-          render: jest.fn().mockImplementation((a) => {
-            <Box>{a}</Box>;
-          }),
+          render: jest.fn().mockReturnValue(<div>box</div>),
+
           value: 'val2',
           row: 'row1',
           getCellProps: jest.fn(),
@@ -44,21 +41,17 @@ const table = {
       Header: 'col1',
       accessor: 'col1',
       hidden: false,
-      render: jest.fn().mockImplementation((a) => {
-        <Box>{a}</Box>;
-      }),
+      render: jest.fn().mockReturnValue(<div>box</div>),
     },
     {
       id: 'col2',
       Header: 'col2',
       accessor: 'col2',
       hidden: true,
-      render: jest.fn().mockImplementation((a) => {
-        <Box>{a}</Box>;
-      }),
+      render: jest.fn().mockReturnValue(<div>box</div>),
     },
   ],
-  prepareRow: prepareRowMock,
+  prepareRow: mockPrepareRow,
 };
 
 describe('RecipientListTableComponent', () => {
@@ -105,30 +98,31 @@ describe('RecipientListTableComponent', () => {
     render(
       <RecipientListTableComponent
         table={table}
-        onItemClick={clickHandlerMock}
+        onItemClick={mockClickHandler}
         title="title"
         error={null}
         loading
       />,
     );
-    expect(prepareRowMock).toHaveBeenCalledTimes(1);
+    expect(mockPrepareRow).toHaveBeenCalledTimes(1);
   });
 
   it('should call row click handler', () => {
     const { debug, getByTestId } = render(
       <RecipientListTableComponent
         table={table}
-        onItemClick={clickHandlerMock}
+        onItemClick={mockClickHandler}
         title="title"
         error={null}
         loading
       />,
     );
+
     debug();
     const row = getByTestId('recipient-list-table-row-row1');
     act(() => {
       fireEvent.press(row);
     });
-    waitFor(() => expect(clickHandlerMock).toHaveBeenCalledWith('row1'));
+    waitFor(() => expect(mockClickHandler).toHaveBeenCalledWith('row1'));
   });
 });
