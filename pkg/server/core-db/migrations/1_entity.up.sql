@@ -31,9 +31,13 @@ CREATE TABLE IF NOT EXISTS entity_relationship (
   id UUID PRIMARY KEY,
   cardinality ENTITY_RELATIONSHIP_CARDINALITY NOT NULL,
   source_entity_id UUID NOT NULL,
+  source_attribute_id UUID NOT NULL,
   target_entity_id UUID NOT NULL,
+  target_attribute_id UUID NOT NULL,
   FOREIGN KEY (source_entity_id) REFERENCES entity_definition(id),
-  FOREIGN KEY (target_entity_id) REFERENCES entity_definition(id)
+  FOREIGN KEY (source_attribute_id) REFERENCES entity_attribute(id),
+  FOREIGN KEY (target_entity_id) REFERENCES entity_definition(id),
+  FOREIGN KEY (target_attribute_id) REFERENCES entity_attribute(id)
 );
 
 COMMIT;

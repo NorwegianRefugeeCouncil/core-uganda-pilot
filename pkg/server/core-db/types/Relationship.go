@@ -10,8 +10,10 @@ const (
 )
 
 type EntityRelationship struct {
-	ID             string      `json:"id"`
-	Cardinality    Cardinality `json:"cardinality"`
-	SourceEntityID string      `json:"sourceEntityId"`
-	TargetEntityID string      `json:"targetEntityId"`
+	ID                string      `json:"id"`
+	Cardinality       Cardinality `json:"cardinality"`
+	SourceEntityID    string      `json:"sourceEntityId"`
+	SourceAttributeID string      `json:"sourceAttributeId"`
+	TargetEntityID    string      `json:"targetEntityId"`
+	TargetAttributeID string      `json:"targetAttributeId"`
 }
