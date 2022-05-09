@@ -16,7 +16,7 @@ var serveCoreDBCmd = &cobra.Command{
 		}
 		if err := serveCoreDBApi(ctx,
 			coreDBServer.Options{
-				ServerOptions: coreOptions.Serve.CoreDB,
+				ServerOptions: coreOptions.Serve.CoreDBApi,
 				StoreFactory:  factory,
 			}); err != nil {
 			return err

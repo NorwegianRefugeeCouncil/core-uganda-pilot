@@ -9,14 +9,14 @@ func (c *Config) makeCoreDBApi() error {
 
 	var err error
 
-	c.coreDBApiTlsKey, err = getOrCreatePrivateKey(path.Join(CoreFormsApiDir, "tls.key"))
+	c.coreDBApiTlsKey, err = getOrCreatePrivateKey(path.Join(CoreDBApiDir, "tls.key"))
 	if err != nil {
 		return err
 	}
 
 	c.coreDBApiTlsCert, err = getOrCreateServerCert(
-		path.Join(CoreFormsApiDir, "tls.crt"),
-		c.coreFormsApiTlsKey,
+		path.Join(CoreDBApiDir, "tls.crt"),
+		c.coreDBApiTlsKey,
 		c.rootCa,
 		c.rootCaKey,
 		[]string{"localhost", "core.dev"},
