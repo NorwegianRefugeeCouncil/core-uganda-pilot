@@ -9,7 +9,7 @@ import (
 
 func (d *entityPostgresStore) InsertAttribute(ctx context.Context, db *gorm.DB, attribute types.Attribute) (*types.Attribute, error) {
 	ddl := d.sqlBuilder.InsertRow(
-		"",
+		"public",
 		"entity_attribute",
 		[]string{
 			"id",
