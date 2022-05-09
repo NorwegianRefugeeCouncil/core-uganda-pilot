@@ -21,6 +21,7 @@ func (d *entityService) Create(ctx context.Context, entity types.Entity) (*types
 	})
 
 	if err != nil {
+		tx.Rollback()
 		return nil, err
 	}
 
@@ -29,6 +30,7 @@ func (d *entityService) Create(ctx context.Context, entity types.Entity) (*types
 		a, err := d.createAttribute(ctx, tx, attribute, entityDefinition.ID)
 
 		if err != nil {
+			tx.Rollback()
 			return nil, err
 		}
 
@@ -40,6 +42,7 @@ func (d *entityService) Create(ctx context.Context, entity types.Entity) (*types
 		r, err := d.createEntityRelationship(ctx, tx, relationship, entityDefinition.ID)
 
 		if err != nil {
+			tx.Rollback()
 			return nil, err
 		}
 
