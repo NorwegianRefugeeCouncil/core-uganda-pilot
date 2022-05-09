@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS entity_definition (
   id UUID PRIMARY KEY,
   name TEXT NOT NULL,
   description TEXT,
-  constraint_custom TEXT[],
+  constraint_custom TEXT[]
 );
 
 CREATE TYPE attribute_type AS ENUM ('string', 'number', 'boolean', 'date', 'time', 'datetime', 'month', 'co-ordinate', 'file');
@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS entity_attribute (
   constraint_pattern TEXT,
   constraint_enum TEXT[],
   constraint_custom TEXT[],
-  FOREIGN KEY (entity_id) REFERENCES entity_definition(id) ON DELETE CASCADE,
+  FOREIGN KEY (entity_id) REFERENCES entity_definition(id) ON DELETE CASCADE
 );
 
 CREATE TYPE entity_relationship_cardinality AS ENUM ('one-to-one', 'one-to-many', 'many-to-one', 'many-to-many');
@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS entity_relationship (
   source_entity_id UUID NOT NULL,
   target_entity_id UUID NOT NULL,
   FOREIGN KEY (source_entity_id) REFERENCES entity_definition(id),
-  FOREIGN KEY (target_entity_id) REFERENCES entity_definition(id),
+  FOREIGN KEY (target_entity_id) REFERENCES entity_definition(id)
 );
 
 COMMIT;
