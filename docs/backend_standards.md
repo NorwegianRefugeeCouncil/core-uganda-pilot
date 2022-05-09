@@ -192,3 +192,9 @@ This will run recursively across all struct fields.
 
 The `SQLBuilder` is aimed at decoupling the SQL statement generation from the model.
 Each method should return an SQL statement (query and args), that can be executed by the model.
+
+## common.TransactionManager
+
+TODO: Move from `common`
+
+Handles starting, committing and rolling back transactions.
