@@ -5,6 +5,7 @@ import (
 
 	"github.com/nrc-no/core/pkg/server/core-db/types"
 	uuid "github.com/satori/go.uuid"
+	"gorm.io/gorm"
 )
 
 func (d *entityService) Create(ctx context.Context, entity types.Entity) (*types.Entity, error) {
@@ -25,11 +26,7 @@ func (d *entityService) Create(ctx context.Context, entity types.Entity) (*types
 
 	attributes := make([]types.Attribute, len(entity.Attributes))
 	for i, attribute := range entity.Attributes {
-		attributeId := uuid.NewV4()
-		attribute.ID = attributeId.String()
-		attribute.EntityID = entityDefinition.ID
-
-		a, err := d.entityStore.InsertAttribute(ctx, tx, attribute)
+		a, err := d.createAttribute(ctx, tx, attribute, entityDefinition.ID)
 
 		if err != nil {
 			return nil, err
@@ -40,11 +37,7 @@ func (d *entityService) Create(ctx context.Context, entity types.Entity) (*types
 
 	relationships := make([]types.EntityRelationship, len(entity.Relationships))
 	for i, relationship := range entity.Relationships {
-		relationshipId := uuid.NewV4()
-		relationship.ID = relationshipId.String()
-		relationship.SourceEntityID = entityDefinition.ID
-
-		r, err := d.entityStore.InsertRelationship(ctx, tx, relationship)
+		r, err := d.createEntityRelationship(ctx, tx, relationship, entityDefinition.ID)
 
 		if err != nil {
 			return nil, err
@@ -60,4 +53,32 @@ func (d *entityService) Create(ctx context.Context, entity types.Entity) (*types
 	}
 
 	return &createdEntity, nil
+}
+
+func (d *entityService) createAttribute(ctx context.Context, tx *gorm.DB, attribute types.Attribute, entityID string) (*types.Attribute, error) {
+	attributeId := uuid.NewV4()
+	attribute.ID = attributeId.String()
+	attribute.EntityID = entityID
+
+	a, err := d.entityStore.InsertAttribute(ctx, tx, attribute)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return a, nil
+}
+
+func (d *entityService) createEntityRelationship(ctx context.Context, tx *gorm.DB, relationship types.EntityRelationship, entityID string) (*types.EntityRelationship, error) {
+	relationshipId := uuid.NewV4()
+	relationship.ID = relationshipId.String()
+	relationship.SourceEntityID = entityID
+
+	r, err := d.entityStore.InsertRelationship(ctx, tx, relationship)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return r, nil
 }
