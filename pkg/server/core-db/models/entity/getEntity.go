@@ -7,6 +7,6 @@ import (
 	"gorm.io/gorm"
 )
 
-func (d *entityPostgresStore) GetEntity(ctx context.Context, db *gorm.DB, entityID string) (*types.Entity, error) {
+func (d *entityPostgresModel) GetEntity(ctx context.Context, db *gorm.DB, entityID string) (*types.Entity, error) {
 	return nil, nil
 }

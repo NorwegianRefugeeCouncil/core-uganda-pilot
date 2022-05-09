@@ -7,7 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func (d *entityPostgresStore) InsertAttribute(ctx context.Context, db *gorm.DB, attribute types.Attribute) (*types.Attribute, error) {
+func (d *entityPostgresModel) InsertAttribute(ctx context.Context, db *gorm.DB, attribute types.Attribute) (*types.Attribute, error) {
 	if db == nil {
 		var err error
 		db, err = d.db.Get()

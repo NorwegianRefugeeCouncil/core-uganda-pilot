@@ -5,21 +5,21 @@ import (
 	"gorm.io/gorm"
 )
 
-type TransactionStore interface {
+type TransactionManager interface {
 	Begin() *gorm.DB
 	Commit(tx *gorm.DB) *gorm.DB
 	Rollback(tx *gorm.DB) *gorm.DB
 }
 
-type transactionStore struct {
+type transactionManager struct {
 	db store.Factory
 }
 
-func NewTransactionStore(db store.Factory) TransactionStore {
-	return &transactionStore{db: db}
+func NewTransactionManager(db store.Factory) TransactionManager {
+	return &transactionManager{db: db}
 }
 
-func (s *transactionStore) Begin() *gorm.DB {
+func (s *transactionManager) Begin() *gorm.DB {
 	db, err := s.db.Get()
 
 	if err != nil {
@@ -29,10 +29,10 @@ func (s *transactionStore) Begin() *gorm.DB {
 	return db.Begin()
 }
 
-func (s *transactionStore) Commit(tx *gorm.DB) *gorm.DB {
+func (s *transactionManager) Commit(tx *gorm.DB) *gorm.DB {
 	return tx.Commit()
 }
 
-func (s *transactionStore) Rollback(tx *gorm.DB) *gorm.DB {
+func (s *transactionManager) Rollback(tx *gorm.DB) *gorm.DB {
 	return tx.Rollback()
 }

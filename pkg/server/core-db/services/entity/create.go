@@ -9,11 +9,11 @@ import (
 )
 
 func (d *entityService) Create(ctx context.Context, entity types.Entity) (*types.Entity, error) {
-	tx := d.transactionStore.Begin()
+	tx := d.transactionManager.Begin()
 
 	entityId := uuid.NewV4()
 
-	entityDefinition, err := d.entityStore.InsertEntityDefinition(ctx, tx, types.EntityDefinition{
+	entityDefinition, err := d.entityModel.InsertEntityDefinition(ctx, tx, types.EntityDefinition{
 		ID:          entityId.String(),
 		Name:        entity.Name,
 		Description: entity.Description,
@@ -63,7 +63,7 @@ func (d *entityService) createAttribute(ctx context.Context, tx *gorm.DB, attrib
 	attribute.ID = attributeId.String()
 	attribute.EntityID = entityID
 
-	a, err := d.entityStore.InsertAttribute(ctx, tx, attribute)
+	a, err := d.entityModel.InsertAttribute(ctx, tx, attribute)
 
 	if err != nil {
 		return nil, err
@@ -77,7 +77,7 @@ func (d *entityService) createEntityRelationship(ctx context.Context, tx *gorm.D
 	relationship.ID = relationshipId.String()
 	relationship.SourceEntityID = entityID
 
-	r, err := d.entityStore.InsertRelationship(ctx, tx, relationship)
+	r, err := d.entityModel.InsertRelationship(ctx, tx, relationship)
 
 	if err != nil {
 		return nil, err

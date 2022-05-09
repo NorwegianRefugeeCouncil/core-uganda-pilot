@@ -5,7 +5,7 @@ import (
 
 	"github.com/nrc-no/core/pkg/common"
 	entityController "github.com/nrc-no/core/pkg/server/core-db/controllers/entity"
-	entityStore "github.com/nrc-no/core/pkg/server/core-db/stores/entity"
+	entityModel "github.com/nrc-no/core/pkg/server/core-db/models/entity"
 	"github.com/nrc-no/core/pkg/server/generic"
 	"github.com/nrc-no/core/pkg/server/options"
 	"github.com/nrc-no/core/pkg/store"
@@ -30,10 +30,10 @@ func NewServer(options Options) (*Server, error) {
 
 	container := genericServer.GoRestfulContainer
 
-	transactionStore := common.NewTransactionStore(options.StoreFactory)
+	transactionManager := common.NewTransactionManager(options.StoreFactory)
 
-	entityStore := entityStore.NewEntityPostgresStore(options.StoreFactory)
-	entityController := entityController.NewController(entityStore, transactionStore)
+	entityModel := entityModel.NewEntityPostgresModel(options.StoreFactory)
+	entityController := entityController.NewController(entityModel, transactionManager)
 	container.Add(entityController.WebService())
 
 	s := &Server{

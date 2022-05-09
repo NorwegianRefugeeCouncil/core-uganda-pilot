@@ -7,7 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func (d *entityPostgresStore) InsertRelationship(ctx context.Context, db *gorm.DB, entityRelationship types.EntityRelationship) (*types.EntityRelationship, error) {
+func (d *entityPostgresModel) InsertRelationship(ctx context.Context, db *gorm.DB, entityRelationship types.EntityRelationship) (*types.EntityRelationship, error) {
 	if db == nil {
 		var err error
 		db, err = d.db.Get()

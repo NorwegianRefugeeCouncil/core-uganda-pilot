@@ -7,6 +7,6 @@ import (
 	"gorm.io/gorm"
 )
 
-func (d *entityPostgresStore) CreateEntityRecordTable(ctx context.Context, db *gorm.DB, entity types.Entity) error {
+func (d *entityPostgresModel) CreateEntityRecordTable(ctx context.Context, db *gorm.DB, entity types.Entity) error {
 	return nil
 }

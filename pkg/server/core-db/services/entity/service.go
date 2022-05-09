@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/nrc-no/core/pkg/common"
-	store "github.com/nrc-no/core/pkg/server/core-db/stores/entity"
+	model "github.com/nrc-no/core/pkg/server/core-db/models/entity"
 	"github.com/nrc-no/core/pkg/server/core-db/types"
 )
 
@@ -17,13 +17,13 @@ type EntityService interface {
 }
 
 type entityService struct {
-	entityStore      store.EntityStore
-	transactionStore common.TransactionStore
+	entityModel        model.EntityModel
+	transactionManager common.TransactionManager
 }
 
-func NewEntityService(entityStore store.EntityStore, transactionStore common.TransactionStore) EntityService {
+func NewEntityService(entityModel model.EntityModel, transactionManager common.TransactionManager) EntityService {
 	return &entityService{
-		entityStore:      entityStore,
-		transactionStore: transactionStore,
+		entityModel:        entityModel,
+		transactionManager: transactionManager,
 	}
 }

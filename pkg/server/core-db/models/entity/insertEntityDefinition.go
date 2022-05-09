@@ -7,7 +7,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func (d *entityPostgresStore) InsertEntityDefinition(ctx context.Context, db *gorm.DB, entity types.EntityDefinition) (*types.EntityDefinition, error) {
+func (d *entityPostgresModel) InsertEntityDefinition(ctx context.Context, db *gorm.DB, entity types.EntityDefinition) (*types.EntityDefinition, error) {
 	if db == nil {
 		var err error
 		db, err = d.db.Get()

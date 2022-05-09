@@ -9,7 +9,7 @@ import (
 	"gorm.io/gorm"
 )
 
-type EntityStore interface {
+type EntityModel interface {
 	ListEntityDefinitions(ctx context.Context, db *gorm.DB) ([]types.EntityDefinition, error)
 
 	GetEntity(ctx context.Context, db *gorm.DB, entityID string) (*types.Entity, error)
@@ -27,13 +27,13 @@ type EntityStore interface {
 	DropEntityRecordTable(ctx context.Context, db *gorm.DB, entityID string) error
 }
 
-type entityPostgresStore struct {
+type entityPostgresModel struct {
 	db         store.Factory
 	sqlBuilder sqlmanager.SQLBuilder
 }
 
-func NewEntityPostgresStore(db store.Factory) EntityStore {
-	return &entityPostgresStore{
+func NewEntityPostgresModel(db store.Factory) EntityModel {
+	return &entityPostgresModel{
 		db:         db,
 		sqlBuilder: sqlmanager.NewSQLBuilder(),
 	}

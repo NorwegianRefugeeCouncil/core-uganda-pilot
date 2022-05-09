@@ -6,25 +6,26 @@ import (
 	"github.com/emicklei/go-restful/v3"
 	"github.com/nrc-no/core/pkg/api/mimetypes"
 	"github.com/nrc-no/core/pkg/common"
+	model "github.com/nrc-no/core/pkg/server/core-db/models/entity"
 	service "github.com/nrc-no/core/pkg/server/core-db/services/entity"
-	store "github.com/nrc-no/core/pkg/server/core-db/stores/entity"
 	"github.com/nrc-no/core/pkg/server/core-db/types"
 )
 
 type Controller struct {
-	entityService    service.EntityService
-	entityStore      store.EntityStore
-	transactionStore common.TransactionStore
-	webService       *restful.WebService
+	entityService      service.EntityService
+	entityModel        model.EntityModel
+	transactionManager common.TransactionManager
+	webService         *restful.WebService
 }
 
 func NewController(
-	entityStore store.EntityStore,
-	transactionStore common.TransactionStore,
+	entityModel model.EntityModel,
+	transactionManager common.TransactionManager,
 ) *Controller {
 	c := &Controller{
-		entityService: service.NewEntityService(entityStore, transactionStore),
-		entityStore:   entityStore,
+		entityService:      service.NewEntityService(entityModel, transactionManager),
+		entityModel:        entityModel,
+		transactionManager: transactionManager,
 	}
 
 	ws := new(restful.WebService).
