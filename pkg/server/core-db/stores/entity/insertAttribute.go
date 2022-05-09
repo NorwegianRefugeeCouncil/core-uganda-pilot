@@ -8,6 +8,15 @@ import (
 )
 
 func (d *entityPostgresStore) InsertAttribute(ctx context.Context, db *gorm.DB, attribute types.Attribute) (*types.Attribute, error) {
+	if db == nil {
+		var err error
+		db, err = d.db.Get()
+
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	ddl := d.sqlBuilder.InsertRow(
 		"public",
 		"entity_attribute",

@@ -8,6 +8,15 @@ import (
 )
 
 func (d *entityPostgresStore) InsertRelationship(ctx context.Context, db *gorm.DB, entityRelationship types.EntityRelationship) (*types.EntityRelationship, error) {
+	if db == nil {
+		var err error
+		db, err = d.db.Get()
+
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	ddl := d.sqlBuilder.InsertRow(
 		"public",
 		"entity_relationship",
