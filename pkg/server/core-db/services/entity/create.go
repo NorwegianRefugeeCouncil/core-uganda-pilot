@@ -27,6 +27,7 @@ func (d *entityService) Create(ctx context.Context, entity types.Entity) (*types
 	for i, attribute := range entity.Attributes {
 		attributeId := uuid.NewV4()
 		attribute.ID = attributeId.String()
+		attribute.EntityID = entityDefinition.ID
 
 		a, err := d.entityStore.InsertAttribute(ctx, tx, attribute)
 
@@ -41,6 +42,7 @@ func (d *entityService) Create(ctx context.Context, entity types.Entity) (*types
 	for i, relationship := range entity.Relationships {
 		relationshipId := uuid.NewV4()
 		relationship.ID = relationshipId.String()
+		relationship.SourceEntityID = entityDefinition.ID
 
 		r, err := d.entityStore.InsertRelationship(ctx, tx, relationship)
 
