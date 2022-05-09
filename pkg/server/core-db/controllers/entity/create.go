@@ -40,6 +40,13 @@ func (c *Controller) Create() http.HandlerFunc {
 			return
 		}
 
+		l.Debug("Validating created entity")
+		if errs := validation.Validate(entity, false); !errs.IsEmpty() {
+			l.Error("Failed to validate created entity", zap.Error(errs.ToAggregate()))
+			utils.ErrorResponse(w, meta.NewInvalid(types.EntityGR, "", errs))
+			return
+		}
+
 		l.Debug("Successfully created entity")
 		utils.JSONResponse(w, http.StatusCreated, respEntity)
 	}
