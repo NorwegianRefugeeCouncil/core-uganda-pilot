@@ -26,7 +26,7 @@ func (c *Controller) Create() http.HandlerFunc {
 		}
 
 		l.Debug("Validating entity")
-		if errs := validation.Validate(&entity, true); !errs.IsEmpty() {
+		if errs := validation.Validate(entity, true); !errs.IsEmpty() {
 			l.Error("Failed to validate entity", zap.Error(errs.ToAggregate()))
 			utils.ErrorResponse(w, meta.NewInvalid(types.EntityGR, "", errs))
 			return
