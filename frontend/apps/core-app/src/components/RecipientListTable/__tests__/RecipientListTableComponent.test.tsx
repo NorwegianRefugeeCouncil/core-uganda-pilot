@@ -1,5 +1,5 @@
 import React from 'react';
-import { act, fireEvent, waitFor } from '@testing-library/react-native';
+import { act, fireEvent } from '@testing-library/react-native';
 
 import { render } from '../../../testUtils/render';
 import { RecipientListTableComponent } from '../RecipientListTableComponent';
@@ -55,6 +55,10 @@ const table = {
 };
 
 describe('RecipientListTableComponent', () => {
+  afterEach(() => {
+    jest.resetAllMocks();
+  });
+
   describe('should match the snapshot', () => {
     it('data', () => {
       const { toJSON } = render(
@@ -71,7 +75,7 @@ describe('RecipientListTableComponent', () => {
     it('error', () => {
       const { toJSON } = render(
         <RecipientListTableComponent
-          table={{ rows: [], columns: [], prepareRow: jest.fn() }}
+          table={table}
           onItemClick={jest.fn()}
           title="title"
           error="error message"
@@ -83,7 +87,7 @@ describe('RecipientListTableComponent', () => {
     it('loading', () => {
       const { toJSON } = render(
         <RecipientListTableComponent
-          table={{ rows: [], columns: [], prepareRow: jest.fn() }}
+          table={table}
           onItemClick={jest.fn()}
           title="title"
           error={null}
@@ -101,28 +105,27 @@ describe('RecipientListTableComponent', () => {
         onItemClick={mockClickHandler}
         title="title"
         error={null}
-        loading
+        loading={false}
       />,
     );
     expect(mockPrepareRow).toHaveBeenCalledTimes(1);
   });
 
   it('should call row click handler', () => {
-    const { debug, getByTestId } = render(
+    const { getByTestId } = render(
       <RecipientListTableComponent
         table={table}
         onItemClick={mockClickHandler}
         title="title"
         error={null}
-        loading
+        loading={false}
       />,
     );
 
-    debug();
     const row = getByTestId('recipient-list-table-row-row1');
     act(() => {
       fireEvent.press(row);
     });
-    waitFor(() => expect(mockClickHandler).toHaveBeenCalledWith('row1'));
+    expect(mockClickHandler).toHaveBeenCalledWith('recordId');
   });
 });

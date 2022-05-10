@@ -549,7 +549,7 @@ exports[`RecipientListTableComponent should match the snapshot error 1`] = `
               }
             }
           >
-            0
+            1
           </Text>
         </View>
       </View>
@@ -671,7 +671,7 @@ exports[`RecipientListTableComponent should match the snapshot loading 1`] = `
               }
             }
           >
-            0
+            1
           </Text>
         </View>
       </View>
