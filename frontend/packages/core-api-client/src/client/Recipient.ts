@@ -94,7 +94,7 @@ export class RecipientClient implements RecipientClientDefinition {
     const formResponse = await this.formClient.get({ id: formId });
 
     if (!formResponse.response) {
-      throw new Error(formResponse.error.message);
+      throw new Error(formResponse.error);
     }
 
     const referenceKey = formResponse.response.fields.find(
@@ -108,7 +108,7 @@ export class RecipientClient implements RecipientClientDefinition {
     });
 
     if (!recipientGetResponse.response) {
-      throw new Error(recipientGetResponse.error.message);
+      throw new Error(recipientGetResponse.error);
     }
 
     if (referenceKey) {
@@ -145,7 +145,7 @@ export class RecipientClient implements RecipientClientDefinition {
     const formResponse = await this.formClient.list(undefined);
 
     if (!formResponse.response) {
-      throw new Error(formResponse.error.message);
+      throw new Error(formResponse.error);
     }
 
     const recipientForms = formResponse.response.items

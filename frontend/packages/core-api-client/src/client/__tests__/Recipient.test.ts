@@ -777,7 +777,7 @@ describe('Recipient', () => {
         expect(listSpy).toHaveBeenCalledWith({
           formId: form.id,
           databaseId: form.databaseId,
-          subforms: false,
+          fetchSubforms: false,
         });
         expect(result).toEqual([
           [{ form, record: record1 }],
@@ -802,17 +802,19 @@ describe('Recipient', () => {
           statusCode: 500,
         });
 
-        const result = await client.Recipient.list({
-          formId: form.id,
-          databaseId: form.databaseId,
-        });
-
-        expect(listSpy).toHaveBeenCalledWith({
-          formId: form.id,
-          databaseId: form.databaseId,
-          subforms: false,
-        });
-        expect(result).toEqual('Error Message');
+        try {
+          await client.Recipient.list({
+            formId: form.id,
+            databaseId: form.databaseId,
+          });
+        } catch (e) {
+          expect(listSpy).toHaveBeenCalledWith({
+            formId: form.id,
+            databaseId: form.databaseId,
+            fetchSubforms: false,
+          });
+          expect(e).toEqual(new Error('Error Message'));
+        }
       });
 
       it('should return an error if request unsuccessful', async () => {
@@ -826,15 +828,8 @@ describe('Recipient', () => {
             databaseId: form.databaseId,
           });
         } catch (e) {
-          expect(e).toEqual('Error Message');
+          expect(e).toEqual(new Error('Error Message'));
         }
-
-        // expect(listSpy).toHaveBeenCalledWith({
-        //   formId: form.id,
-        //   databaseId: form.databaseId,
-        //   subforms: false,
-        // });
-        // expect(result).toEqual('Error Message');
       });
     });
   });
