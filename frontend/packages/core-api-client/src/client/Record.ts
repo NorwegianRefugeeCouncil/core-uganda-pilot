@@ -132,13 +132,14 @@ export class RecordClient implements RecordClientDefinition {
     return getResponse.response;
   };
 
-  public list = async (
-    request: RecordListRequest,
-  ): Promise<RecordListResponse> => {
-    const { databaseId, formId } = request;
+  public list = async ({
+    databaseId,
+    formId,
+    fetchSubforms = true,
+  }: RecordListRequest): Promise<RecordListResponse> => {
     const url = `/records?databaseId=${databaseId}&formId=${formId}`;
     const response = await this.restClient.do<RecordListRequest, RecordList>(
-      request,
+      { databaseId, formId },
       url,
       'get',
       undefined,
@@ -146,6 +147,8 @@ export class RecordClient implements RecordClientDefinition {
     );
 
     if (!response.response) return response;
+
+    if (!fetchSubforms) return response;
 
     const recordList = await Promise.all(
       response.response.items.map(async (record) => this.massageRecord(record)),

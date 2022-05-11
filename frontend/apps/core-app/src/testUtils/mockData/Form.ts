@@ -5,11 +5,11 @@ export const makeForm = (
   type: FormType = FormType.DefaultFormType,
   fields: FieldDefinition[] = [],
 ): FormDefinition => ({
-  id: `form${index}`,
+  id: `form-${index}`,
   code: '',
-  name: `form ${index}`,
-  databaseId: 'databaseId',
-  folderId: 'folderId',
+  name: `form-name-${index}`,
+  databaseId: 'database-id',
+  folderId: 'folder-id',
   formType: type,
   fields,
 });

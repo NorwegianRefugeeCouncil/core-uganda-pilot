@@ -1,4 +1,4 @@
-import { FieldDefinition, FieldType } from 'core-api-client';
+import { FieldDefinition, FieldType } from '../../types';
 
 export const makeField = (
   index: number,
@@ -6,9 +6,9 @@ export const makeField = (
   required: boolean,
   type: FieldType,
 ): FieldDefinition => ({
-  id: `field-${index}`,
-  name: `field-name-${index}`,
-  description: `description-${index}`,
+  id: `field${index}`,
+  name: `field ${index}`,
+  description: `description ${index}`,
   code: '',
   required,
   key,

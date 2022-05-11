@@ -1,47 +1,80 @@
-import React from 'react';
-import { FormWithRecord, Record } from 'core-api-client';
+import React, { useEffect } from 'react';
+import { FormDefinition } from 'core-api-client';
 import { useGlobalFilter, useSortBy, useTable } from 'react-table';
+import { useNavigation } from '@react-navigation/native';
+
+import { useAPICall } from '../../hooks/useAPICall';
+import { formsClient } from '../../clients/formsClient';
+import { routes } from '../../constants/routes';
 
 import { RecipientListTableComponent } from './RecipientListTableComponent';
-import { RecipientListTableContext } from './RecipientListTableContext';
 import { createTableColumns } from './createTableColumns';
-import { mapRecordsToRecordTableData } from './mapRecordsToRecordTableData';
+import { mapRecordsToRecipientTableData } from './mapRecordsToRecipientTableData';
 import { RecipientListTableEntry, SortedFilteredTable } from './types';
 
-type Props<T extends Record> = {
-  data: FormWithRecord<T>[][];
-  onItemClick: (id: string) => void;
+type Props = {
+  form: FormDefinition;
+  filter: string;
 };
 
-export const RecipientListTableContainer: React.FC<Props<Record>> = ({
-  data,
-  onItemClick,
+export const RecipientListTableContainer: React.FC<Props> = ({
+  form,
+  filter,
 }) => {
-  const context = React.useContext(RecipientListTableContext);
+  const navigation = useNavigation();
+  const [_, recipientState] = useAPICall(
+    formsClient.Recipient.list,
+    [
+      {
+        formId: form.id,
+        databaseId: form.databaseId,
+      },
+    ],
+    true,
+  );
 
   const memoizedData = React.useMemo(
-    () => mapRecordsToRecordTableData(data),
-    [JSON.stringify(data)],
+    () => mapRecordsToRecipientTableData(recipientState.data || []),
+    [JSON.stringify(recipientState.data)],
   );
   const memoizedColumns = React.useMemo(
-    () => createTableColumns(data),
-    [JSON.stringify(data)],
+    () => createTableColumns(recipientState.data && recipientState.data[0]),
+    [JSON.stringify(recipientState.data)],
   );
 
   const table: SortedFilteredTable<RecipientListTableEntry> = useTable(
     {
       data: memoizedData,
       columns: memoizedColumns,
+      initialState: {
+        hiddenColumns: memoizedColumns
+          .filter((c) => c.hidden)
+          .map((c) => c.accessor),
+      },
     },
     useGlobalFilter,
     useSortBy,
   );
 
-  React.useEffect(() => {
-    if (!context) return;
+  useEffect(() => {
+    table.setGlobalFilter(filter);
+  }, [filter]);
 
-    context.setTableInstance(table);
-  }, [context]);
+  const handleItemClick = (id: string) => {
+    navigation.navigate(routes.recipientsProfile.name, {
+      recordId: id,
+      formId: form.id,
+      databaseId: form.databaseId,
+    });
+  };
 
-  return <RecipientListTableComponent onItemClick={onItemClick} />;
+  return (
+    <RecipientListTableComponent
+      onItemClick={handleItemClick}
+      title={form.name}
+      table={table}
+      error={recipientState.error}
+      loading={recipientState.loading}
+    />
+  );
 };

@@ -12,7 +12,7 @@ export interface RecipientClientDefinition {
     FormWithRecord<Recipient>[],
     FormWithRecord<Recipient>[]
   >;
-  list: DataOperation<FormLookup, RecipientList>;
+  list: DataOperation<FormLookup, FormWithRecord<Recipient>[][]>;
   get: DataOperation<RecordLookup, FormWithRecord<Recipient>[]>;
   getRecipientForms: () => Promise<FormDefinition[]>;
 }

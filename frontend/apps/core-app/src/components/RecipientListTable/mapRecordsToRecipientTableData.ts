@@ -1,9 +1,10 @@
-import { FieldValue, FormWithRecord, Record } from 'core-api-client';
+import { FieldValue, FormWithRecord } from 'core-api-client';
+import { Recipient } from 'core-api-client/src/types/client/Recipient';
 
 import { RecipientListTableEntry } from './types';
 
-export const mapRecordsToRecordTableData = (
-  data: FormWithRecord<Record>[][],
+export const mapRecordsToRecipientTableData = (
+  data: FormWithRecord<Recipient>[][],
 ): RecipientListTableEntry[] => {
   return data.reduce((allEntries: RecipientListTableEntry[], item) => {
     const completeEntry = item.reduce(
@@ -11,7 +12,7 @@ export const mapRecordsToRecordTableData = (
         const partialEntry = formWithRecord.record.values.reduce(
           (pe: RecipientListTableEntry, value: FieldValue) => {
             const field = formWithRecord.form.fields.find((f) => {
-              return !f.key && f.id === value.fieldId;
+              return f.id === value.fieldId;
             });
             if (field) return { ...pe, [field?.id]: value.value };
             return pe;
@@ -20,7 +21,7 @@ export const mapRecordsToRecordTableData = (
         );
         return { ...ce, ...partialEntry };
       },
-      {},
+      { recordId: item[item.length - 1].record.id },
     );
     return allEntries.concat([completeEntry]);
   }, []);

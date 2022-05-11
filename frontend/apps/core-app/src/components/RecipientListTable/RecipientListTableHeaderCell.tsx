@@ -1,8 +1,7 @@
 import { HStack, IconButton, Text } from 'native-base';
 import { Icon } from 'core-design-system';
-import React, { BaseSyntheticEvent, SyntheticEvent } from 'react';
+import React from 'react';
 import { ColumnInstance, UseSortByColumnProps } from 'react-table';
-import { NativeSyntheticEvent, NativeTouchEvent } from 'react-native';
 
 import { RecipientListTableEntry } from './types';
 
@@ -13,6 +12,8 @@ type Props<T extends Record<string, any>> = {
 export const RecipientListTableHeaderCell: React.FC<
   Props<RecipientListTableEntry>
 > = ({ column }) => {
+  // if (!column) return null;
+
   const sortIcon = column.isSorted
     ? column.isSortedDesc
       ? 'more'
@@ -25,11 +26,8 @@ export const RecipientListTableHeaderCell: React.FC<
     <HStack
       width={column.width}
       p="2"
-      borderBottomColor="neutral.400"
-      borderBottomWidth="1"
       alignItems="center"
       justifyContent="space-between"
-      bg="neutral.100"
       flexGrow={1}
     >
       {column.render(Text, {
@@ -43,7 +41,10 @@ export const RecipientListTableHeaderCell: React.FC<
         colorScheme="secondary"
         variant="ghost"
         size="sm"
-        icon={<Icon size={5} name={sortIcon} />}
+        testID="recipient-table-sort-button"
+        icon={
+          <Icon size={5} name={sortIcon} testID={`sort-icon-${sortIcon}`} />
+        }
       />
     </HStack>
   );

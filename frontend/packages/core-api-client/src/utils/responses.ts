@@ -14,9 +14,9 @@ const errorResponse = <TRequest, TBody>(
   return {
     request,
     response: undefined,
-    status: errorResp.response.statusText || '500 Internal Server Error',
-    statusCode: errorResp.response.status || 500,
-    error: errorResp.response.data,
+    status: errorResp.response?.statusText || '500 Internal Server Error',
+    statusCode: errorResp.response?.status || 500,
+    error: errorResp.response?.data,
     success: false,
   };
 };
