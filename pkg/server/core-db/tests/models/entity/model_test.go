@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	coreDBModel "github.com/nrc-no/core/pkg/server/core-db/models"
+	"github.com/nrc-no/core/pkg/server/core-db/models/entity"
 	"github.com/nrc-no/core/pkg/store"
 	"github.com/nrc-no/core/pkg/testutils"
 	"github.com/stretchr/testify/assert"
@@ -12,7 +13,8 @@ import (
 
 type Suite struct {
 	suite.Suite
-	DBFactory store.Factory
+	DBFactory   store.Factory
+	entityModel entity.EntityModel
 }
 
 func (s *Suite) SetupSuite() {
@@ -29,6 +31,8 @@ func (s *Suite) SetupSuite() {
 	}
 
 	s.DBFactory = dbFactory
+
+	s.entityModel = entity.NewEntityPostgresModel(s.DBFactory)
 }
 
 func (s *Suite) BeforeTest(suiteName, testName string) {

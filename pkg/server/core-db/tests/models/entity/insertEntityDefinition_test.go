@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/lib/pq"
-	"github.com/nrc-no/core/pkg/server/core-db/models/entity"
 
 	"github.com/nrc-no/core/pkg/server/core-db/types"
 	uuid "github.com/satori/go.uuid"
@@ -28,8 +27,6 @@ func (s *Suite) TestInsertEntityDefinitionSuccessSingle() {
 		s.T().FailNow()
 	}
 
-	entityStore := entity.NewEntityPostgresModel(s.DBFactory)
-
 	e := types.EntityDefinition{
 		ID:          uuid.NewV4().String(),
 		Name:        "test",
@@ -41,7 +38,7 @@ func (s *Suite) TestInsertEntityDefinitionSuccessSingle() {
 		},
 	}
 
-	createdEntity, err := entityStore.InsertEntityDefinition(ctx, db, e)
+	createdEntity, err := s.entityModel.InsertEntityDefinition(ctx, db, e)
 
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
@@ -73,8 +70,6 @@ func (s *Suite) TestInsertEntityDefinitionSuccessMultiple() {
 		s.T().FailNow()
 	}
 
-	entityStore := entity.NewEntityPostgresModel(s.DBFactory)
-
 	e1 := types.EntityDefinition{
 
 		ID:          uuid.NewV4().String(),
@@ -98,14 +93,14 @@ func (s *Suite) TestInsertEntityDefinitionSuccessMultiple() {
 		},
 	}
 
-	createdEntity1, err := entityStore.InsertEntityDefinition(ctx, db, e1)
+	createdEntity1, err := s.entityModel.InsertEntityDefinition(ctx, db, e1)
 
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
 		return
 	}
 
-	createdEntity2, err := entityStore.InsertEntityDefinition(ctx, db, e2)
+	createdEntity2, err := s.entityModel.InsertEntityDefinition(ctx, db, e2)
 
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
@@ -148,15 +143,13 @@ func (s *Suite) TestInsertEntityDefinitionSuccessMissingConstraint() {
 		s.T().FailNow()
 	}
 
-	entityStore := entity.NewEntityPostgresModel(s.DBFactory)
-
 	e := types.EntityDefinition{
 		ID:          uuid.NewV4().String(),
 		Name:        "test",
 		Description: "test",
 	}
 
-	createdEntity, err := entityStore.InsertEntityDefinition(ctx, db, e)
+	createdEntity, err := s.entityModel.InsertEntityDefinition(ctx, db, e)
 
 	if !assert.NoError(s.T(), err) {
 		s.T().FailNow()
@@ -188,8 +181,6 @@ func (s *Suite) TestInsertEntityDefinitionFailInvalidUUID() {
 		s.T().FailNow()
 	}
 
-	entityStore := entity.NewEntityPostgresModel(s.DBFactory)
-
 	e := types.EntityDefinition{
 		ID:          "not-a-uuid",
 		Name:        "test",
@@ -201,7 +192,7 @@ func (s *Suite) TestInsertEntityDefinitionFailInvalidUUID() {
 		},
 	}
 
-	_, err = entityStore.InsertEntityDefinition(ctx, db, e)
+	_, err = s.entityModel.InsertEntityDefinition(ctx, db, e)
 
 	assert.Error(s.T(), err)
 
