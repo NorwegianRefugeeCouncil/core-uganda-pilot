@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/nrc-no/core/pkg/logging"
+	coreDBModel "github.com/nrc-no/core/pkg/server/core-db/models"
 	loginstore "github.com/nrc-no/core/pkg/server/login/store"
 	"github.com/nrc-no/core/pkg/store"
 	"github.com/spf13/cobra"
@@ -34,6 +35,10 @@ var migrateCmd = &cobra.Command{
 		}
 		if err := loginstore.Migrate(db); err != nil {
 			l.Error("failed to migrate login store", zap.Error(err))
+			return err
+		}
+		if err := coreDBModel.Migrate(db); err != nil {
+			l.Error("failed to migrate core DB store", zap.Error(err))
 			return err
 		}
 		l.Info("successfully applied migrations")

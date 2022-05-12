@@ -56,6 +56,7 @@ type ServeOptions struct {
 	AuthnzApi     ServerOptions `mapstructure:"authnz_api"`
 	Login         ServerOptions `mapstructure:"login"`
 	AuthnzBouncer ServerOptions `mapstructure:"authnz_bouncer"`
+	CoreDBApi     ServerOptions `mapstructure:"core_db_api"`
 }
 
 type CertOptions struct {

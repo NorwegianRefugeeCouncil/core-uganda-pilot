@@ -6,7 +6,14 @@ import (
 	"crypto/x509"
 	"encoding/json"
 	"fmt"
-	"github.com/dustinkirkland/golang-petname"
+	"math/rand"
+	"os"
+	"os/exec"
+	"path"
+	"path/filepath"
+	"time"
+
+	petname "github.com/dustinkirkland/golang-petname"
 	"github.com/manifoldco/promptui"
 	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/nrc-no/core/pkg/server/options"
@@ -18,12 +25,6 @@ import (
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 	"gopkg.in/yaml.v3"
-	"math/rand"
-	"os"
-	"os/exec"
-	"path"
-	"path/filepath"
-	"time"
 )
 
 var (
@@ -36,6 +37,7 @@ var (
 	CoreAppFrontendDir   string
 	CoreAdminFrontendDir string
 	CoreFormsApiDir      string
+	CoreDBApiDir         string
 	CoreAuthnzApiDir     string
 	CoreAuthnzBouncerDir string
 	LoginDir             string
@@ -130,6 +132,8 @@ type Config struct {
 	coreApiHashKey            string
 	coreFormsApiTlsCert       *x509.Certificate
 	coreFormsApiTlsKey        *rsa.PrivateKey
+	coreDBApiTlsCert          *x509.Certificate
+	coreDBApiTlsKey           *rsa.PrivateKey
 	coreAppFrontendClientId   string
 	coreAppFrontendTlsCert    *x509.Certificate
 	coreAppFrontendTlsKey     *rsa.PrivateKey
@@ -258,6 +262,7 @@ func createConfig() (*Config, error) {
 		config.makeLogin,
 		config.makeHydra,
 		config.makeCoreFormsApi,
+		config.makeCoreDBApi,
 		config.makeCoreAuthnzApi,
 		config.makeAppFrontend,
 		config.makeAdminFrontend,
@@ -460,6 +465,7 @@ func init() {
 	CoreAppFrontendDir = path.Join(CoreDir, "app_frontend")
 	CoreAdminFrontendDir = path.Join(CoreDir, "admin_frontend")
 	CoreFormsApiDir = path.Join(CoreDir, "forms_api")
+	CoreDBApiDir = path.Join(CoreDir, "core_db_api")
 	CoreAuthnzApiDir = path.Join(CoreDir, "authnz_api")
 	CoreAuthnzBouncerDir = path.Join(CoreDir, "authnz_bouncer")
 }

@@ -2,10 +2,14 @@ package testutils
 
 import (
 	"fmt"
+	"testing"
+	"time"
+
 	embeddedpostgres "github.com/fergusstrange/embedded-postgres"
 	"github.com/juju/fslock"
+	"github.com/nrc-no/core/pkg/store"
+	"github.com/stretchr/testify/assert"
 	"gopkg.in/matryer/try.v1"
-	"time"
 )
 
 // lock is a file lock. This is needed because the go tests do not actually
@@ -56,4 +60,22 @@ func TryGetPostgres() (func(), error) {
 
 	return done, nil
 
+}
+
+func SetupPostgres(t *testing.T) store.Factory {
+	done, err := TryGetPostgres()
+
+	if !assert.NoError(t, err) {
+		t.FailNow()
+	}
+
+	t.Cleanup(done)
+
+	dbFactory, err := store.NewFactory("postgres://postgres:postgres@localhost:15432/postgres?sslmode=disable")
+
+	if !assert.NoError(t, err) {
+		t.FailNow()
+	}
+
+	return dbFactory
 }
