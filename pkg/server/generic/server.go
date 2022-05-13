@@ -4,6 +4,13 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net"
+	"net/http"
+	"reflect"
+	"strconv"
+	"strings"
+	"time"
+
 	"github.com/boj/redistore"
 	restfulspec "github.com/emicklei/go-restful-openapi/v2"
 	"github.com/emicklei/go-restful/v3"
@@ -18,11 +25,6 @@ import (
 	"github.com/rs/cors"
 	"go.uber.org/zap"
 	"gopkg.in/matryer/try.v1"
-	"net"
-	"net/http"
-	"reflect"
-	"strings"
-	"time"
 )
 
 type Server struct {
@@ -246,6 +248,12 @@ func (g Server) SessionStore() sessions.Store {
 
 func (g Server) Address() string {
 	return g.address
+}
+
+func (g Server) Port() int {
+	parts := strings.Split(g.address, ":")
+	port, _ := strconv.Atoi(parts[len(parts)-1])
+	return port
 }
 
 func (g Server) Start(ctx context.Context) {
