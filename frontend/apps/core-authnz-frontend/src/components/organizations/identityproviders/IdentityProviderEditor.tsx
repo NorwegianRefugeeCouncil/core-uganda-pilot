@@ -1,9 +1,9 @@
-import { FC, useCallback, useEffect, useMemo } from 'react';
+import { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import classNames from 'classnames';
 
 import { useApiClient, useFormValidation } from '../../../hooks/hooks';
-import { Organization } from '../../../types/types';
+import { IdentityProvider, Organization } from '../../../types/types';
 
 type Props = {
   id?: string;
@@ -17,6 +17,8 @@ type FormData = {
   clientSecret: string;
   organizationId: string;
   emailDomain: string;
+  scopes: string;
+  claim: { Version: string; Mappings: any };
 };
 
 export const IdentityProviderEditor: FC<Props> = (props) => {
@@ -28,6 +30,8 @@ export const IdentityProviderEditor: FC<Props> = (props) => {
 
   const form = useForm<FormData>({ mode: 'onChange' });
 
+  const [version, setVersion] = useState<string>('0');
+
   const {
     register,
     handleSubmit,
@@ -37,24 +41,33 @@ export const IdentityProviderEditor: FC<Props> = (props) => {
 
   const { fieldErrors, fieldClasses } = useFormValidation(isNew, form);
 
+  const setData = (data: IdentityProvider) => {
+    setValue('name', data.name);
+    setValue('clientId', data.clientId);
+    setValue('organizationId', data.organizationId);
+    setValue('issuer', data.domain);
+    setValue('emailDomain', data.emailDomain);
+    setValue('clientSecret', '');
+    setValue('scopes', data.scopes);
+    setValue('claim.Mappings', JSON.stringify(data.claim.Mappings));
+    setVersion(data.claim.Version);
+  };
+
   useEffect(() => {
     if (id) {
       apiClient.getIdentityProvider({ id }).then((resp) => {
         if (resp.response) {
-          setValue('name', resp.response.name);
-          setValue('clientId', resp.response.clientId);
-          setValue('organizationId', resp.response.organizationId);
-          setValue('issuer', resp.response.domain);
-          setValue('emailDomain', resp.response.emailDomain);
-          setValue('clientSecret', '');
+          setData(resp.response);
         }
       });
     }
   }, [apiClient, id, setValue]);
 
   const onSubmit = useCallback(
-    (args: FormData) => {
-      const obj = {
+    async (args: FormData) => {
+      const newVersion = `${parseInt(version, 10) + 1}`;
+
+      const object = {
         id,
         name: args.name,
         clientId: args.clientId,
@@ -62,23 +75,35 @@ export const IdentityProviderEditor: FC<Props> = (props) => {
         domain: args.issuer,
         organizationId: organization.id,
         emailDomain: args.emailDomain,
+        scopes: args.scopes,
+        claim: {
+          Version: newVersion,
+          Mappings: JSON.parse(args.claim.Mappings),
+        },
       };
+      let resp;
       if (id) {
-        return apiClient.updateIdentityProvider({
-          object: obj,
+        resp = await apiClient.updateIdentityProvider({
+          object,
+        });
+      } else {
+        resp = await apiClient.createIdentityProvider({
+          object,
         });
       }
-      return apiClient.createIdentityProvider({
-        object: obj,
-      });
+      return resp.response && setData(resp.response);
     },
-    [apiClient, id, organization.id],
+    [apiClient, id, organization.id, version],
   );
 
   return (
     <div className={classNames('card bg-dark border-secondary')}>
       <div className="card-body">
-        <form className="needs-validation" noValidate onSubmit={handleSubmit(onSubmit)}>
+        <form
+          className="needs-validation"
+          noValidate
+          onSubmit={handleSubmit(onSubmit)}
+        >
           <div className={classNames('form-group mb-2')}>
             <label className="form-label text-light">Name</label>
             <input
@@ -86,7 +111,10 @@ export const IdentityProviderEditor: FC<Props> = (props) => {
                 required: true,
                 pattern: /^[a-zA-Z0-9\-_ ]+$/,
               })}
-              className={classNames('form-control form-control-darkula', fieldClasses('name'))}
+              className={classNames(
+                'form-control form-control-darkula',
+                fieldClasses('name'),
+              )}
             />
             {fieldErrors('name')}
           </div>
@@ -97,7 +125,10 @@ export const IdentityProviderEditor: FC<Props> = (props) => {
                 required: true,
                 pattern: /^https?:\/\/[a-zA-Z0-9.\-_]+(:[0-9]+)?$/,
               })}
-              className={classNames('form-control form-control-darkula', fieldClasses('issuer'))}
+              className={classNames(
+                'form-control form-control-darkula',
+                fieldClasses('issuer'),
+              )}
             />
             {fieldErrors('issuer')}
           </div>
@@ -107,7 +138,10 @@ export const IdentityProviderEditor: FC<Props> = (props) => {
               {...register('emailDomain', {
                 required: true,
               })}
-              className={classNames('form-control form-control-darkula', fieldClasses('emailDomain'))}
+              className={classNames(
+                'form-control form-control-darkula',
+                fieldClasses('emailDomain'),
+              )}
             />
             {fieldErrors('emailDomain')}
           </div>
@@ -117,7 +151,10 @@ export const IdentityProviderEditor: FC<Props> = (props) => {
               {...register('clientId', {
                 required: true,
               })}
-              className={classNames('form-control form-control-darkula', fieldClasses('clientId'))}
+              className={classNames(
+                'form-control form-control-darkula',
+                fieldClasses('clientId'),
+              )}
             />
             {fieldErrors('clientId')}
           </div>
@@ -128,11 +165,45 @@ export const IdentityProviderEditor: FC<Props> = (props) => {
               {...register('clientSecret', {
                 required: isNew,
               })}
-              className={classNames('form-control form-control-darkula', fieldClasses('clientSecret'))}
+              className={classNames(
+                'form-control form-control-darkula',
+                fieldClasses('clientSecret'),
+              )}
               placeholder={isNew ? '' : '********'}
             />
             {fieldErrors('clientSecret')}
           </div>
+
+          <div className="form-group mb-2">
+            <label className="form-label text-light">Scopes</label>
+            <input
+              {...register('scopes', {
+                required: true,
+              })}
+              className={classNames(
+                'form-control form-control-darkula',
+                fieldClasses('scopes'),
+              )}
+            />
+            {fieldErrors('scopes')}
+          </div>
+
+          <div className="form-group mb-2">
+            <label className="form-label text-light">
+              Claim Mapping (Version: {version})
+            </label>
+            <textarea
+              {...register('claim.Mappings', {
+                required: true,
+              })}
+              className={classNames(
+                'form-control form-control-darkula',
+                fieldClasses('claim.Mappings'),
+              )}
+            />
+          </div>
+          {fieldErrors('claim')}
+
           <button disabled={isSubmitting} className="btn btn-success mt-2">
             {props.id ? 'Update Identity Provider' : 'Create Identity Provider'}
           </button>

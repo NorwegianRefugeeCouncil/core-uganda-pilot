@@ -1,4 +1,4 @@
-import { FC, Fragment } from 'react';
+import { FC } from 'react';
 import { Link, useRouteMatch } from 'react-router-dom';
 
 import { Organization } from '../../../types/types';
@@ -23,11 +23,22 @@ export const IdentityProviders: FC<Props> = (props) => {
 
       <div className="list-group list-group-darkula">
         {idps.map((idp) => (
-          <Link className="list-group-item list-group-item-action" to={`${match.url}/${idp.id}`}>
-            {idp.name} <span className="badge bg-dark font-monospace">{idp.emailDomain}</span>
+          <Link
+            key={idp.id}
+            className="list-group-item list-group-item-action"
+            to={`${match.url}/${idp.id}`}
+          >
+            {idp.name}{' '}
+            <span className="badge bg-dark font-monospace">
+              {idp.emailDomain}
+            </span>
           </Link>
         ))}
-        {idps.length === 0 ? <div className="disabled list-group-item">No Identity Provider</div> : <></>}
+        {idps.length === 0 ? (
+          <div className="disabled list-group-item">No Identity Provider</div>
+        ) : (
+          <></>
+        )}
       </div>
     </div>
   );
