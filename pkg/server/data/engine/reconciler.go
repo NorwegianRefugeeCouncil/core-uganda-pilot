@@ -150,7 +150,7 @@ func (r *reconciler) Reconcile(ctx context.Context, source api.ReadInterface, de
 		}
 	}
 
-	changes, err := source.GetChangeStream(ctx, api.GetChangesRequest{Since: checkpoint})
+	changes, err := source.GetChanges(ctx, api.GetChangesRequest{Since: checkpoint})
 	if err != nil {
 		return err
 	}

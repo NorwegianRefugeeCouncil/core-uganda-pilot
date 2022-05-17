@@ -11,7 +11,7 @@ import (
 
 func getChanges(e api.Engine, request api.GetChangesRequest) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		changeStream, err := e.GetChangeStream(req.Context(), request)
+		changeStream, err := e.GetChanges(req.Context(), request)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return

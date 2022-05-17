@@ -116,7 +116,7 @@ func (e *engine) CreateTable(ctx context.Context, table api.Table) (api.Table, e
 }
 
 // GetChangeStream implements Engine.GetChanges
-func (e *engine) GetChangeStream(ctx context.Context, request api.GetChangesRequest) (api.Changes, error) {
+func (e *engine) GetChanges(ctx context.Context, request api.GetChangesRequest) (api.Changes, error) {
 	ret, err := e.doTransaction(ctx, func(tx api.Transaction) (interface{}, error) {
 		return e.getChangeStreamInternal(tx, ctx, request.Since)
 	})

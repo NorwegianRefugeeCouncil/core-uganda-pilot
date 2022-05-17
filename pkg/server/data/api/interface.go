@@ -17,7 +17,7 @@ type ReadInterface interface {
 	// If the record does not exist, an error is returned.
 	GetRecord(ctx context.Context, request GetRecordRequest) (Record, error)
 	// GetChangeStream gets a change stream for a table
-	GetChangeStream(ctx context.Context, request GetChangesRequest) (Changes, error)
+	GetChanges(ctx context.Context, request GetChangesRequest) (Changes, error)
 }
 
 type PutRecordRequest struct {
