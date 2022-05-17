@@ -14,9 +14,8 @@ type GetChangesRequest struct {
 
 type ReadInterface interface {
 	// GetRecord gets a single record from the database.
-	// If the record does not exist, an error is returned.
 	GetRecord(ctx context.Context, request GetRecordRequest) (Record, error)
-	// GetChangeStream gets a change stream for a table
+	// GetChanges gets a change stream for a table
 	GetChanges(ctx context.Context, request GetChangesRequest) (Changes, error)
 }
 
