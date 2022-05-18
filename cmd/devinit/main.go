@@ -329,7 +329,7 @@ func createIdentityProviders(factory store.Factory, err error, orgId string, env
 		ClientID:       envCfg.idpClientId,
 		ClientSecret:   envCfg.idpClientSecret,
 		EmailDomain:    "nrc.no",
-		Scopes: 		"profile",
+		Scopes: 		"openid profile offline_access",
 		Claim: 			types.Claim{Mappings: nil, Version: "0"},
 	}
 	if len(idps) == 0 {
