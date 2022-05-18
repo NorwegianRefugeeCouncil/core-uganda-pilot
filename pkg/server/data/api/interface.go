@@ -8,15 +8,41 @@ type GetRecordRequest struct {
 	Revision  Revision
 }
 
+type GetRecordsRequest struct {
+	TableName string   `json:"table"`
+	RecordIDs []string `json:"recordIds"`
+	Revisions bool     `json:"revisions"`
+}
+
 type GetChangesRequest struct {
 	Since int64
+}
+
+type GetTablesRequest struct{}
+
+type GetTableRequest struct {
+	TableName string `json:"tableName"`
+}
+
+type GetTablesResponseItem struct {
+	Name string `json:"name"`
+}
+
+type GetTablesResponse struct {
+	Items []GetTablesResponseItem `json:"items"`
 }
 
 type ReadInterface interface {
 	// GetRecord gets a single record from the database.
 	GetRecord(ctx context.Context, request GetRecordRequest) (Record, error)
+	// GetRecords gets multiple records from the database.
+	GetRecords(ctx context.Context, request GetRecordsRequest) (RecordList, error)
 	// GetChanges gets a change stream for a table
 	GetChanges(ctx context.Context, request GetChangesRequest) (Changes, error)
+	// GetTables gets a list of tables in the database
+	GetTables(ctx context.Context, request GetTablesRequest) (GetTablesResponse, error)
+	// GetTable gets a table definition
+	GetTable(ctx context.Context, request GetTableRequest) (Table, error)
 }
 
 type PutRecordRequest struct {

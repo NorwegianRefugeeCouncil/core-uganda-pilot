@@ -10,19 +10,21 @@ import (
 	"github.com/nrc-no/core/pkg/server/data/api"
 )
 
-func putRow(e api.Engine) http.Handler {
+func putRecord(e api.Engine) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		var request api.PutRecordRequest
+		var record api.Record
 		bodyBytes, err := ioutil.ReadAll(req.Body)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		if err := json.Unmarshal(bodyBytes, &request); err != nil {
+		if err := json.Unmarshal(bodyBytes, &record); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
-		ret, err := e.PutRecord(req.Context(), request)
+		ret, err := e.PutRecord(req.Context(), api.PutRecordRequest{
+			Record: record,
+		})
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -39,8 +41,8 @@ func putRow(e api.Engine) http.Handler {
 	})
 }
 
-func restfulPutRow(engine api.Engine) func(req *restful.Request, resp *restful.Response) {
+func restfulPutRecord(engine api.Engine) func(req *restful.Request, resp *restful.Response) {
 	return func(req *restful.Request, resp *restful.Response) {
-		putRow(engine).ServeHTTP(resp.ResponseWriter, req.Request)
+		putRecord(engine).ServeHTTP(resp.ResponseWriter, req.Request)
 	}
 }

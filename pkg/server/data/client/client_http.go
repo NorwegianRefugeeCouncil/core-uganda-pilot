@@ -14,10 +14,13 @@ type httpClient struct {
 }
 
 type HTTPClient interface {
-	GetRecord(ctx context.Context, request api.GetRecordRequest) (api.Record, error)
-	PutRecord(ctx context.Context, request api.PutRecordRequest) (api.Record, error)
 	CreateTable(ctx context.Context, request api.Table) (api.Table, error)
+	GetRecord(ctx context.Context, request api.GetRecordRequest) (api.Record, error)
+	GetRecords(ctx context.Context, request api.GetRecordsRequest) (api.RecordList, error)
+	GetTables(ctx context.Context, request api.GetTablesRequest) (api.GetTablesResponse, error)
+	GetTable(ctx context.Context, request api.GetTableRequest) (api.Table, error)
 	GetChanges(ctx context.Context, request api.GetChangesRequest) (api.Changes, error)
+	PutRecord(ctx context.Context, request api.PutRecordRequest) (api.Record, error)
 }
 
 func NewClient(baseURL string) HTTPClient {
@@ -33,6 +36,34 @@ func (c *httpClient) GetRecord(ctx context.Context, request api.GetRecordRequest
 		URL(c.baseURL+"/apis/data.nrc.no/v1/tables/"+request.TableName+"/records/"+request.RecordID).
 		WithHeader("Accept", "application/json").
 		WithQueryParam("revision", request.Revision.String()).
+		Do(ctx).Into(&response)
+	return response, err
+}
+
+func (c *httpClient) GetTables(ctx context.Context, _ api.GetTablesRequest) (api.GetTablesResponse, error) {
+	var response api.GetTablesResponse
+	err := c.client.Get().
+		URL(c.baseURL+"/apis/data.nrc.no/v1/tables").
+		WithHeader("Accept", "application/json").
+		Do(ctx).Into(&response)
+	return response, err
+}
+
+func (c *httpClient) GetTable(ctx context.Context, request api.GetTableRequest) (api.Table, error) {
+	var response api.Table
+	err := c.client.Get().
+		URL(c.baseURL+"/apis/data.nrc.no/v1/tables/"+request.TableName).
+		WithHeader("Accept", "application/json").
+		Do(ctx).Into(&response)
+	return response, err
+}
+
+func (c *httpClient) GetRecords(ctx context.Context, request api.GetRecordsRequest) (api.RecordList, error) {
+	var response api.RecordList
+	err := c.client.Get().
+		URL(c.baseURL+"/apis/data.nrc.no/v1/tables/"+request.TableName+"/records").
+		WithHeader("Accept", "application/json").
+		WithQueryParam("revisions", strconv.FormatBool(request.Revisions)).
 		Do(ctx).Into(&response)
 	return response, err
 }

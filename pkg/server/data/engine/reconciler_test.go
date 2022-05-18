@@ -51,7 +51,7 @@ func (s *ReconcilerSuite) TestReconcileRecordFromSource() {
 	r := &reconciler{}
 
 	for _, e := range []api.Engine{s.source.Engine, s.destination.Engine} {
-		if err := e.CreateTable(ctx, api.Table{
+		if _, err := e.CreateTable(ctx, api.Table{
 			Name: "test",
 			Columns: []api.Column{
 				{

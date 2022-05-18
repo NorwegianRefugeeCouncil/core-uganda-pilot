@@ -31,7 +31,7 @@ func NewServer(options Options) (*Server, error) {
 	}
 
 	// create the database connection
-	db, err := sqlx.ConnectContext(ctx, "sqlite3", ":memory:")
+	db, err := sqlx.ConnectContext(ctx, "sqlite3", "test.db")
 	if err != nil {
 		return nil, err
 	}

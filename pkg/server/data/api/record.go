@@ -39,6 +39,10 @@ type Record struct {
 	Attributes       Attributes `json:"attributes"`
 }
 
+type RecordList struct {
+	Items []Record `json:"items"`
+}
+
 func (r *Record) UnmarshalJSON(data []byte) error {
 	type record struct {
 		ID         string     `json:"id"`
@@ -116,7 +120,7 @@ type Table struct {
 	// Columns of the table
 	Columns []Column `json:"columns"`
 	// Constraints of the table
-	Constraints []TableConstraint `json:"constraints"`
+	Constraints []TableConstraint `json:"constraints,omitempty"`
 }
 
 func (t Table) String() string {
@@ -151,9 +155,9 @@ type Column struct {
 	// Type is the data type of the column
 	Type string `json:"type"`
 	// Default value of the column
-	Default string `json:"default"`
+	Default string `json:"default,omitempty"`
 	// Constraints of the column
-	Constraints []ColumnConstraint `json:"constraints"`
+	Constraints []ColumnConstraint `json:"constraints,omitempty"`
 }
 
 // ColumnConstraint represents a SQL column constraint

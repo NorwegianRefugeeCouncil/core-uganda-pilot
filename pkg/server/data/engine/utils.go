@@ -27,6 +27,14 @@ func joinStrings(strings []string, separator string) string {
 	return b.String()
 }
 
+func repeatStrings(str string, n int) []string {
+	var ret []string
+	for i := 0; i < n; i++ {
+		ret = append(ret, str)
+	}
+	return ret
+}
+
 // StringBuilder is a simple string builder
 // it is a zero-dependant version of strings.Builder
 type StringBuilder struct {

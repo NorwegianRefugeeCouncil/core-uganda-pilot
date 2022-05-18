@@ -103,3 +103,33 @@ serve:
       enabled: true
       exposed_headers:
         - Location
+  data:
+    host: "127.0.0.1"
+    port: "9005"
+    tls:
+      enabled: true
+      cert:
+        path: creds/core/data/tls.crt
+      key:
+        path: creds/core/data/tls.key
+    cors:
+      allowed_origins:
+        - https://localhost:3001
+        - http://localhost:3001
+        - https://localhost:3000
+        - http://localhost:3000
+      allow_credentials: true
+      allowed_headers:
+        - Authorization
+        - Content-Type
+        - Accept
+      allowed_methods:
+        - "GET"
+        - "POST"
+        - "PUT"
+        - "OPTIONS"
+        - "DELETE"
+      debug: true
+      enabled: true
+      exposed_headers:
+        - Location

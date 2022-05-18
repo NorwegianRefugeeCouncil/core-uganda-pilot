@@ -2,16 +2,15 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 
 	"github.com/emicklei/go-restful/v3"
 	"github.com/nrc-no/core/pkg/server/data/api"
 )
 
-func getRow(e api.Engine, request api.GetRecordRequest) http.Handler {
+func getRecords(e api.Engine, request api.GetRecordsRequest) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
-		rec, err := e.GetRecord(req.Context(), request)
+		rec, err := e.GetRecords(req.Context(), request)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -23,23 +22,17 @@ func getRow(e api.Engine, request api.GetRecordRequest) http.Handler {
 		}
 		header := w.Header()
 		header.Set("Content-Type", "application/json")
-		header.Set("ETag", fmt.Sprintf("%s", rec.Revision.String()))
 		w.Write(responseBytes)
 	})
 }
 
-func restfulGetRow(e api.Engine) func(req *restful.Request, resp *restful.Response) {
+func restfulGetRecords(e api.Engine) func(req *restful.Request, resp *restful.Response) {
 	return func(req *restful.Request, resp *restful.Response) {
-		rev, err := api.ParseRevision(req.QueryParameter(queryParamRev))
-		if err != nil {
-			http.Error(resp.ResponseWriter, err.Error(), http.StatusBadRequest)
-			return
-		}
-		var request = api.GetRecordRequest{
-			RecordID:  req.PathParameter(pathParamId),
+		revStr := req.QueryParameter("revisions")
+		var request = api.GetRecordsRequest{
 			TableName: req.PathParameter(pathParamTable),
-			Revision:  rev,
+			Revisions: revStr == "true",
 		}
-		getRow(e, request).ServeHTTP(resp.ResponseWriter, req.Request)
+		getRecords(e, request).ServeHTTP(resp.ResponseWriter, req.Request)
 	}
 }

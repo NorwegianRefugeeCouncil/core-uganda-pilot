@@ -57,6 +57,30 @@ func NewHandler(engine api.Engine) *Handler {
 		To(restfulPutTable(engine)).
 		Returns(http.StatusOK, "OK", api.Table{}))
 
+	ws.Route(ws.GET("/tables").
+		Operation("GetTables").
+		Doc("Gets tables").
+		Writes(api.TableList{}).
+		Produces("application/json").
+		To(restfulGetTables(engine)).
+		Returns(http.StatusOK, "OK", api.TableList{}))
+
+	ws.Route(ws.GET("/tables/{"+pathParamTable+"}").
+		Operation("GetTable").
+		Doc("Get Table").
+		Writes(api.Table{}).
+		Produces("application/json").
+		To(restfulGetTable(engine)).
+		Returns(http.StatusOK, "OK", api.Table{}))
+
+	ws.Route(ws.GET("/tables/{"+pathParamTable+"}/records").
+		Operation("GetRecords").
+		Doc("Gets Records").
+		Writes(api.RecordList{}).
+		Produces("application/json").
+		To(restfulGetRecords(engine)).
+		Returns(http.StatusOK, "OK", api.RecordList{}))
+
 	ws.Route(ws.GET(fmt.Sprintf("/tables/{%s}/records/{%s}", pathParamTable, pathParamId)).
 		Operation("GetRecord").
 		Doc("Gets a record").
@@ -74,7 +98,7 @@ func NewHandler(engine api.Engine) *Handler {
 			QueryParameter(queryParamRev, "revision").
 			DataType(stringDataType).
 			Required(false)).
-		To(restfulGetRow(engine)).
+		To(restfulGetRecord(engine)).
 		Returns(http.StatusOK, "OK", api.Record{}))
 
 	ws.Route(ws.PUT(fmt.Sprintf(`/tables/{%s}/records/{%s}`, pathParamTable, pathParamId)).
@@ -96,7 +120,7 @@ func NewHandler(engine api.Engine) *Handler {
 			QueryParameter(queryParamIsReplication, "is this a new record?").
 			DataType(booleanDataType).
 			Required(false)).
-		To(restfulPutRow(engine)).
+		To(restfulPutRecord(engine)).
 		Returns(http.StatusOK, "OK", api.Record{}))
 
 	ws.Route(ws.GET("/changes").

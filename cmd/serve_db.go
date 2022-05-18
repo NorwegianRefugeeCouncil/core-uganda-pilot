@@ -14,7 +14,7 @@ var serveDataCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if err := serveDb(ctx,
 			data.Options{
-				ServerOptions: coreOptions.Serve.Login,
+				ServerOptions: coreOptions.Serve.Data,
 			}); err != nil {
 			return err
 		}
