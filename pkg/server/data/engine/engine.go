@@ -89,6 +89,62 @@ func (e *engine) GetRecord(ctx context.Context, request api.GetRecordRequest) (a
 	return ret.(api.Record), nil
 }
 
+// GetRecords implements Engine.GetRecords
+func (e *engine) GetRecords(ctx context.Context, request api.GetRecordsRequest) (api.RecordList, error) {
+	ret, err := e.doTransaction(ctx, func(t api.Transaction) (interface{}, error) {
+		return e.getRecords(ctx, t, request)
+	})
+	if err != nil {
+		return api.RecordList{}, err
+	}
+	return ret.(api.RecordList), nil
+}
+
+// CreateTable implements Engine.CreateTable
+func (e *engine) CreateTable(ctx context.Context, table api.Table) (api.Table, error) {
+	_, err := e.doTransaction(ctx, func(tx api.Transaction) (interface{}, error) {
+		err := e.createTable(ctx, tx, table)
+		if err != nil {
+			return nil, err
+		}
+		return nil, nil
+	})
+	return table, err
+}
+
+// GetChanges implements Engine.GetChanges
+func (e *engine) GetChanges(ctx context.Context, request api.GetChangesRequest) (api.Changes, error) {
+	ret, err := e.doTransaction(ctx, func(tx api.Transaction) (interface{}, error) {
+		return e.getChanges(tx, ctx, request.Since)
+	})
+	if err != nil {
+		return api.Changes{}, err
+	}
+	return ret.(api.Changes), nil
+}
+
+// GetTables implements Engine.GetTables
+func (e *engine) GetTables(ctx context.Context, request api.GetTablesRequest) (api.GetTablesResponse, error) {
+	ret, err := e.doTransaction(ctx, func(tx api.Transaction) (interface{}, error) {
+		return e.getTables(ctx, tx)
+	})
+	if err != nil {
+		return api.GetTablesResponse{}, err
+	}
+	return ret.(api.GetTablesResponse), nil
+}
+
+// GetTable implements Engine.GetTable
+func (e *engine) GetTable(ctx context.Context, request api.GetTableRequest) (api.Table, error) {
+	ret, err := e.doTransaction(ctx, func(tx api.Transaction) (interface{}, error) {
+		return e.getTable(ctx, tx, request.TableName)
+	})
+	if err != nil {
+		return api.Table{}, err
+	}
+	return ret.(api.Table), nil
+}
+
 func (e *engine) getRevision(ctx context.Context, tx api.Transaction, request api.GetRecordRequest) (interface{}, error) {
 	found, err := e.findRevision(ctx, tx, request.TableName, request.RecordID, request.Revision)
 	if err != nil {
@@ -109,16 +165,6 @@ func (e *engine) getLatestRevision(ctx context.Context, tx api.Transaction, requ
 		return api.Record{}, api.ErrRecordNotFound
 	}
 	return *found, nil
-}
-
-func (e *engine) GetRecords(ctx context.Context, request api.GetRecordsRequest) (api.RecordList, error) {
-	ret, err := e.doTransaction(ctx, func(t api.Transaction) (interface{}, error) {
-		return e.getRecords(ctx, t, request)
-	})
-	if err != nil {
-		return api.RecordList{}, err
-	}
-	return ret.(api.RecordList), nil
 }
 
 func (e *engine) getRecords(ctx context.Context, tx api.Transaction, request api.GetRecordsRequest) (api.RecordList, error) {
@@ -192,49 +238,6 @@ GROUP BY ` + api.KeyRecordID + `
 
 	return api.RecordList{Items: records}, nil
 
-}
-
-// CreateTable implements Engine.CreateTable
-func (e *engine) CreateTable(ctx context.Context, table api.Table) (api.Table, error) {
-	_, err := e.doTransaction(ctx, func(tx api.Transaction) (interface{}, error) {
-		err := e.createTable(ctx, tx, table)
-		if err != nil {
-			return nil, err
-		}
-		return nil, nil
-	})
-	return table, err
-}
-
-// GetChanges implements Engine.GetChanges
-func (e *engine) GetChanges(ctx context.Context, request api.GetChangesRequest) (api.Changes, error) {
-	ret, err := e.doTransaction(ctx, func(tx api.Transaction) (interface{}, error) {
-		return e.getChanges(tx, ctx, request.Since)
-	})
-	if err != nil {
-		return api.Changes{}, err
-	}
-	return ret.(api.Changes), nil
-}
-
-func (e *engine) GetTables(ctx context.Context, request api.GetTablesRequest) (api.GetTablesResponse, error) {
-	ret, err := e.doTransaction(ctx, func(tx api.Transaction) (interface{}, error) {
-		return e.getTables(ctx, tx)
-	})
-	if err != nil {
-		return api.GetTablesResponse{}, err
-	}
-	return ret.(api.GetTablesResponse), nil
-}
-
-func (e *engine) GetTable(ctx context.Context, request api.GetTableRequest) (api.Table, error) {
-	ret, err := e.doTransaction(ctx, func(tx api.Transaction) (interface{}, error) {
-		return e.getTable(ctx, tx, request.TableName)
-	})
-	if err != nil {
-		return api.Table{}, err
-	}
-	return ret.(api.Table), nil
 }
 
 func (e *engine) getTable(ctx context.Context, tx api.Transaction, tableName string) (api.Table, error) {
@@ -313,52 +316,6 @@ ORDER BY "` + api.KeyCSSequence + `" ASC;
 	return api.Changes{
 		Items: records,
 	}, nil
-}
-
-func parseChangeStreamItem(rec api.Record) (api.ChangeItem, error) {
-	var changeItem api.ChangeItem
-
-	recordIDValue, err := rec.GetFieldValue(api.KeyCSRecordID)
-	if err != nil {
-		return api.ChangeItem{}, err
-	}
-	if recordIDValue.Kind != api.ValueKindString {
-		return api.ChangeItem{}, fmt.Errorf("recordID is not a string")
-	}
-	changeItem.RecordID = recordIDValue.Str.ValueOrZero()
-
-	tableNameValue, err := rec.GetFieldValue(api.KeyCSTableName)
-	if err != nil {
-		return api.ChangeItem{}, err
-	}
-	if tableNameValue.Kind != api.ValueKindString {
-		return api.ChangeItem{}, fmt.Errorf("table name is not a string")
-	}
-	changeItem.TableName = tableNameValue.Str.ValueOrZero()
-
-	revisionValue, err := rec.GetFieldValue(api.KeyCSRecordRevision)
-	if err != nil {
-		return api.ChangeItem{}, err
-	}
-	if revisionValue.Kind != api.ValueKindString {
-		return api.ChangeItem{}, fmt.Errorf("revision is not a string")
-	}
-	revision, err := api.ParseRevision(revisionValue.Str.ValueOrZero())
-	if err != nil {
-		return api.ChangeItem{}, err
-	}
-	changeItem.RecordRevision = revision
-
-	sequenceValue, err := rec.GetFieldValue(api.KeyCSSequence)
-	if err != nil {
-		return api.ChangeItem{}, err
-	}
-	if sequenceValue.Kind != api.ValueKindInt {
-		return api.ChangeItem{}, fmt.Errorf("sequence is not an int")
-	}
-	changeItem.Sequence = sequenceValue.Int.ValueOrZero()
-
-	return changeItem, nil
 }
 
 // getColumnKinds returns the column types for the given table
@@ -930,6 +887,52 @@ func generateRevision(revisionGenerator api.RevisionGenerator, recordId string, 
 		revisionData[k] = v
 	}
 	return revisionGenerator.Generate(previousRevision.Num+1, revisionData)
+}
+
+func parseChangeStreamItem(rec api.Record) (api.ChangeItem, error) {
+	var changeItem api.ChangeItem
+
+	recordIDValue, err := rec.GetFieldValue(api.KeyCSRecordID)
+	if err != nil {
+		return api.ChangeItem{}, err
+	}
+	if recordIDValue.Kind != api.ValueKindString {
+		return api.ChangeItem{}, fmt.Errorf("recordID is not a string")
+	}
+	changeItem.RecordID = recordIDValue.Str.ValueOrZero()
+
+	tableNameValue, err := rec.GetFieldValue(api.KeyCSTableName)
+	if err != nil {
+		return api.ChangeItem{}, err
+	}
+	if tableNameValue.Kind != api.ValueKindString {
+		return api.ChangeItem{}, fmt.Errorf("table name is not a string")
+	}
+	changeItem.TableName = tableNameValue.Str.ValueOrZero()
+
+	revisionValue, err := rec.GetFieldValue(api.KeyCSRecordRevision)
+	if err != nil {
+		return api.ChangeItem{}, err
+	}
+	if revisionValue.Kind != api.ValueKindString {
+		return api.ChangeItem{}, fmt.Errorf("revision is not a string")
+	}
+	revision, err := api.ParseRevision(revisionValue.Str.ValueOrZero())
+	if err != nil {
+		return api.ChangeItem{}, err
+	}
+	changeItem.RecordRevision = revision
+
+	sequenceValue, err := rec.GetFieldValue(api.KeyCSSequence)
+	if err != nil {
+		return api.ChangeItem{}, err
+	}
+	if sequenceValue.Kind != api.ValueKindInt {
+		return api.ChangeItem{}, fmt.Errorf("sequence is not an int")
+	}
+	changeItem.Sequence = sequenceValue.Int.ValueOrZero()
+
+	return changeItem, nil
 }
 
 // readInRecord builds a record from a database result
