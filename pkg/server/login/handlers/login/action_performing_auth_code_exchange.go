@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/looplab/fsm"
+	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/server/login/authrequest"
 	"github.com/nrc-no/core/pkg/store"
@@ -64,7 +65,7 @@ func handlePerformingAuthCodeExchange(
 		}
 
 		l.Debug("verifying token")
-		processedToken, err := processOidcToken(req.Context(), tokenFromExchange, verifier)
+		processedToken, err := processOidcToken(req.Context(), tokenFromExchange, verifier, idp)
 		if err != nil {
 			l.Error("failed to verify token", zap.Error(err))
 			return err
@@ -106,6 +107,7 @@ func processOidcToken(
 	ctx context.Context,
 	token *oauth2.Token,
 	verifier *oidc.IDTokenVerifier,
+	idp *types.IdentityProvider,
 ) (*ProcessedToken, error) {
 
 	l := logging.NewLogger(ctx)

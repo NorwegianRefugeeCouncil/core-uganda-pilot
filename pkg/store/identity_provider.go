@@ -63,7 +63,15 @@ type IdentityProvider struct {
 
 type ClaimMappings struct {
 	Version  string
-	Mappings map[string]string
+	Mappings Mappings
+}
+
+type Mappings struct {
+	Subject       string
+	DisplayName   string
+	FullName      string
+	Email         string
+	EmailVerified string
 }
 
 func (c ClaimMappings) Value() (driver.Value, error) {
@@ -89,7 +97,7 @@ func (c *ClaimMappings) Scan(src interface{}) error {
 		return fmt.Errorf("failed to scan scan claims: value of type %T could not be converted to map[string]interface{}", i)
 	}
 
-	versionIntf, ok := m["Version"]
+	versionIntf, ok := m["version"]
 	if ok {
 		versionStr, ok := versionIntf.(string)
 		if !ok {
@@ -98,20 +106,49 @@ func (c *ClaimMappings) Scan(src interface{}) error {
 		c.Version = versionStr
 	}
 
-	claimMappingsInft, ok := m["Mappings"]
-
-	c.Mappings = map[string]string{}
+	claimMappingsInft, ok := m["mappings"]
 
 	if ok {
 		claimMapping, ok := claimMappingsInft.(map[string]interface{})
 		if ok {
+			subject, okS := claimMapping["subject"].(string)
+			if !okS {
+				return fmt.Errorf("claim mapping is not a string")
+			}
+			if okS {
+				c.Mappings.Subject = subject
+			}
 
-			for key, elementIntf := range claimMapping {
-				claimStr, ok := elementIntf.(string)
-				if !ok {
-					return fmt.Errorf("claim mapping is not a string")
-				}
-				c.Mappings[key] = claimStr
+			displayName, okD := claimMapping["displayName"].(string)
+			if !okD {
+				return fmt.Errorf("claim mapping is not a string")
+			}
+			if okD {
+				c.Mappings.DisplayName = displayName
+			}
+
+			fullName, okF := claimMapping["fullName"].(string)
+			if !okF {
+				return fmt.Errorf("claim mapping is not a string")
+			}
+			if okF {
+				c.Mappings.FullName = fullName
+			}
+
+			email, okE := claimMapping["email"].(string)
+			if !okE {
+				return fmt.Errorf("claim mapping is not a string")
+			}
+			if okE {
+				c.Mappings.Email = email
+			}
+
+			verified, okV := claimMapping["emailVerified"].(string)
+			if !okV {
+				return fmt.Errorf("claim mapping is not a string")
+			}
+			if okV {
+				c.Mappings.EmailVerified = verified
 			}
 		}
 	}
@@ -300,8 +337,14 @@ func mapIdentityProviderList(i IdentityProviders, keepClientSecrets bool) []*typ
 // mapIdentityProviderTo maps a store.IdentityProvider to a types.IdentityProvider
 func mapIdentityProviderTo(i *IdentityProvider, keepClientSecret bool) *types.IdentityProvider {
 	claimMappings := &types.ClaimMappings{
-		Version:  i.ClaimMappings.Version,
-		Mappings: i.ClaimMappings.Mappings,
+		Version: i.ClaimMappings.Version,
+		Mappings: types.Mappings{
+			Subject       : i.ClaimMappings.Mappings.Subject,
+			DisplayName   : i.ClaimMappings.Mappings.DisplayName,
+			FullName      : i.ClaimMappings.Mappings.FullName,
+			Email         : i.ClaimMappings.Mappings.Email,
+			EmailVerified : i.ClaimMappings.Mappings.EmailVerified,
+		},
 	}
 	result := &types.IdentityProvider{
 		ID:             i.ID,
@@ -322,8 +365,14 @@ func mapIdentityProviderTo(i *IdentityProvider, keepClientSecret bool) *types.Id
 // mapIdentityProviderFrom maps a types.IdentityProvider into a store.IdentityProvider
 func mapIdentityProviderFrom(i *types.IdentityProvider) *IdentityProvider {
 	claimMappings := &ClaimMappings{
-		Version:  i.ClaimMappings.Version,
-		Mappings: i.ClaimMappings.Mappings,
+		Version: i.ClaimMappings.Version,
+		Mappings: Mappings{
+			Subject       : i.ClaimMappings.Mappings.Subject,
+			DisplayName   : i.ClaimMappings.Mappings.DisplayName,
+			FullName      : i.ClaimMappings.Mappings.FullName,
+			Email         : i.ClaimMappings.Mappings.Email,
+			EmailVerified : i.ClaimMappings.Mappings.EmailVerified,
+		},
 	}
 	return &IdentityProvider{
 		ID:             i.ID,

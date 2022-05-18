@@ -25,9 +25,18 @@ type IdentityProvider struct {
 }
 
 type ClaimMappings struct {
-	Version  string            `json:"Version"`
-	Mappings map[string]string `json:"Mappings"`
+	Version  string   `json:"version"`
+	Mappings Mappings `json:"mappings"`
 }
+
+type Mappings struct {
+	Subject       string `json:"subject"`
+	DisplayName   string `json:"displayName"`
+	FullName      string `json:"fullName"`
+	Email         string `json:"email"`
+	EmailVerified string `json:"emailVerified"`
+}
+
 
 // IdentityProviderList represents a list of IdentityProvider
 type IdentityProviderList struct {

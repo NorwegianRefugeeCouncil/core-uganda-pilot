@@ -322,6 +322,7 @@ func createIdentityProviders(factory store.Factory, err error, orgId string, env
 	if err != nil {
 		return err
 	}
+
 	idp := &types.IdentityProvider{
 		Name:           "Fake OIDC",
 		OrganizationID: orgId,
@@ -330,7 +331,13 @@ func createIdentityProviders(factory store.Factory, err error, orgId string, env
 		ClientSecret:   envCfg.idpClientSecret,
 		EmailDomain:    "nrc.no",
 		Scopes:         "openid profile offline_access",
-		ClaimMappings:  types.ClaimMappings{Mappings: nil, Version: "0"},
+		ClaimMappings:  types.ClaimMappings{Mappings: types.Mappings{
+			Subject:       "{{.Subject}}",
+			DisplayName:   "{{.DisplayName}}",
+			FullName:      "{{.FullName}}",
+			Email:         "{{.Email}}",
+			EmailVerified: "{{.EmailVerified}}",
+		}, Version: "0"},
 	}
 	if len(idps) == 0 {
 		_, err := idpStore.Create(context.Background(), idp, store.IdentityProviderCreateOptions{})
