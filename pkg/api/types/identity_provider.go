@@ -3,8 +3,6 @@ package types
 import (
 	"database/sql/driver"
 	"encoding/json"
-	"errors"
-	"fmt"
 )
 
 // IdentityProvider represents an Organization trusted Identity Provider
@@ -28,10 +26,10 @@ type IdentityProvider struct {
 
 	Scopes string `json:"scopes"`
 
-	Claim Claim `json:"claim"`
+	ClaimMappings ClaimMappings `json:"claimMappings"`
 }
 
-type Claim struct {
+type ClaimMappings struct {
 	Version string `json:"Version"`
 	Mappings map[string]string `json:"Mappings"`
 }
@@ -41,55 +39,7 @@ type IdentityProviderList struct {
 	Items []*IdentityProvider `json:"items"`
 }
 
-func (c Claim) Value() (driver.Value, error) {
+func (c ClaimMappings) Value() (driver.Value, error) {
 	j, err := json.Marshal(c)
 	return j, err
-}
-
-func (c *Claim) Scan(src interface{}) error {
-	source, ok := src.([]byte)
-	if !ok {
-		return errors.New("type assertion .([]byte) failed")
-	}
-
-	var i interface{}
-	err := json.Unmarshal(source, &i)
-	if err != nil {
-		return err
-	}
-
-	m, ok := i.(map[string]interface{})
-
-	if !ok {
-		return errors.New("type assertion .(map[string]interface{}) failed")
-	}
-
-	versionIntf, ok := m["Version"]
-	if ok {
-		versionStr, ok := versionIntf.(string)
-		if !ok {
-			return fmt.Errorf("version is not a string")
-		}
-		c.Version = versionStr
-	}
-
-	claimMappingsInft, ok := m["Mappings"]
-
-	c.Mappings = map[string]string{}
-
-	if ok {
-		claimMapping, ok := claimMappingsInft.(map[string]interface{})
-		if ok {
-
-			for key, elementIntf := range claimMapping {
-				claimStr, ok := elementIntf.(string)
-				if !ok {
-					return fmt.Errorf("claim mapping is not a string")
-				}
-				c.Mappings[key] = claimStr
-			}
-		}
-	}
-
-	return nil
 }

@@ -18,7 +18,7 @@ type FormData = {
   organizationId: string;
   emailDomain: string;
   scopes: string;
-  claim: { Version: string; Mappings: any };
+  claimMappings: { Version: string; Mappings: any };
 };
 
 export const IdentityProviderEditor: FC<Props> = (props) => {
@@ -49,14 +49,18 @@ export const IdentityProviderEditor: FC<Props> = (props) => {
     setValue('emailDomain', data.emailDomain);
     setValue('clientSecret', '');
     setValue('scopes', data.scopes);
-    setValue('claim.Mappings', JSON.stringify(data.claim.Mappings));
-    setVersion(data.claim.Version);
+    setValue(
+      'claimMappings.Mappings',
+      JSON.stringify(data.claimMappings.Mappings),
+    );
+    setVersion(data.claimMappings.Version);
   };
 
   useEffect(() => {
     if (id) {
       apiClient.getIdentityProvider({ id }).then((resp) => {
         if (resp.response) {
+          console.log('RESP', resp.response);
           setData(resp.response);
         }
       });
@@ -76,9 +80,9 @@ export const IdentityProviderEditor: FC<Props> = (props) => {
         organizationId: organization.id,
         emailDomain: args.emailDomain,
         scopes: args.scopes,
-        claim: {
+        claimMappings: {
           Version: newVersion,
-          Mappings: JSON.parse(args.claim.Mappings),
+          Mappings: JSON.parse(args.claimMappings.Mappings),
         },
       };
       let resp;
@@ -193,16 +197,16 @@ export const IdentityProviderEditor: FC<Props> = (props) => {
               Claim Mapping (Version: {version})
             </label>
             <textarea
-              {...register('claim.Mappings', {
+              {...register('claimMappings.Mappings', {
                 required: true,
               })}
               className={classNames(
                 'form-control form-control-darkula',
-                fieldClasses('claim.Mappings'),
+                fieldClasses('claimMappings.Mappings'),
               )}
             />
           </div>
-          {fieldErrors('claim')}
+          {fieldErrors('claimMappings')}
 
           <button disabled={isSubmitting} className="btn btn-success mt-2">
             {props.id ? 'Update Identity Provider' : 'Create Identity Provider'}

@@ -329,8 +329,8 @@ func createIdentityProviders(factory store.Factory, err error, orgId string, env
 		ClientID:       envCfg.idpClientId,
 		ClientSecret:   envCfg.idpClientSecret,
 		EmailDomain:    "nrc.no",
-		Scopes: 		"openid profile offline_access",
-		Claim: 			types.Claim{Mappings: nil, Version: "0"},
+		Scopes:         "openid profile offline_access",
+		ClaimMappings:  types.ClaimMappings{Mappings: nil, Version: "0"},
 	}
 	if len(idps) == 0 {
 		_, err := idpStore.Create(context.Background(), idp, store.IdentityProviderCreateOptions{})

@@ -103,7 +103,7 @@ export class IdentityProvider {
 
   public scopes = '';
 
-  public claim = {
+  public claimMappings = {
     Version: '0',
     Mappings: {},
   };
