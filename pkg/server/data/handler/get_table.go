@@ -28,7 +28,7 @@ func getTable(e api.Engine, tableName string) http.Handler {
 
 func restfulGetTable(engine api.Engine) func(req *restful.Request, resp *restful.Response) {
 	return func(req *restful.Request, resp *restful.Response) {
-		tableName := req.PathParameter(pathParamTable)
+		tableName := req.PathParameter(pathParamTableName)
 		getTable(engine, tableName).ServeHTTP(resp.ResponseWriter, req.Request)
 	}
 }

@@ -30,7 +30,7 @@ func restfulGetRecords(e api.Engine) func(req *restful.Request, resp *restful.Re
 	return func(req *restful.Request, resp *restful.Response) {
 		revStr := req.QueryParameter("revisions")
 		var request = api.GetRecordsRequest{
-			TableName: req.PathParameter(pathParamTable),
+			TableName: req.PathParameter(pathParamTableName),
 			Revisions: revStr == "true",
 		}
 		getRecords(e, request).ServeHTTP(resp.ResponseWriter, req.Request)

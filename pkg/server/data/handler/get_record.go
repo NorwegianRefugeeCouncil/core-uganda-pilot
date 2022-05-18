@@ -30,14 +30,14 @@ func getRecord(e api.Engine, request api.GetRecordRequest) http.Handler {
 
 func restfulGetRecord(e api.Engine) func(req *restful.Request, resp *restful.Response) {
 	return func(req *restful.Request, resp *restful.Response) {
-		rev, err := api.ParseRevision(req.QueryParameter(queryParamRev))
+		rev, err := api.ParseRevision(req.QueryParameter(queryParamRecordRevision))
 		if err != nil {
 			http.Error(resp.ResponseWriter, err.Error(), http.StatusBadRequest)
 			return
 		}
 		var request = api.GetRecordRequest{
-			RecordID:  req.PathParameter(pathParamId),
-			TableName: req.PathParameter(pathParamTable),
+			RecordID:  req.PathParameter(pathParamRecordId),
+			TableName: req.PathParameter(pathParamTableName),
 			Revision:  rev,
 		}
 		getRecord(e, request).ServeHTTP(resp.ResponseWriter, req.Request)

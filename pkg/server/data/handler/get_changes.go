@@ -29,7 +29,7 @@ func getChanges(e api.Engine, request api.GetChangesRequest) http.Handler {
 func restfulGetChanges(e api.Engine) func(req *restful.Request, resp *restful.Response) {
 	return func(req *restful.Request, resp *restful.Response) {
 		var request api.GetChangesRequest
-		sinceStr := req.QueryParameter(queryParamSince)
+		sinceStr := req.QueryParameter(queryParamCheckpoint)
 		since, err := strconv.ParseInt(sinceStr, 10, 64)
 		if err != nil {
 			resp.WriteErrorString(http.StatusBadRequest, err.Error())
