@@ -31,3 +31,5 @@ tmp/
 # all user credentials
 creds/
 **/node_modules/
+
+*.db
