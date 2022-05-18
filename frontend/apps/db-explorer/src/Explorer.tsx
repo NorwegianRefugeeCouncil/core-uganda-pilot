@@ -31,7 +31,7 @@ function Explorer(props: ExplorerProps) {
               <tbody>
               {
                 tables?.map(t => <tr key={t.name}>
-                  <td><Link to={`/tables/${t}`}>{t.name}</Link></td>
+                  <td><Link to={`/tables/${t.name}`}>{t.name}</Link></td>
                 </tr>)
               }
               </tbody>

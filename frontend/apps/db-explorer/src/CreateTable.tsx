@@ -69,7 +69,7 @@ function CreateTable(props: CreateTableProps) {
 
                   <div className={classnames('form-group', 'mb-3', {
                     dirty: dirtyFields?.columns?.[index].name,
-                    touched: touchedFields?.columns?.[index].name
+                    touched: touchedFields?.columns?.[index]?.name
                   })}>
                     <label htmlFor={`column-${index}`}>Column Name</label>
                     <input className={'form-control'}
