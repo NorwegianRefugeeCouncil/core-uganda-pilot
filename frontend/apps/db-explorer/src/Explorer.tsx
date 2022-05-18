@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Client, GetTablesResponseItem, Table} from './client';
+import {Client, GetTablesResponseItem} from './client';
 import CreateTable from './CreateTable';
 import {Link} from 'react-router-dom';
 
@@ -43,7 +43,7 @@ function Explorer(props: ExplorerProps) {
                 });
               }}
               onCancel={() => {
-
+                //todo
               }}
             />
           </div>

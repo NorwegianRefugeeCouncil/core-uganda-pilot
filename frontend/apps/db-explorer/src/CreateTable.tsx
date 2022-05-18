@@ -1,5 +1,5 @@
 import {useForm, useFieldArray, FieldNamesMarkedBoolean} from 'react-hook-form';
-import {Column, Table} from './client';
+import {Table} from './client';
 import classnames from 'classnames';
 import {useCallback} from 'react';
 import {object, array, string} from 'yup';

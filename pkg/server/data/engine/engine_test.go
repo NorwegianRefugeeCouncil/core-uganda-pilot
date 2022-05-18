@@ -38,7 +38,7 @@ func TestSuite(t *testing.T) {
 	suite.Run(t, new(Suite))
 }
 
-func (s *Suite) Test_Engine_CreateTable() {
+func (s *Suite) TestEngineCreateTable() {
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
@@ -180,7 +180,7 @@ func (s *Suite) Test_Engine_CreateTable() {
 	}
 }
 
-func (s *Suite) Test_Engine_GetRecord_Exists() {
+func (s *Suite) TestEngineGetRecordExists() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -213,7 +213,7 @@ func (s *Suite) Test_Engine_GetRecord_Exists() {
 	s.T().Log(found)
 }
 
-func (s *Suite) Test_Engine_GetRecord_DoesNotExist() {
+func (s *Suite) TestEngineGetRecordDoesNotExist() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -232,7 +232,7 @@ func (s *Suite) Test_Engine_GetRecord_DoesNotExist() {
 	assert.ErrorIs(s.T(), err, api.ErrRecordNotFound)
 }
 
-func (s *Suite) Test_Engine_PutRecord_MultipleRevisions() {
+func (s *Suite) TestEnginePutRecordMultipleRevisions() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 

@@ -143,7 +143,7 @@ export class Client {
     }
   }
 
-  public async getTables(request: {}): Promise<GetTablesResponse> {
+  public async getTables(_: {}): Promise<GetTablesResponse> {
     try {
       const resp = await axios.default.get<any, axios.AxiosResponse<GetTablesResponse>>(`${this.baseURL}/apis/data.nrc.no/v1/tables`);
       return resp.data;

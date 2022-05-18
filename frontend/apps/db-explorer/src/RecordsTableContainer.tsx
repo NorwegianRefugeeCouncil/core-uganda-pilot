@@ -1,6 +1,5 @@
 import {useCallback, useEffect, useState} from 'react';
-import {Client, Record, Table, Value, StringValue, isStringValue} from './client';
-import classnames from 'classnames';
+import {Client, Record, Table, Value, isStringValue} from './client';
 
 type RecordsTableProps = {
   records: Record[];
@@ -85,8 +84,8 @@ function RecordsTableContainer(props: RecordsTableContainerProps) {
   const [tableLoading, setTableLoading] = useState(true);
 
   const [recordJSON, setRecordJSON] = useState<string>('');
-  const onChangeRecordJSON = useCallback((recordJSON: string) => {
-    setRecordJSON(recordJSON);
+  const onChangeRecordJSON = useCallback((jsonValue: string) => {
+    setRecordJSON(jsonValue);
   }, []);
 
   const [selectedRecordId, setSelectedRecordId] = useState<string>();
@@ -97,20 +96,20 @@ function RecordsTableContainer(props: RecordsTableContainerProps) {
 
   const fetchRecords = useCallback(async () => {
     setRecordsRecordsLoading(true);
-    const records = await client.getRecords({table: tableName});
-    setRecords(records.items);
+    const fetchedRecords = await client.getRecords({table: tableName});
+    setRecords(fetchedRecords.items);
     setRecordsRecordsLoading(false);
   }, [tableName, client]);
 
   const fetchTable = useCallback(async () => {
     setTableLoading(true);
-    const table = await client.getTable({tableName});
-    setTable(table);
+    const fetchedTable = await client.getTable({tableName});
+    setTable(fetchedTable);
     setTableLoading(false);
     const mockRecord: any = {};
     mockRecord['id'] = '';
     mockRecord['attributes'] = {};
-    table.columns.forEach(column => {
+    fetchedTable.columns.forEach(column => {
       if (column.name === '_rev' || column.name === '_id') {
         return;
       }

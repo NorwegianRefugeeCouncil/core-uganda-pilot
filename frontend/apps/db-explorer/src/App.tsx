@@ -2,7 +2,7 @@ import React from 'react';
 import Explorer from './Explorer';
 import {BrowserRouter, Switch, Route} from 'react-router-dom';
 import {Client} from './client';
-import RecordsTable from './RecordsTable';
+import RecordsTable from './RecordsTableContainer';
 
 function App() {
 

@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_getDigits(t *testing.T) {
+func TestGetDigits(t *testing.T) {
 	tests := []struct {
 		name string
 		i    int

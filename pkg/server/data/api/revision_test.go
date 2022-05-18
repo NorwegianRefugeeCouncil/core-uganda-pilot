@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_parseRevision(t *testing.T) {
+func TestParseRevision(t *testing.T) {
 	tests := []struct {
 		name    string
 		rev     string
@@ -68,7 +68,7 @@ func Test_parseRevision(t *testing.T) {
 	}
 }
 
-func Test_revision_String(t *testing.T) {
+func TestRevisionString(t *testing.T) {
 	type fields struct {
 		num  int
 		hash string

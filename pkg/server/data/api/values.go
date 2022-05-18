@@ -640,54 +640,74 @@ func (v Value) MarshalJSON() ([]byte, error) {
 	var ret = map[string]interface{}{}
 	switch v.Kind {
 	case ValueKindNull:
-		ret["null"] = true
-		return json.Marshal(ret)
+		return marshalNullValue(ret)
 	case ValueKindInt:
-		if v.Int.IsZero() {
-			ret["null"] = true
-		} else {
-			text, err := v.Int.MarshalText()
-			if err != nil {
-				return nil, err
-			}
-			ret["int"] = string(text)
-		}
-		return json.Marshal(ret)
+		return marshalIntValue(v, ret)
 	case ValueKindFloat:
-		if v.Float.IsZero() {
-			ret["null"] = true
-		} else {
-			text, err := v.Float.MarshalText()
-			if err != nil {
-				return nil, err
-			}
-			ret["float"] = string(text)
-		}
-		return json.Marshal(ret)
+		return marshalFloatValue(v, ret)
 	case ValueKindString:
-		if v.String.IsZero() {
-			ret["null"] = true
-		} else {
-			text, err := v.String.MarshalText()
-			if err != nil {
-				return nil, err
-			}
-			ret["string"] = string(text)
-		}
-		return json.Marshal(ret)
+		return marshalStringValue(v, ret)
 	case ValueKindBool:
-		if v.Bool.IsZero() {
-			ret["null"] = true
-		} else {
-			text, err := v.Bool.MarshalText()
-			if err != nil {
-				return nil, err
-			}
-			ret["bool"] = string(text)
-		}
-		return json.Marshal(ret)
+		return marshalBoolValue(v, ret)
 	}
 	return nil, fmt.Errorf("unsupported value kind %d", v.Kind)
+}
+
+func marshalNullValue(ret map[string]interface{}) ([]byte, error) {
+	ret["null"] = true
+	return json.Marshal(ret)
+}
+
+func marshalBoolValue(v Value, ret map[string]interface{}) ([]byte, error) {
+	if v.Bool.IsZero() {
+		ret["null"] = true
+	} else {
+		text, err := v.Bool.MarshalText()
+		if err != nil {
+			return nil, err
+		}
+		ret["bool"] = string(text)
+	}
+	return json.Marshal(ret)
+}
+
+func marshalStringValue(v Value, ret map[string]interface{}) ([]byte, error) {
+	if v.String.IsZero() {
+		ret["null"] = true
+	} else {
+		text, err := v.String.MarshalText()
+		if err != nil {
+			return nil, err
+		}
+		ret["string"] = string(text)
+	}
+	return json.Marshal(ret)
+}
+
+func marshalFloatValue(v Value, ret map[string]interface{}) ([]byte, error) {
+	if v.Float.IsZero() {
+		ret["null"] = true
+	} else {
+		text, err := v.Float.MarshalText()
+		if err != nil {
+			return nil, err
+		}
+		ret["float"] = string(text)
+	}
+	return json.Marshal(ret)
+}
+
+func marshalIntValue(v Value, ret map[string]interface{}) ([]byte, error) {
+	if v.Int.IsZero() {
+		ret["null"] = true
+	} else {
+		text, err := v.Int.MarshalText()
+		if err != nil {
+			return nil, err
+		}
+		ret["int"] = string(text)
+	}
+	return json.Marshal(ret)
 }
 
 // NewStringValue creates a new Value with a string value.

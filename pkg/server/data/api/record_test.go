@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_Record_UnmarshalJSON(t *testing.T) {
+func TestRecordUnmarshalJSON(t *testing.T) {
 	type testCase struct {
 		name      string
 		input     []byte
@@ -93,7 +93,7 @@ func Test_Record_UnmarshalJSON(t *testing.T) {
 	}
 }
 
-func Test_Record_MarshalJSON(t *testing.T) {
+func TestRecordMarshalJSON(t *testing.T) {
 	type testCase struct {
 		name      string
 		columns   map[string]ValueKind
