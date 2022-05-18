@@ -83,7 +83,7 @@ func (c *httpClient) PutRecord(ctx context.Context, request api.PutRecordRequest
 	err := c.client.Put().
 		URL(c.baseURL+"/apis/data.nrc.no/v1/tables/"+request.Record.Table+"/records/"+request.Record.ID).
 		WithQueryParam("replication", strconv.FormatBool(request.IsReplication)).
-		WithBody(request).
+		WithBody(request.Record).
 		Do(ctx).Into(&response)
 	return response, err
 }
