@@ -38,8 +38,8 @@ func (r SQLResultReader) Read(columnKinds []api.ValueKind) (map[string]api.Value
 	for _, kind := range columnKinds {
 		switch kind {
 		case api.ValueKindString:
-			values = append(values, api.Value{Kind: kind, String: &api.String{}})
-			pointers = append(pointers, values[len(values)-1].String)
+			values = append(values, api.Value{Kind: kind, Str: &api.String{}})
+			pointers = append(pointers, values[len(values)-1].Str)
 		case api.ValueKindInt:
 			values = append(values, api.Value{Kind: kind, Int: &api.Int{}})
 			pointers = append(pointers, values[len(values)-1].Int)

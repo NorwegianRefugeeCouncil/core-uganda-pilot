@@ -102,33 +102,17 @@ func (r *request) Do(ctx context.Context) *response {
 	if r.err != nil {
 		return &response{err: r.err}
 	}
-	var body []byte
-	if r.body != nil {
-		body = r.body
-	}
-	req, err := http.NewRequestWithContext(ctx, r.method, r.url, bytes.NewBuffer(body))
+	req, err := http.NewRequestWithContext(ctx, r.method, r.url, bytes.NewBuffer(r.body))
 	if err != nil {
 		return &response{err: r.err}
 	}
-	if req.Header == nil {
-		req.Header = make(http.Header)
-	}
-	for k, v := range r.headers {
-		req.Header.Set(k, v)
-	}
-	if len(r.body) > 0 && (r.headers == nil || r.headers["Content-Type"] == "") {
-		req.Header.Set("Content-Type", "application/json")
-	}
-	if r.method == "POST" || r.method == "PUT" {
-		if r.headers["Accept"] == "" {
-			req.Header.Set("Accept", "application/json")
-		}
-	}
-	for k, v := range r.queryParams {
-		q := req.URL.Query()
-		q.Add(k, v)
-		req.URL.RawQuery = q.Encode()
-	}
+	r.buildRequestHeader(req)
+	r.buildRequestBody(req)
+	r.buildRequestQueryParams(req)
+	return r.execute(err, req)
+}
+
+func (r *request) execute(err error, req *http.Request) *response {
 	resp, err := r.client.client.Do(req)
 	if err != nil {
 		return &response{err: r.err}
@@ -138,27 +122,62 @@ func (r *request) Do(ctx context.Context) *response {
 			r.err = err
 		}
 	}()
-	body, err = ioutil.ReadAll(resp.Body)
+	responseBytes, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return &response{err: r.err}
 	}
-	if resp.StatusCode < 200 || resp.StatusCode > 299 {
-		err := fmt.Errorf("Error occured with status code %d: %s\n", resp.StatusCode, string(body))
-		return &response{
-			err:        err,
-			statusCode: resp.StatusCode,
-			body:       body,
-			url:        resp.Request.URL.String(),
-			headers:    resp.Header,
-		}
+	if isErrorResponse(resp) {
+		return r.buildErrorResponse(resp, responseBytes)
 	}
 	return &response{
 		statusCode: resp.StatusCode,
-		body:       body,
+		body:       responseBytes,
 		headers:    resp.Header,
 		url:        resp.Request.URL.String(),
 	}
+}
 
+func isErrorResponse(resp *http.Response) bool {
+	return resp.StatusCode < 200 || resp.StatusCode > 299
+}
+
+func (r *request) buildErrorResponse(resp *http.Response, responseBytes []byte) *response {
+	err := fmt.Errorf("Error occured with status code %d: %s\n", resp.StatusCode, string(responseBytes))
+	return &response{
+		err:        err,
+		statusCode: resp.StatusCode,
+		body:       responseBytes,
+		url:        resp.Request.URL.String(),
+		headers:    resp.Header,
+	}
+}
+
+func (r *request) buildRequestQueryParams(req *http.Request) {
+	for k, v := range r.queryParams {
+		q := req.URL.Query()
+		q.Add(k, v)
+		req.URL.RawQuery = q.Encode()
+	}
+}
+
+func (r *request) buildRequestBody(req *http.Request) {
+	if len(r.body) > 0 && (r.headers == nil || r.headers["Content-Type"] == "") {
+		req.Header.Set("Content-Type", "application/json")
+	}
+}
+
+func (r *request) buildRequestHeader(req *http.Request) {
+	if req.Header == nil {
+		req.Header = make(http.Header)
+	}
+	for k, v := range r.headers {
+		req.Header.Set(k, v)
+	}
+	if r.method == "POST" || r.method == "PUT" {
+		if r.headers["Accept"] == "" {
+			req.Header.Set("Accept", "application/json")
+		}
+	}
 }
 
 type response struct {

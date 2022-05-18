@@ -63,7 +63,7 @@ func (e *engine) Init(ctx context.Context) error {
 func (e *engine) PutRecord(ctx context.Context, request api.PutRecordRequest) (api.Record, error) {
 	ret, err := e.doTransaction(ctx, func(tx api.Transaction) (interface{}, error) {
 		var recPtr = &request.Record
-		if err := e.putRecordInternal(ctx, tx, recPtr, request.IsReplication); err != nil {
+		if err := e.putRecord(ctx, tx, recPtr, request.IsReplication); err != nil {
 			return nil, err
 		}
 		return *recPtr, nil
@@ -78,23 +78,9 @@ func (e *engine) PutRecord(ctx context.Context, request api.PutRecordRequest) (a
 func (e *engine) GetRecord(ctx context.Context, request api.GetRecordRequest) (api.Record, error) {
 	ret, err := e.doTransaction(ctx, func(tx api.Transaction) (interface{}, error) {
 		if request.Revision.IsEmpty() {
-			found, err := e.findRecordInternal(ctx, tx, request.TableName, request.RecordID)
-			if err != nil {
-				return api.Record{}, err
-			}
-			if found == nil {
-				return api.Record{}, api.ErrRecordNotFound
-			}
-			return *found, nil
+			return e.getLatestRevision(ctx, tx, request)
 		} else {
-			found, err := e.findRecordRevision(ctx, tx, request.TableName, request.RecordID, request.Revision)
-			if err != nil {
-				return api.Record{}, err
-			}
-			if found == nil {
-				return api.Record{}, api.ErrRecordNotFound
-			}
-			return *found, nil
+			return e.getRevision(ctx, tx, request)
 		}
 	})
 	if err != nil {
@@ -103,9 +89,31 @@ func (e *engine) GetRecord(ctx context.Context, request api.GetRecordRequest) (a
 	return ret.(api.Record), nil
 }
 
+func (e *engine) getRevision(ctx context.Context, tx api.Transaction, request api.GetRecordRequest) (interface{}, error) {
+	found, err := e.findRevision(ctx, tx, request.TableName, request.RecordID, request.Revision)
+	if err != nil {
+		return api.Record{}, err
+	}
+	if found == nil {
+		return api.Record{}, api.ErrRecordNotFound
+	}
+	return *found, nil
+}
+
+func (e *engine) getLatestRevision(ctx context.Context, tx api.Transaction, request api.GetRecordRequest) (interface{}, error) {
+	found, err := e.findLatestRevision(ctx, tx, request.TableName, request.RecordID)
+	if err != nil {
+		return api.Record{}, err
+	}
+	if found == nil {
+		return api.Record{}, api.ErrRecordNotFound
+	}
+	return *found, nil
+}
+
 func (e *engine) GetRecords(ctx context.Context, request api.GetRecordsRequest) (api.RecordList, error) {
 	ret, err := e.doTransaction(ctx, func(t api.Transaction) (interface{}, error) {
-		return e.getRecordsInternal(ctx, t, request)
+		return e.getRecords(ctx, t, request)
 	})
 	if err != nil {
 		return api.RecordList{}, err
@@ -113,7 +121,7 @@ func (e *engine) GetRecords(ctx context.Context, request api.GetRecordsRequest) 
 	return ret.(api.RecordList), nil
 }
 
-func (e *engine) getRecordsInternal(ctx context.Context, tx api.Transaction, request api.GetRecordsRequest) (api.RecordList, error) {
+func (e *engine) getRecords(ctx context.Context, tx api.Transaction, request api.GetRecordsRequest) (api.RecordList, error) {
 
 	// retrieve the information about the table
 	columnNames, columnKinds, err := e.getValueTypeInfoForTable(ctx, tx, request.TableName)
@@ -201,7 +209,7 @@ func (e *engine) CreateTable(ctx context.Context, table api.Table) (api.Table, e
 // GetChanges implements Engine.GetChanges
 func (e *engine) GetChanges(ctx context.Context, request api.GetChangesRequest) (api.Changes, error) {
 	ret, err := e.doTransaction(ctx, func(tx api.Transaction) (interface{}, error) {
-		return e.getChangeStreamInternal(tx, ctx, request.Since)
+		return e.getChanges(tx, ctx, request.Since)
 	})
 	if err != nil {
 		return api.Changes{}, err
@@ -211,7 +219,7 @@ func (e *engine) GetChanges(ctx context.Context, request api.GetChangesRequest) 
 
 func (e *engine) GetTables(ctx context.Context, request api.GetTablesRequest) (api.GetTablesResponse, error) {
 	ret, err := e.doTransaction(ctx, func(tx api.Transaction) (interface{}, error) {
-		return e.getTablesInternal(ctx, tx)
+		return e.getTables(ctx, tx)
 	})
 	if err != nil {
 		return api.GetTablesResponse{}, err
@@ -221,7 +229,7 @@ func (e *engine) GetTables(ctx context.Context, request api.GetTablesRequest) (a
 
 func (e *engine) GetTable(ctx context.Context, request api.GetTableRequest) (api.Table, error) {
 	ret, err := e.doTransaction(ctx, func(tx api.Transaction) (interface{}, error) {
-		return e.getTableInternal(ctx, tx, request.TableName)
+		return e.getTable(ctx, tx, request.TableName)
 	})
 	if err != nil {
 		return api.Table{}, err
@@ -229,7 +237,7 @@ func (e *engine) GetTable(ctx context.Context, request api.GetTableRequest) (api
 	return ret.(api.Table), nil
 }
 
-func (e *engine) getTableInternal(ctx context.Context, tx api.Transaction, tableName string) (api.Table, error) {
+func (e *engine) getTable(ctx context.Context, tx api.Transaction, tableName string) (api.Table, error) {
 	columnNames, columnKinds, err := e.getColumnTypeInfoForTable(ctx, tx, tableName)
 	if err != nil {
 		return api.Table{}, err
@@ -248,7 +256,7 @@ func (e *engine) getTableInternal(ctx context.Context, tx api.Transaction, table
 	return ret, nil
 }
 
-func (e *engine) getChangeStreamInternal(tx api.Transaction, ctx context.Context, checkpoint int64) (api.Changes, error) {
+func (e *engine) getChanges(tx api.Transaction, ctx context.Context, checkpoint int64) (api.Changes, error) {
 
 	// retrieve the information about the table
 	columnNames, columnKinds, err := e.getValueTypeInfoForTable(ctx, tx, api.ChangeStreamTableName)
@@ -317,7 +325,7 @@ func parseChangeStreamItem(rec api.Record) (api.ChangeItem, error) {
 	if recordIDValue.Kind != api.ValueKindString {
 		return api.ChangeItem{}, fmt.Errorf("recordID is not a string")
 	}
-	changeItem.RecordID = recordIDValue.String.ValueOrZero()
+	changeItem.RecordID = recordIDValue.Str.ValueOrZero()
 
 	tableNameValue, err := rec.GetFieldValue(api.KeyCSTableName)
 	if err != nil {
@@ -326,7 +334,7 @@ func parseChangeStreamItem(rec api.Record) (api.ChangeItem, error) {
 	if tableNameValue.Kind != api.ValueKindString {
 		return api.ChangeItem{}, fmt.Errorf("table name is not a string")
 	}
-	changeItem.TableName = tableNameValue.String.ValueOrZero()
+	changeItem.TableName = tableNameValue.Str.ValueOrZero()
 
 	revisionValue, err := rec.GetFieldValue(api.KeyCSRecordRevision)
 	if err != nil {
@@ -335,7 +343,7 @@ func parseChangeStreamItem(rec api.Record) (api.ChangeItem, error) {
 	if revisionValue.Kind != api.ValueKindString {
 		return api.ChangeItem{}, fmt.Errorf("revision is not a string")
 	}
-	revision, err := api.ParseRevision(revisionValue.String.ValueOrZero())
+	revision, err := api.ParseRevision(revisionValue.Str.ValueOrZero())
 	if err != nil {
 		return api.ChangeItem{}, err
 	}
@@ -353,9 +361,9 @@ func parseChangeStreamItem(rec api.Record) (api.ChangeItem, error) {
 	return changeItem, nil
 }
 
-// getColumnKindsInternal returns the column types for the given table
-func (e *engine) getColumnKindsInternal(ctx context.Context, tx api.Transaction, table string) (map[string]api.ValueKind, error) {
-	columnTypes, err := e.getColumnTypesInternal(ctx, tx, table)
+// getColumnKinds returns the column types for the given table
+func (e *engine) getColumnKinds(ctx context.Context, tx api.Transaction, table string) (map[string]api.ValueKind, error) {
+	columnTypes, err := e.getColumnTypes(ctx, tx, table)
 	if err != nil {
 		return nil, err
 	}
@@ -378,8 +386,8 @@ func (e *engine) getColumnKindsInternal(ctx context.Context, tx api.Transaction,
 	return ret, nil
 }
 
-// getColumnKindsInternal returns the column types for the given table
-func (e *engine) getColumnTypesInternal(ctx context.Context, tx api.Transaction, table string) (map[string]string, error) {
+// getColumnTypes returns the column types for the given table
+func (e *engine) getColumnTypes(ctx context.Context, tx api.Transaction, table string) (map[string]string, error) {
 
 	// these will be the returned column types
 	columnKinds := []api.ValueKind{
@@ -408,9 +416,9 @@ func (e *engine) getColumnTypesInternal(ctx context.Context, tx api.Transaction,
 		}
 
 		// get the name of the column
-		columnName := row["name"].String.ValueOrZero()
+		columnName := row["name"].Str.ValueOrZero()
 		// get the type of the column
-		columnType := strings.ToLower(row["type"].String.ValueOrZero())
+		columnType := strings.ToLower(row["type"].Str.ValueOrZero())
 
 		columnTypes[columnName] = columnType
 
@@ -428,8 +436,8 @@ func (e *engine) getColumnTypesInternal(ctx context.Context, tx api.Transaction,
 	return columnTypes, nil
 }
 
-// FindRecord finds a record by id within the given transaction
-func (e *engine) findRecordInternal(ctx context.Context, tx api.Transaction, table string, id string) (*api.Record, error) {
+// findLatestRevision finds the latest revision of the record
+func (e *engine) findLatestRevision(ctx context.Context, tx api.Transaction, table string, id string) (*api.Record, error) {
 
 	// retrieve the column information
 	columnNames, columnKinds, err := e.getValueTypeInfoForTable(ctx, tx, table)
@@ -468,9 +476,9 @@ func (e *engine) findRecordInternal(ctx context.Context, tx api.Transaction, tab
 	return &record, nil
 }
 
-// getColumnTypeInfoForTable returns the column names and types for the given table
+// getColumnTypeInfoForTable return the column names and types for the given table
 func (e *engine) getColumnTypeInfoForTable(ctx context.Context, tx api.Transaction, table string) ([]string, []string, error) {
-	columnTypes, err := e.getColumnTypesInternal(ctx, tx, table)
+	columnTypes, err := e.getColumnTypes(ctx, tx, table)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -488,7 +496,7 @@ func (e *engine) getColumnTypeInfoForTable(ctx context.Context, tx api.Transacti
 
 // getValueTypeInfoForTable returns the column names and value kinds for the given table
 func (e *engine) getValueTypeInfoForTable(ctx context.Context, tx api.Transaction, table string) ([]string, []api.ValueKind, error) {
-	columnTypes, err := e.getColumnKindsInternal(ctx, tx, table)
+	columnTypes, err := e.getColumnKinds(ctx, tx, table)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -504,8 +512,8 @@ func (e *engine) getValueTypeInfoForTable(ctx context.Context, tx api.Transactio
 	return columnNames, columnKinds, nil
 }
 
-// putRecordInternal inserts a record into the database with the given timestamp
-func (e *engine) putRecordInternal(ctx context.Context, tx api.Transaction, record *api.Record, isReplication bool) error {
+// putRecord inserts a record into the database with the given timestamp
+func (e *engine) putRecord(ctx context.Context, tx api.Transaction, record *api.Record, isReplication bool) error {
 
 	// insert the record into the database
 	if err := e.appendToHistory(ctx, tx, record, isReplication); err != nil {
@@ -544,7 +552,7 @@ func (e *engine) appendToHistory(ctx context.Context, tx api.Transaction, record
 	// it basically means that this record is the next revision of revision.Revision
 	if !isReplication && !record.Revision.IsEmpty() {
 		// find previous revision
-		_, err := e.findRecordRevision(ctx, tx, record.Table, record.ID, record.Revision)
+		_, err := e.findRevision(ctx, tx, record.Table, record.ID, record.Revision)
 		if err != nil {
 			return err
 		}
@@ -637,8 +645,8 @@ func (e *engine) updateView(ctx context.Context, tx api.Transaction, rec *api.Re
 	return err
 }
 
-// findRecordRevision finds the revision of a record
-func (e *engine) findRecordRevision(ctx context.Context, tx api.Transaction, table string, id string, revision api.Revision) (*api.Record, error) {
+// findRevision finds the revision of a record
+func (e *engine) findRevision(ctx context.Context, tx api.Transaction, table string, id string, revision api.Revision) (*api.Record, error) {
 
 	// get information about the table
 	columnNames, columnTypes, err := e.getValueTypeInfoForTable(ctx, tx, table)
@@ -878,7 +886,7 @@ VALUES (?, ?, ?)
 	return nil
 }
 
-func (e *engine) getTablesInternal(ctx context.Context, tx api.Transaction) (api.GetTablesResponse, error) {
+func (e *engine) getTables(ctx context.Context, tx api.Transaction) (api.GetTablesResponse, error) {
 	sqlStatement := `
 select name from sqlite_master
 where type = 'table'
@@ -897,7 +905,7 @@ and "name" not like '%_history'
 		if err != nil {
 			return api.GetTablesResponse{}, err
 		}
-		tableName = row["name"].String.ValueOrZero()
+		tableName = row["name"].Str.ValueOrZero()
 		tableNames = append(tableNames, api.GetTablesResponseItem{
 			Name: tableName,
 		})
@@ -933,15 +941,15 @@ func readInRecord(table string, data map[string]api.Value) (api.Record, error) {
 	for columnName, columnValue := range data {
 		switch columnName {
 		case api.KeyRecordID:
-			record.ID = columnValue.String.ValueOrZero()
+			record.ID = columnValue.Str.ValueOrZero()
 			continue
 		case api.KeyRevision:
-			record.Revision, err = api.ParseRevision(columnValue.String.ValueOrZero())
+			record.Revision, err = api.ParseRevision(columnValue.Str.ValueOrZero())
 			if err != nil {
 				return api.Record{}, err
 			}
 		case api.KeyPrevision:
-			value := columnValue.String.ValueOrZero()
+			value := columnValue.Str.ValueOrZero()
 			if len(value) == 0 {
 				record.PreviousRevision = api.EmptyRevision
 			} else {

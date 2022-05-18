@@ -37,12 +37,20 @@ func StringFromPtr(s *string) String {
 	return NewString(*s, true)
 }
 
+// String implements the fmt.Stringer interface.
+func (ns String) String() string {
+	if !ns.Valid {
+		return "null"
+	}
+	return ns.NullString.String
+}
+
 // ValueOrZero returns the inner value if valid, otherwise empty string
 func (ns String) ValueOrZero() string {
 	if !ns.Valid {
 		return ""
 	}
-	return ns.String
+	return ns.NullString.String
 }
 
 // UnmarshalJSON implements json.Unmarshaler.
@@ -52,7 +60,7 @@ func (ns *String) UnmarshalJSON(data []byte) error {
 		return nil
 	}
 	ns.Valid = true
-	if err := json.Unmarshal(data, &ns.String); err != nil {
+	if err := json.Unmarshal(data, &ns.NullString.String); err != nil {
 		return err
 	}
 	return nil
@@ -63,7 +71,7 @@ func (ns String) MarshalJSON() ([]byte, error) {
 	if !ns.Valid {
 		return []byte("null"), nil
 	}
-	return json.Marshal(ns.String)
+	return json.Marshal(ns.NullString.String)
 }
 
 // NewString creates a new String
@@ -79,21 +87,21 @@ func NewString(s string, valid bool) String {
 // MarshalText implements encoding.TextMarshaler.
 func (ns String) MarshalText() ([]byte, error) {
 	if ns.Valid {
-		return []byte(ns.String), nil
+		return []byte(ns.NullString.String), nil
 	}
 	return nil, nil
 }
 
 // UnmarshalText implements encoding.TextUnmarshaler.
 func (ns *String) UnmarshalText(text []byte) error {
-	ns.String = string(text)
+	ns.NullString.String = string(text)
 	ns.Valid = true
 	return nil
 }
 
 // SetValid changes this String's value and also sets it to be non-null.
 func (ns *String) SetValid(v string) {
-	ns.String = v
+	ns.NullString.String = v
 	ns.Valid = true
 }
 
@@ -110,7 +118,7 @@ func (ns String) Equal(other String) bool {
 	if !ns.Valid || !other.Valid {
 		return false
 	}
-	return ns.String == other.String
+	return ns.NullString.String == other.NullString.String
 }
 
 // Ptr returns a pointer to this String's value, or a nil pointer if this String is invalid.
@@ -118,7 +126,7 @@ func (ns String) Ptr() *string {
 	if !ns.Valid {
 		return nil
 	}
-	return &ns.String
+	return &ns.NullString.String
 }
 
 // Bool is a nullable bool.
@@ -129,6 +137,14 @@ func (ns String) Ptr() *string {
 // So it is both database and json compatible.
 type Bool struct {
 	sql.NullBool
+}
+
+// String implements the fmt.Stringer interface.
+func (ns Bool) String() string {
+	if !ns.Valid {
+		return "null"
+	}
+	return strconv.FormatBool(ns.Bool)
 }
 
 // BoolFrom creates a new Bool that will always be non-null.
@@ -264,6 +280,14 @@ type Int struct {
 	sql.NullInt64
 }
 
+// String implements the fmt.Stringer interface.
+func (ns Int) String() string {
+	if !ns.Valid {
+		return "null"
+	}
+	return strconv.FormatInt(ns.Int64, 10)
+}
+
 // IntFrom creates a new Int that will always be non-null.
 func IntFrom(s int64) Int {
 	return NewInt(s, true)
@@ -393,6 +417,14 @@ func (b Int) Ptr() *int64 {
 // So it is both database and json compatible.
 type Float struct {
 	sql.NullFloat64
+}
+
+// String implements the fmt.Stringer interface.
+func (ns Float) String() string {
+	if !ns.Valid {
+		return "null"
+	}
+	return fmt.Sprintf("%f", ns.Float64)
 }
 
 // FloatFrom creates a new Float that will always be non-null.
@@ -544,14 +576,31 @@ const (
 type Value struct {
 	// Kind is the kind of value this is.
 	Kind ValueKind `json:"-"`
-	// String is the string value if Kind is ValueKindString.
-	String *String `json:"string,omitempty"`
+	// Str is the string value if Kind is ValueKindString.
+	Str *String `json:"string,omitempty"`
 	// Bool is the bool value if Kind is ValueKindBool.
 	Bool *Bool `json:"bool,omitempty"`
 	// Int is the int64 value if Kind is ValueKindInt.
 	Int *Int `json:"int,omitempty"`
 	// Float is the float64 value if Kind is ValueKindFloat.
 	Float *Float `json:"float,omitempty"`
+}
+
+func (v Value) String() string {
+	switch v.Kind {
+	case ValueKindNull:
+		return "null"
+	case ValueKindString:
+		return v.Str.String()
+	case ValueKindBool:
+		return v.Bool.String()
+	case ValueKindInt:
+		return v.Int.String()
+	case ValueKindFloat:
+		return v.Float.String()
+	default:
+		panic("unknown value kind")
+	}
 }
 
 // Scan implements the sql.Scanner interface.
@@ -564,8 +613,8 @@ func (v *Value) Scan(value interface{}) error {
 		v.Float = &Float{}
 		return v.Float.Scan(value)
 	case ValueKindString:
-		v.String = &String{}
-		return v.String.Scan(value)
+		v.Str = &String{}
+		return v.Str.Scan(value)
 	case ValueKindBool:
 		v.Bool = &Bool{}
 		return v.Bool.Scan(value)
@@ -584,7 +633,7 @@ func (v *Value) Value() (driver.Value, error) {
 	case ValueKindFloat:
 		return v.Float.Value()
 	case ValueKindString:
-		return v.String.Value()
+		return v.Str.Value()
 	case ValueKindBool:
 		return v.Bool.Value()
 	default:
@@ -593,7 +642,7 @@ func (v *Value) Value() (driver.Value, error) {
 }
 
 func (v *Value) UnmarshalJSON(data []byte) error {
-	v.String = nil
+	v.Str = nil
 	v.Bool = nil
 	v.Int = nil
 	v.Float = nil
@@ -614,8 +663,8 @@ func (v *Value) UnmarshalJSON(data []byte) error {
 	}
 	if val.String != "" {
 		v.Kind = ValueKindString
-		v.String = &String{}
-		return v.String.UnmarshalText([]byte(val.String))
+		v.Str = &String{}
+		return v.Str.UnmarshalText([]byte(val.String))
 	}
 	if val.Int != "" {
 		v.Kind = ValueKindInt
@@ -672,10 +721,10 @@ func marshalBoolValue(v Value, ret map[string]interface{}) ([]byte, error) {
 }
 
 func marshalStringValue(v Value, ret map[string]interface{}) ([]byte, error) {
-	if v.String.IsZero() {
+	if v.Str.IsZero() {
 		ret["null"] = true
 	} else {
-		text, err := v.String.MarshalText()
+		text, err := v.Str.MarshalText()
 		if err != nil {
 			return nil, err
 		}
@@ -714,8 +763,8 @@ func marshalIntValue(v Value, ret map[string]interface{}) ([]byte, error) {
 func NewStringValue(s string, valid bool) Value {
 	val := NewString(s, valid)
 	return Value{
-		Kind:   ValueKindString,
-		String: &val,
+		Kind: ValueKindString,
+		Str:  &val,
 	}
 }
 

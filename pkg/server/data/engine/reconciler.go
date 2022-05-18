@@ -106,7 +106,7 @@ func (r *reconciler) Reconcile(ctx context.Context, source api.ReadInterface, de
 	// TODO assign unique id to destination
 	var sourceId = "dest1234"
 	var checkpoint int64 = -1
-	var checkpointRec *api.Record
+	var checkpointRec api.Record
 	var err error
 
 	// create the checkpoint table if it doesn't exist
@@ -115,45 +115,16 @@ func (r *reconciler) Reconcile(ctx context.Context, source api.ReadInterface, de
 	}
 
 	// get the last checkpoint from the destination database for the source database
-	foundCheckpointRec, err := destination.GetRecord(ctx, api.GetRecordRequest{
-		TableName: checkpointTableName,
-		RecordID:  sourceId,
-	})
+	checkpointRec, checkpoint, err = r.findCheckpoint(ctx, err, destination, sourceId)
 	if err != nil {
-		if !errors.Is(err, api.ErrRecordNotFound) {
-			return err
-		}
-	} else {
-		checkpointRec = &foundCheckpointRec
-	}
-
-	if checkpointRec != nil {
-		// already has a checkpoint for the source database
-		// retrieve the checkpoint
-		var (
-			fieldValue interface{}
-			ok         bool
-		)
-		if fieldValue, err = checkpointRec.GetFieldValue(checkpointKey); err != nil {
-			return err
-		}
-		if checkpoint, ok = fieldValue.(int64); !ok {
-			return errors.New("checkpoint is not an int64")
-		}
-	} else {
-		checkpointRec = &api.Record{
-			Table: checkpointTableName,
-			ID:    sourceId,
-			Attributes: map[string]api.Value{
-				checkpointKey: api.NewIntValue(checkpoint, true),
-			},
-		}
+		return err
 	}
 
 	changes, err := source.GetChanges(ctx, api.GetChangesRequest{Since: checkpoint})
 	if err != nil {
 		return err
 	}
+
 	// todo: Wrap this in a transaction somehow
 	// probably have to create a WithTransaction(fn func(e Engine) error) method
 	// But that would only work locally, grpc or through websockets, not through HTTP
@@ -161,48 +132,90 @@ func (r *reconciler) Reconcile(ctx context.Context, source api.ReadInterface, de
 	// todo: batch this for sure
 	for _, change := range changes.Items {
 		// for each change in the source change stream
-
-		// skip if this checkpoint has already been reconciled
-		if change.Sequence == checkpoint {
-			continue
-		}
-
-		// check if the record revision already exist in the destination
-		// if so, we don't need to do anything
-		_, err = destination.GetRecord(ctx, api.GetRecordRequest{
-			TableName: change.TableName,
-			RecordID:  change.RecordID,
-			Revision:  change.RecordRevision,
-		})
-		if !api.IsError(err, api.ErrCodeRecordNotFound) {
-			return err
-		}
-
-		// get the revision from the source
-		sourceRevisionRec, err := source.GetRecord(ctx, api.GetRecordRequest{
-			TableName: change.TableName,
-			RecordID:  change.RecordID,
-			Revision:  change.RecordRevision,
-		})
+		checkpointRec, checkpoint, err = r.processChange(ctx, checkpoint, checkpointRec, change, source, destination)
 		if err != nil {
 			return err
 		}
-
-		// insert the revision into the destination
-		if _, err := destination.PutRecord(ctx, api.PutRecordRequest{
-			Record:        sourceRevisionRec,
-			IsReplication: true,
-		}); err != nil {
-			return err
-		}
-		checkpointRec.SetFieldValue(checkpointKey, api.NewIntValue(checkpoint, true))
 	}
 
 	if _, err := destination.PutRecord(ctx, api.PutRecordRequest{
-		Record: *checkpointRec,
+		Record: checkpointRec,
 	}); err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func (r *reconciler) processChange(ctx context.Context, checkpoint int64, checkpointRecord api.Record, change api.ChangeItem, source api.ReadInterface, destination api.Engine) (api.Record, int64, error) {
+	// skip if this checkpoint has already been reconciled
+	if change.Sequence == checkpoint {
+		return checkpointRecord, checkpoint, nil
+	}
+
+	// check if the record revision already exist in the destination
+	// if so, we don't need to do anything
+	_, err := destination.GetRecord(ctx, api.GetRecordRequest{
+		TableName: change.TableName,
+		RecordID:  change.RecordID,
+		Revision:  change.RecordRevision,
+	})
+	if !api.IsError(err, api.ErrCodeRecordNotFound) {
+		return api.Record{}, 0, err
+	}
+
+	// get the revision from the source
+	sourceRevisionRec, err := source.GetRecord(ctx, api.GetRecordRequest{
+		TableName: change.TableName,
+		RecordID:  change.RecordID,
+		Revision:  change.RecordRevision,
+	})
+	if err != nil {
+		return api.Record{}, 0, err
+	}
+
+	// insert the revision into the destination
+	if _, err := destination.PutRecord(ctx, api.PutRecordRequest{
+		Record:        sourceRevisionRec,
+		IsReplication: true,
+	}); err != nil {
+		return api.Record{}, 0, err
+	}
+	changeSequence := change.Sequence
+	checkpointRecord = checkpointRecord.SetFieldValue(checkpointKey, api.NewIntValue(changeSequence, true))
+	return checkpointRecord, changeSequence, nil
+
+}
+
+func (r *reconciler) findCheckpoint(ctx context.Context, err error, destination api.Engine, sourceId string) (api.Record, int64, error) {
+	foundCheckpointRec, err := destination.GetRecord(ctx, api.GetRecordRequest{
+		TableName: checkpointTableName,
+		RecordID:  sourceId,
+	})
+	if err != nil {
+		if !errors.Is(err, api.ErrRecordNotFound) {
+			return api.Record{}, 0, err
+		}
+		var checkpoint int64 = -1
+		return api.Record{
+			Table: checkpointTableName,
+			ID:    sourceId,
+			Attributes: map[string]api.Value{
+				checkpointKey: api.NewIntValue(checkpoint, true),
+			},
+		}, checkpoint, nil
+	} else {
+		var (
+			fieldValue interface{}
+			ok         bool
+		)
+		if fieldValue, err = foundCheckpointRec.GetFieldValue(checkpointKey); err != nil {
+			return api.Record{}, 0, err
+		}
+		checkpoint, ok := fieldValue.(int64)
+		if !ok {
+			return api.Record{}, 0, errors.New("checkpoint is not an int64")
+		}
+		return foundCheckpointRec, checkpoint, nil
+	}
 }
