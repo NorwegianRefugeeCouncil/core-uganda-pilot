@@ -65,7 +65,7 @@ func getOauthProvider(
 		RedirectURL:  redirectUri,
 	}
 	if loginRequest != nil {
-		oauthConfig.Scopes = loginRequest.RequestedScope
+		oauthConfig.Scopes = strings.Split(client.Scopes, " ")
 	}
 
 	verifier := oidcProvider.Verifier(&oidc.Config{
