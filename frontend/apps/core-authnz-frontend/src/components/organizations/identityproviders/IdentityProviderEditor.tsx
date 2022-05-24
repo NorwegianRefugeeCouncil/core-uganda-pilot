@@ -56,23 +56,11 @@ export const IdentityProviderEditor: FC<Props> = (props) => {
     setValue('emailDomain', data.emailDomain);
     setValue('clientSecret', '');
     setValue('scopes', data.scopes);
-    setValue(
-      'claimMappings.subject',
-      JSON.stringify(data.claimMappings.subject),
-    );
-    setValue(
-      'claimMappings.displayName',
-      JSON.stringify(data.claimMappings.displayName),
-    );
-    setValue(
-      'claimMappings.fullName',
-      JSON.stringify(data.claimMappings.fullName),
-    );
-    setValue('claimMappings.email', JSON.stringify(data.claimMappings.email));
-    setValue(
-      'claimMappings.emailVerified',
-      JSON.stringify(data.claimMappings.emailVerified),
-    );
+    setValue('claimMappings.subject', data.claimMappings.subject);
+    setValue('claimMappings.displayName', data.claimMappings.displayName);
+    setValue('claimMappings.fullName', data.claimMappings.fullName);
+    setValue('claimMappings.email', data.claimMappings.email);
+    setValue('claimMappings.emailVerified', data.claimMappings.emailVerified);
     setVersion(data.claimMappings.version);
   };
 
@@ -101,11 +89,11 @@ export const IdentityProviderEditor: FC<Props> = (props) => {
         scopes: args.scopes,
         claimMappings: {
           version: newVersion,
-          subject: JSON.parse(args.claimMappings.subject),
-          displayName: JSON.parse(args.claimMappings.displayName),
-          fullName: JSON.parse(args.claimMappings.fullName),
-          email: JSON.parse(args.claimMappings.email),
-          emailVerified: JSON.parse(args.claimMappings.emailVerified),
+          subject: args.claimMappings.subject,
+          displayName: args.claimMappings.displayName,
+          fullName: args.claimMappings.fullName,
+          email: args.claimMappings.email,
+          emailVerified: args.claimMappings.emailVerified,
         },
       };
       let resp;
