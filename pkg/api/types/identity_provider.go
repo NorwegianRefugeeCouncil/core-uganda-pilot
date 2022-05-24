@@ -25,11 +25,7 @@ type IdentityProvider struct {
 }
 
 type ClaimMappings struct {
-	Version  string   `json:"version"`
-	Mappings Mappings `json:"mappings"`
-}
-
-type Mappings struct {
+	Version       string `json:"version"`
 	Subject       string `json:"subject"`
 	DisplayName   string `json:"displayName"`
 	FullName      string `json:"fullName"`

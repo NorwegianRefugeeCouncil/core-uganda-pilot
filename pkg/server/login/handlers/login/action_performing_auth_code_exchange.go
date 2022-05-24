@@ -136,10 +136,35 @@ func processOidcToken(
 	}
 
 	// unmarshal claims
-	var userProfile authrequest.Claims
-	if err := idToken.Claims(&userProfile); err != nil {
+	var a interface{}
+	var b map[string]interface{}
+	if err := idToken.Claims(&a); err != nil {
 		l.Error("failed to unmarshal claims from ID token", zap.Error(err))
 		return nil, err
+	}
+	var userProfile authrequest.Claims
+
+	b, ok = a.(map[string]interface{})
+
+	subject, ok := b[idp.ClaimMappings.Subject].(string)
+	if ok {
+		userProfile.Subject = subject
+	}
+	displayName, ok := b[idp.ClaimMappings.DisplayName].(string)
+	if ok {
+		userProfile.DisplayName = displayName
+	}
+	fullName, ok := b[idp.ClaimMappings.FullName].(string)
+	if ok {
+		userProfile.FullName = fullName
+	}
+	email, ok := b[idp.ClaimMappings.Email].(string)
+	if ok {
+		userProfile.Email = email
+	}
+	emailVerified, ok := b[idp.ClaimMappings.EmailVerified].(bool)
+	if ok {
+		userProfile.EmailVerified = emailVerified
 	}
 
 	result := &ProcessedToken{

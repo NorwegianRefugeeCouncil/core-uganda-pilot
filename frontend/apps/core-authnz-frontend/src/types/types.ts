@@ -105,13 +105,11 @@ export class IdentityProvider {
 
   public claimMappings = {
     version: '0',
-    mappings: {
-      subject: '',
-      displayName: '',
-      fullName: '',
-      email: '',
-      emailVerified: '',
-    },
+    subject: '',
+    displayName: '',
+    fullName: '',
+    email: '',
+    emailVerified: '',
   };
 }
 

@@ -20,13 +20,11 @@ type FormData = {
   scopes: string;
   claimMappings: {
     version: string;
-    mappings: {
-      subject: string;
-      displayName: string;
-      fullName: string;
-      email: string;
-      emailVerified: string;
-    };
+    subject: string;
+    displayName: string;
+    fullName: string;
+    email: string;
+    emailVerified: string;
   };
 };
 
@@ -59,24 +57,21 @@ export const IdentityProviderEditor: FC<Props> = (props) => {
     setValue('clientSecret', '');
     setValue('scopes', data.scopes);
     setValue(
-      'claimMappings.mappings.subject',
-      JSON.stringify(data.claimMappings.mappings.subject),
+      'claimMappings.subject',
+      JSON.stringify(data.claimMappings.subject),
     );
     setValue(
-      'claimMappings.mappings.displayName',
-      JSON.stringify(data.claimMappings.mappings.displayName),
+      'claimMappings.displayName',
+      JSON.stringify(data.claimMappings.displayName),
     );
     setValue(
-      'claimMappings.mappings.fullName',
-      JSON.stringify(data.claimMappings.mappings.fullName),
+      'claimMappings.fullName',
+      JSON.stringify(data.claimMappings.fullName),
     );
+    setValue('claimMappings.email', JSON.stringify(data.claimMappings.email));
     setValue(
-      'claimMappings.mappings.email',
-      JSON.stringify(data.claimMappings.mappings.email),
-    );
-    setValue(
-      'claimMappings.mappings.emailVerified',
-      JSON.stringify(data.claimMappings.mappings.emailVerified),
+      'claimMappings.emailVerified',
+      JSON.stringify(data.claimMappings.emailVerified),
     );
     setVersion(data.claimMappings.version);
   };
@@ -106,15 +101,11 @@ export const IdentityProviderEditor: FC<Props> = (props) => {
         scopes: args.scopes,
         claimMappings: {
           version: newVersion,
-          mappings: {
-            subject: JSON.parse(args.claimMappings.mappings.subject),
-            displayName: JSON.parse(args.claimMappings.mappings.displayName),
-            fullName: JSON.parse(args.claimMappings.mappings.fullName),
-            email: JSON.parse(args.claimMappings.mappings.email),
-            emailVerified: JSON.parse(
-              args.claimMappings.mappings.emailVerified,
-            ),
-          },
+          subject: JSON.parse(args.claimMappings.subject),
+          displayName: JSON.parse(args.claimMappings.displayName),
+          fullName: JSON.parse(args.claimMappings.fullName),
+          email: JSON.parse(args.claimMappings.email),
+          emailVerified: JSON.parse(args.claimMappings.emailVerified),
         },
       };
       let resp;
@@ -225,69 +216,114 @@ export const IdentityProviderEditor: FC<Props> = (props) => {
           </div>
 
           <h6 className="text-light">
-            Current Claim Mapping Version: {version}
+            Claim Mapping, Current Version: {version}
           </h6>
 
-          <div className="form-group mb-2">
-            <label className="form-label text-light">
-              Subject Claim Mapping
-            </label>
-            <input
-              {...register('claimMappings.mappings.subject', {
-                required: true,
-              })}
-              className={classNames(
-                'form-control form-control-darkula',
-                fieldClasses('claimMappings.mappings.subject'),
-              )}
-            />
-            <label className="form-label text-light">
-              DisplayName Claim Mapping
-            </label>
-            <input
-              {...register('claimMappings.mappings.displayName', {
-                required: true,
-              })}
-              className={classNames(
-                'form-control form-control-darkula',
-                fieldClasses('claimMappings.mappings.displayName'),
-              )}
-            />
-            <label className="form-label text-light">
-              FullName Claim Mapping
-            </label>
-            <input
-              {...register('claimMappings.mappings.fullName', {
-                required: true,
-              })}
-              className={classNames(
-                'form-control form-control-darkula',
-                fieldClasses('claimMappings.mappings.fullName'),
-              )}
-            />
-            <label className="form-label text-light">Email Claim Mapping</label>
-            <input
-              {...register('claimMappings.mappings.email', {
-                required: true,
-              })}
-              className={classNames(
-                'form-control form-control-darkula',
-                fieldClasses('claimMappings.mappings.email'),
-              )}
-            />
-            <label className="form-label text-light">
-              EmailVerified Claim Mapping
-            </label>
-            <input
-              {...register('claimMappings.mappings.emailVerified', {
-                required: true,
-              })}
-              className={classNames(
-                'form-control form-control-darkula',
-                fieldClasses('claimMappings.mappings.emailVerified'),
-              )}
-            />
+          <div className="form-group row">
+            <div className="col-sm-2 text-light">
+              <label htmlFor="subject">Subject</label>
+            </div>
+            <div className="col-sm-10">
+              <input
+                {...register('claimMappings.subject', {
+                  required: true,
+                })}
+                id="subject"
+                className={classNames(
+                  'form-control form-control-darkula',
+                  fieldClasses('claimMappings.subject'),
+                )}
+              />
+              <small className="form-text text-muted">
+                Please use dot notation
+              </small>
+            </div>
           </div>
+
+          <div className="form-group row">
+            <div className="col-sm-2 text-light">
+              <label htmlFor="displayName">Display Name</label>
+            </div>
+            <div className="col-sm-10">
+              <input
+                {...register('claimMappings.displayName', {
+                  required: true,
+                })}
+                id="displayName"
+                className={classNames(
+                  'form-control form-control-darkula',
+                  fieldClasses('claimMappings.displayName'),
+                )}
+              />
+              <small className="form-text text-muted">
+                Please use dot notation
+              </small>
+            </div>
+          </div>
+
+          <div className="form-group row">
+            <div className="col-sm-2 text-light">
+              <label htmlFor="fullName">Full Name</label>
+            </div>
+            <div className="col-sm-10">
+              <input
+                {...register('claimMappings.fullName', {
+                  required: true,
+                })}
+                id="fullName"
+                className={classNames(
+                  'form-control form-control-darkula',
+                  fieldClasses('claimMappings.fullName'),
+                )}
+              />
+              <small className="form-text text-muted">
+                Please use dot notation
+              </small>
+            </div>
+          </div>
+
+          <div className="form-group row">
+            <div className="col-sm-2 text-light">
+              <label htmlFor="email">Email</label>
+            </div>
+            <div className="col-sm-10">
+              <input
+                {...register('claimMappings.email', {
+                  required: true,
+                })}
+                id="email"
+                className={classNames(
+                  'form-control form-control-darkula',
+                  fieldClasses('claimMappings.email'),
+                )}
+              />
+              <small className="form-text text-muted">
+                Please use dot notation
+              </small>
+            </div>
+          </div>
+
+          <div className="form-group row">
+            <div className="col-sm-2 text-light">
+              <label htmlFor="emailVerified">Email Verified</label>
+            </div>
+            <div className="col-sm-10">
+              <input
+                {...register('claimMappings.emailVerified', {
+                  required: true,
+                })}
+                id="emailVerified"
+                className={classNames(
+                  'form-control form-control-darkula',
+                  fieldClasses('claimMappings.emailVerified'),
+                )}
+              />
+              <small className="form-text text-muted">
+                Please use dot notation
+              </small>
+            </div>
+          </div>
+
           {fieldErrors('claimMappings')}
 
           <button disabled={isSubmitting} className="btn btn-success mt-2">
