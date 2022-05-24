@@ -136,33 +136,33 @@ func processOidcToken(
 	}
 
 	// unmarshal claims
-	var a interface{}
-	var b map[string]interface{}
-	if err := idToken.Claims(&a); err != nil {
+	var claimInft interface{}
+	if err := idToken.Claims(&claimInft); err != nil {
 		l.Error("failed to unmarshal claims from ID token", zap.Error(err))
 		return nil, err
 	}
 	var userProfile authrequest.Claims
 
-	b, ok = a.(map[string]interface{})
+	var mappedClaimInft map[string]interface{}
+	mappedClaimInft, ok = claimInft.(map[string]interface{})
 
-	subject, ok := b[idp.ClaimMappings.Subject].(string)
+	subject, ok := mappedClaimInft[idp.ClaimMappings.Subject].(string)
 	if ok {
 		userProfile.Subject = subject
 	}
-	displayName, ok := b[idp.ClaimMappings.DisplayName].(string)
+	displayName, ok := mappedClaimInft[idp.ClaimMappings.DisplayName].(string)
 	if ok {
 		userProfile.DisplayName = displayName
 	}
-	fullName, ok := b[idp.ClaimMappings.FullName].(string)
+	fullName, ok := mappedClaimInft[idp.ClaimMappings.FullName].(string)
 	if ok {
 		userProfile.FullName = fullName
 	}
-	email, ok := b[idp.ClaimMappings.Email].(string)
+	email, ok := mappedClaimInft[idp.ClaimMappings.Email].(string)
 	if ok {
 		userProfile.Email = email
 	}
-	emailVerified, ok := b[idp.ClaimMappings.EmailVerified].(bool)
+	emailVerified, ok := mappedClaimInft[idp.ClaimMappings.EmailVerified].(bool)
 	if ok {
 		userProfile.EmailVerified = emailVerified
 	}
