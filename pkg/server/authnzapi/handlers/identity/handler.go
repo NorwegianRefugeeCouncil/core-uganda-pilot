@@ -11,7 +11,7 @@ import (
 )
 
 type Handler struct {
-	store      store.IdentityStore
+	store      store.IdentityProfileStore
 	webService *restful.WebService
 }
 
@@ -19,7 +19,7 @@ func (h *Handler) WebService() *restful.WebService {
 	return h.webService
 }
 
-func NewHandler(store store.IdentityStore) *Handler {
+func NewHandler(store store.IdentityProfileStore) *Handler {
 	h := &Handler{store: store}
 
 	ws := new(restful.WebService).
@@ -36,8 +36,8 @@ func NewHandler(store store.IdentityStore) *Handler {
 			DataFormat("uuid").
 			Required(true)).
 		Produces(mimetypes.ApplicationJson).
-		Writes(types.Identity{}).
-		Returns(http.StatusOK, "OK", types.Identity{}))
+		Writes(types.IdentityProfile{}).
+		Returns(http.StatusOK, "OK", types.IdentityProfile{}))
 
 	return h
 }

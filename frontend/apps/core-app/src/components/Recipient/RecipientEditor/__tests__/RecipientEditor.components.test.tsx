@@ -6,7 +6,7 @@ import {
 } from 'core-api-client';
 import { Recipient } from 'core-api-client/src/types/client/Recipient';
 
-import { formsClient } from '../../../../clients/formsClient';
+import { formsClient } from '../../../../clients';
 import { render } from '../../../../testUtils/render';
 import { RecipientEditorComponent } from '../RecipientEditor.component';
 

@@ -13,24 +13,24 @@ import (
 
 func (h *Handler) Get(identityId string) http.HandlerFunc {
 	return func(w http.ResponseWriter, req *http.Request) {
-		l := logging.NewLogger(req.Context()).With(zap.String("identity_provider_id", identityId))
+		l := logging.NewLogger(req.Context()).With(zap.String("identity_id", identityId))
 
-		l.Debug("validating identity provider id")
+		l.Debug("validating identity id")
 		if _, err := uuid.FromString(identityId); err != nil {
-			l.Error("failed to validate identity provider id", zap.Error(err))
-			utils.ErrorResponse(w, meta.NewBadRequest("invalid identity provider id"))
+			l.Error("failed to validate identity id", zap.Error(err))
+			utils.ErrorResponse(w, meta.NewBadRequest("invalid identity id"))
 			return
 		}
 
-		l.Debug("getting identity provider")
+		l.Debug("getting identity")
 		identity, err := h.store.Get(req.Context(), identityId)
 		if err != nil {
-			l.Error("failed to get identity provider", zap.Error(err))
+			l.Error("failed to get identity", zap.Error(err))
 			utils.ErrorResponse(w, err)
 			return
 		}
 
-		l.Debug("successfully got identity provider")
+		l.Debug("successfully got identity")
 		utils.JSONResponse(w, http.StatusOK, identity)
 	}
 }

@@ -18,7 +18,7 @@ import {
 
 import { RecordEditor } from '..';
 import * as ReactHookFormTransformer from '../../../utils/ReactHookFormTransformer';
-import { formsClient } from '../../../clients/formsClient';
+import { formsClient } from '../../../clients';
 import { SubFormTable } from '../../SubFormTable';
 
 type Props = {

@@ -3,7 +3,7 @@ import { FormWithRecord } from 'core-api-client';
 import { Recipient } from 'core-api-client/src/types/client/Recipient';
 import { useNavigation } from '@react-navigation/native';
 
-import { formsClient } from '../../clients/formsClient';
+import { formsClient } from '../../clients';
 import configuration from '../../config';
 import { useAPICall } from '../../hooks/useAPICall';
 import { routes } from '../../constants/routes';

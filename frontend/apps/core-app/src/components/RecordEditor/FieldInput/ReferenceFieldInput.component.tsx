@@ -3,7 +3,7 @@ import { FormControl, Select } from 'native-base';
 import { useFormContext, useController } from 'react-hook-form';
 import { FormDefinition, Record, Validation } from 'core-api-client';
 
-import { formsClient } from '../../../clients/formsClient';
+import { formsClient } from '../../../clients';
 
 type Props = {
   formId: string;

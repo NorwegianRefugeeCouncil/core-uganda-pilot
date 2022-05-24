@@ -2,7 +2,7 @@ import { fireEvent, waitFor } from '@testing-library/react-native';
 import { FormType, FormWithRecord } from 'core-api-client';
 import { Recipient } from 'core-api-client/src/types/client/Recipient';
 
-import { formsClient } from '../../../clients/formsClient';
+import { formsClient } from '../../../clients';
 import { render } from '../../../testUtils/render';
 import * as ReactHookFormTransformer from '../../../utils/ReactHookFormTransformer';
 import { RecipientRegistrationScreenComponent } from '../RecipientRegistrationScreen.component';

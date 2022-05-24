@@ -199,7 +199,7 @@ var _ FormStore = &formStore{}
 
 // Get implements FormStore.Get
 func (d *formStore) Get(ctx context.Context, formID string) (*types.FormDefinition, error) {
-	ctx, db, _, done, err := actionContext(ctx, d.db, "form", "get", zap.String("form_id", formID))
+	ctx, db, _, done, err := actionContext(ctx, d.db, formStoreName, "get", zap.String("form_id", formID))
 	if err != nil {
 		return nil, err
 	}
@@ -209,7 +209,7 @@ func (d *formStore) Get(ctx context.Context, formID string) (*types.FormDefiniti
 
 // List implements FormStore.List
 func (d *formStore) List(ctx context.Context) (*types.FormDefinitionList, error) {
-	ctx, db, _, done, err := actionContext(ctx, d.db, "form", "list")
+	ctx, db, _, done, err := actionContext(ctx, d.db, formStoreName, "list")
 	if err != nil {
 		return nil, err
 	}
@@ -238,7 +238,7 @@ func (d *formStore) List(ctx context.Context) (*types.FormDefinitionList, error)
 // Delete implements FormStore.Delete
 func (d *formStore) Delete(ctx context.Context, id string) error {
 
-	ctx, db, l, done, err := actionContext(ctx, d.db, "form", "delete")
+	ctx, db, l, done, err := actionContext(ctx, d.db, formStoreName, "delete")
 	if err != nil {
 		return err
 	}
@@ -301,7 +301,7 @@ func (d *formStore) Delete(ctx context.Context, id string) error {
 
 // Create implements FormStore.Create
 func (d *formStore) Create(ctx context.Context, form *types.FormDefinition) (*types.FormDefinition, error) {
-	ctx, db, l, done, err := actionContext(ctx, d.db, "form", "create")
+	ctx, db, l, done, err := actionContext(ctx, d.db, formStoreName, "create")
 	if err != nil {
 		return nil, err
 	}

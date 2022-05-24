@@ -16,7 +16,7 @@ import {
 } from '@expo-google-fonts/roboto';
 
 import { AuthWrapper } from './src/components/AuthWrapper';
-import { formsClient } from './src/clients/formsClient';
+import { adminClient, formsClient } from './src/clients';
 import { RootNavigator } from './src/navigation';
 import { linkingConfig } from './src/navigation/linking.config';
 
@@ -40,10 +40,15 @@ const App: React.FC = () => {
 
   if (!fontsLoaded) return null;
 
+  const handleTokenChange = (token: string) => {
+    formsClient.setToken(token);
+    adminClient.setToken(token);
+  };
+
   return (
     <NativeBaseProvider theme={theme}>
       <NavigationContainer linking={linkingConfig} theme={navTheme}>
-        <AuthWrapper onTokenChange={formsClient.setToken}>
+        <AuthWrapper onTokenChange={handleTokenChange}>
           <RootNavigator />
         </AuthWrapper>
       </NavigationContainer>

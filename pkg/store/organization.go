@@ -19,7 +19,7 @@ type Organization struct {
 
 type OrganizationStore interface {
 	Get(ctx context.Context, id string) (*types.Organization, error)
-	Create(ctx context.Context, organiztion *types.Organization) (*types.Organization, error)
+	Create(ctx context.Context, organization *types.Organization) (*types.Organization, error)
 	Update(ctx context.Context, organization *types.Organization) (*types.Organization, error)
 	List(ctx context.Context) ([]*types.Organization, error)
 }
@@ -60,7 +60,7 @@ func mapAllToOrg(orgs []*Organization) []*types.Organization {
 }
 
 func (o organizationStore) Get(ctx context.Context, id string) (*types.Organization, error) {
-	ctx, db, l, done, err := actionContext(ctx, o.db, "organization", "get", zap.String("organization_id", id))
+	ctx, db, l, done, err := actionContext(ctx, o.db, organizationStoreName, "get", zap.String("organization_id", id))
 	if err != nil {
 		return nil, err
 	}
@@ -76,14 +76,14 @@ func (o organizationStore) Get(ctx context.Context, id string) (*types.Organizat
 	return mapToOrg(&org), nil
 }
 
-func (o organizationStore) Create(ctx context.Context, organiztion *types.Organization) (*types.Organization, error) {
-	ctx, db, l, done, err := actionContext(ctx, o.db, "organization", "create")
+func (o organizationStore) Create(ctx context.Context, organization *types.Organization) (*types.Organization, error) {
+	ctx, db, l, done, err := actionContext(ctx, o.db, organizationStoreName, "create")
 	if err != nil {
 		return nil, err
 	}
 	defer done()
 
-	var org = mapFromOrg(organiztion)
+	var org = mapFromOrg(organization)
 	org.ID = uuid.NewV4().String()
 
 	l.Debug("creating organization")
@@ -95,7 +95,7 @@ func (o organizationStore) Create(ctx context.Context, organiztion *types.Organi
 }
 
 func (o organizationStore) Update(ctx context.Context, organization *types.Organization) (*types.Organization, error) {
-	ctx, db, l, done, err := actionContext(ctx, o.db, "organization", "update", zap.String("organization_id", organization.ID))
+	ctx, db, l, done, err := actionContext(ctx, o.db, organizationStoreName, "update", zap.String("organization_id", organization.ID))
 	if err != nil {
 		return nil, err
 	}
@@ -122,7 +122,7 @@ func (o organizationStore) Update(ctx context.Context, organization *types.Organ
 }
 
 func (o organizationStore) List(ctx context.Context) ([]*types.Organization, error) {
-	ctx, db, l, done, err := actionContext(ctx, o.db, "organization", "list")
+	ctx, db, l, done, err := actionContext(ctx, o.db, organizationStoreName, "list")
 	if err != nil {
 		return nil, err
 	}

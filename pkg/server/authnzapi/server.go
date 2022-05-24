@@ -52,7 +52,7 @@ func NewServer(options Options) (*Server, error) {
 	idpHandler := identityprovider.NewHandler(idpStore)
 	container.Add(idpHandler.WebService())
 
-	identityStore := store.NewIdentityStore(options.StoreFactory)
+	identityStore := store.NewIdentityProfileStore(options.StoreFactory)
 	identityHandler := identity.NewHandler(identityStore)
 	container.Add(identityHandler.WebService())
 
