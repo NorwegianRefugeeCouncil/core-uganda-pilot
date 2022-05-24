@@ -7,4 +7,5 @@ const (
 	ParamFolderID           = "folderId"
 	ParamOrganizationID     = "organizationId"
 	ParamIdentityProviderID = "identityProviderId"
+	ParamIdentityID         = "identityId"
 )

@@ -3,6 +3,7 @@ package authnzapi
 import (
 	"context"
 	"github.com/nrc-no/core/pkg/server/authnzapi/handlers/clients"
+	"github.com/nrc-no/core/pkg/server/authnzapi/handlers/identity"
 	"github.com/nrc-no/core/pkg/server/authnzapi/handlers/identityprovider"
 	"github.com/nrc-no/core/pkg/server/authnzapi/handlers/organization"
 	"github.com/nrc-no/core/pkg/server/generic"
@@ -50,6 +51,10 @@ func NewServer(options Options) (*Server, error) {
 	idpStore := store.NewIdentityProviderStore(options.StoreFactory)
 	idpHandler := identityprovider.NewHandler(idpStore)
 	container.Add(idpHandler.WebService())
+
+	identityStore := store.NewIdentityStore(options.StoreFactory)
+	identityHandler := identity.NewHandler(identityStore)
+	container.Add(identityHandler.WebService())
 
 	s := &Server{
 		Server:  genericServer,
