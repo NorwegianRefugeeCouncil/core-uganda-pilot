@@ -45,8 +45,23 @@ func handleAuthCodeExchangeSucceeded(
 					return err
 				}
 				identifier = newIdentity.Credentials[0].Identifiers[0]
+
+				newIdentityProfile := store2.IdentityProfile{
+					ID:    newIdentity.ID,
+					IdentityProviderID: idp.ID,
+					Subject:       authRequest.Claims.Subject,
+					DisplayName:   authRequest.Claims.DisplayName,
+					FullName:      authRequest.Claims.FullName,
+					Email:         authRequest.Claims.Email,
+					EmailVerified: authRequest.Claims.EmailVerified,
+				}
+
+				err2 := loginStore.CreateOidcIdentityProfile(newIdentityProfile)
+				if err2 != nil {
+					l.Error("failed to store identity profile", zap.Error(err2))
+				}
+
 			} else {
-				l.Error("failed to get user identifier for oidc provider", zap.Error(err))
 				return err
 			}
 		}

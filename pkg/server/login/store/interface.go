@@ -17,6 +17,7 @@ type Interface interface {
 	GetIdentity(ctx context.Context, id string) (*Identity, error)
 	FindOidcIdentifier(identifier string, identityProviderId string) (*CredentialIdentifier, error)
 	CreateOidcIdentity(issuer string, identifier string, initialAccessToken string, initialRefreshToken string, initialIdToken string) (*Identity, error)
+	CreateOidcIdentityProfile(profile IdentityProfile) error
 }
 
 type loginStore struct {
@@ -136,6 +137,22 @@ func (l *loginStore) CreateOidcIdentity(
 
 	return identity, nil
 
+}
+
+func (l *loginStore) CreateOidcIdentityProfile(
+	profile IdentityProfile,
+) error {
+
+	db, err := l.db.Get()
+	if err != nil {
+		return err
+	}
+
+	if err := db.Create(&profile).Error; err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (l *loginStore) FindOidcIdentifier(

@@ -1,6 +1,8 @@
 package store
 
-import "gorm.io/gorm"
+import (
+	"gorm.io/gorm"
+)
 
 func Migrate(db *gorm.DB) error {
 	return db.AutoMigrate(

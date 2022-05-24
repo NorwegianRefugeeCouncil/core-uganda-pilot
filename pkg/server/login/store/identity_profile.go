@@ -3,5 +3,9 @@ package store
 type IdentityProfile struct {
 	ID                 string
 	IdentityProviderID string
-	Claims             map[string]string `json:"Claims"`
+	Subject            string
+	DisplayName        string
+	FullName           string
+	Email              string
+	EmailVerified      bool
 }
