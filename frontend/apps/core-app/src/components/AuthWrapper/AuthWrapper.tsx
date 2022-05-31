@@ -11,8 +11,9 @@ type Props = {
 
 export const AuthWrapper: React.FC<Props> = ({ onTokenChange, children }) => {
   const [loggedIn, setLoggedIn] = React.useState(false);
+  const [discoveryLoading, setDiscoveryLoading] = React.useState(true);
 
-  const [tokenResponse, login] = useTokenResponse();
+  const [tokenResponse, login] = useTokenResponse(setDiscoveryLoading);
 
   React.useEffect(() => {
     if (tokenResponse) {
@@ -29,7 +30,7 @@ export const AuthWrapper: React.FC<Props> = ({ onTokenChange, children }) => {
   }, [tokenResponse?.accessToken]);
 
   if (!loggedIn) {
-    return <LoginScreen onLogin={login} />;
+    return <LoginScreen onLogin={login} isLoading={discoveryLoading} />;
   }
 
   return <>{children}</>;
