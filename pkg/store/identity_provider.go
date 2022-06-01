@@ -5,6 +5,7 @@ import (
 	"database/sql/driver"
 	"encoding/json"
 	"fmt"
+
 	"github.com/nrc-no/core/pkg/api/meta"
 	"github.com/nrc-no/core/pkg/api/types"
 	uuid "github.com/satori/go.uuid"
@@ -61,7 +62,7 @@ type IdentityProvider struct {
 }
 
 type ClaimMappings struct {
-	Version string
+	Version  string
 	Mappings map[string]string
 }
 
@@ -256,12 +257,12 @@ func (i identityProviderStore) Update(ctx context.Context, identityProvider *typ
 
 	// these are the only fields allowed to be updated on an IdentityProvider
 	updates := map[string]interface{}{
-		"name":         	identityProvider.Name,
-		"client_id":    	identityProvider.ClientID,
-		"domain":       	identityProvider.Domain,
-		"email_domain": 	identityProvider.EmailDomain,
-		"scopes":           identityProvider.Scopes,
-		"claim_mappings":   identityProvider.ClaimMappings,
+		"name":           storeIdp.Name,
+		"client_id":      storeIdp.ClientID,
+		"domain":         storeIdp.Domain,
+		"email_domain":   storeIdp.EmailDomain,
+		"scopes":         storeIdp.Scopes,
+		"claim_mappings": storeIdp.ClaimMappings,
 	}
 	if len(identityProvider.ClientSecret) != 0 {
 		updates["client_secret"] = identityProvider.ClientSecret
@@ -299,7 +300,7 @@ func mapIdentityProviderList(i IdentityProviders, keepClientSecrets bool) []*typ
 // mapIdentityProviderTo maps a store.IdentityProvider to a types.IdentityProvider
 func mapIdentityProviderTo(i *IdentityProvider, keepClientSecret bool) *types.IdentityProvider {
 	claimMappings := &types.ClaimMappings{
-		Version: i.ClaimMappings.Version,
+		Version:  i.ClaimMappings.Version,
 		Mappings: i.ClaimMappings.Mappings,
 	}
 	result := &types.IdentityProvider{
@@ -321,7 +322,7 @@ func mapIdentityProviderTo(i *IdentityProvider, keepClientSecret bool) *types.Id
 // mapIdentityProviderFrom maps a types.IdentityProvider into a store.IdentityProvider
 func mapIdentityProviderFrom(i *types.IdentityProvider) *IdentityProvider {
 	claimMappings := &ClaimMappings{
-		Version: i.ClaimMappings.Version,
+		Version:  i.ClaimMappings.Version,
 		Mappings: i.ClaimMappings.Mappings,
 	}
 	return &IdentityProvider{
