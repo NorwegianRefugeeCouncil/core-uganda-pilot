@@ -59,7 +59,7 @@ serve-native:
 serve-pwa:
 	@./scripts/serve-pwa.sh
 
-.PHONY: serve-admin
+.PHONY: serve-authnz-frontend
 serve-authnz-frontend:
 	@./scripts/serve-authnz-frontend.sh
 

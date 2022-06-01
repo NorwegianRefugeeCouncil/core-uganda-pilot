@@ -1,10 +1,5 @@
 package types
 
-import (
-	"database/sql/driver"
-	"encoding/json"
-)
-
 // IdentityProvider represents an Organization trusted Identity Provider
 type IdentityProvider struct {
 	// ID of the IdentityProvider
@@ -30,16 +25,11 @@ type IdentityProvider struct {
 }
 
 type ClaimMappings struct {
-	Version string `json:"Version"`
+	Version  string            `json:"Version"`
 	Mappings map[string]string `json:"Mappings"`
 }
 
 // IdentityProviderList represents a list of IdentityProvider
 type IdentityProviderList struct {
 	Items []*IdentityProvider `json:"items"`
-}
-
-func (c ClaimMappings) Value() (driver.Value, error) {
-	j, err := json.Marshal(c)
-	return j, err
 }

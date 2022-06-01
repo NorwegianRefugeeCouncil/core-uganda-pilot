@@ -23,6 +23,8 @@ static_resources:
                 stat_prefix: ingress_http
                 http_filters:
                   - name: envoy.filters.http.router
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
                 route_config:
                   name: local_route
                   virtual_hosts:
@@ -71,6 +73,8 @@ static_resources:
                           timeout: 0.250s
                         path_prefix: /apis/authorization.nrc.no/v1
                   - name: envoy.filters.http.router
+                    typed_config:
+                      "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
                 route_config:
                   name: local_route
                   virtual_hosts:
