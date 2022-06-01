@@ -2,6 +2,10 @@ package store
 
 import (
 	"context"
+	"database/sql/driver"
+	"encoding/json"
+	"fmt"
+
 	"github.com/nrc-no/core/pkg/api/meta"
 	"github.com/nrc-no/core/pkg/api/types"
 	uuid "github.com/satori/go.uuid"
@@ -49,6 +53,70 @@ type IdentityProvider struct {
 
 	// Name of this IdentityProvider
 	Name string
+
+	// Scopes of this IdentityProvider
+	Scopes string
+
+	// ClaimMappings of this IdentityProvider
+	ClaimMappings ClaimMappings
+}
+
+type ClaimMappings struct {
+	Version  string
+	Mappings map[string]string
+}
+
+func (c ClaimMappings) Value() (driver.Value, error) {
+	j, err := json.Marshal(c)
+	return j, err
+}
+
+func (c *ClaimMappings) Scan(src interface{}) error {
+	source, ok := src.([]byte)
+	if !ok {
+		return fmt.Errorf("failed to scan scan claims: value of type %T could not be converted to []byte", src)
+	}
+
+	var i interface{}
+	err := json.Unmarshal(source, &i)
+	if err != nil {
+		return err
+	}
+
+	m, ok := i.(map[string]interface{})
+
+	if !ok {
+		return fmt.Errorf("failed to scan scan claims: value of type %T could not be converted to map[string]interface{}", i)
+	}
+
+	versionIntf, ok := m["Version"]
+	if ok {
+		versionStr, ok := versionIntf.(string)
+		if !ok {
+			return fmt.Errorf("version is not a string")
+		}
+		c.Version = versionStr
+	}
+
+	claimMappingsInft, ok := m["Mappings"]
+
+	c.Mappings = map[string]string{}
+
+	if ok {
+		claimMapping, ok := claimMappingsInft.(map[string]interface{})
+		if ok {
+
+			for key, elementIntf := range claimMapping {
+				claimStr, ok := elementIntf.(string)
+				if !ok {
+					return fmt.Errorf("claim mapping is not a string")
+				}
+				c.Mappings[key] = claimStr
+			}
+		}
+	}
+
+	return nil
 }
 
 // IdentityProviders represent a list of IdentityProvider
@@ -189,10 +257,12 @@ func (i identityProviderStore) Update(ctx context.Context, identityProvider *typ
 
 	// these are the only fields allowed to be updated on an IdentityProvider
 	updates := map[string]interface{}{
-		"name":         identityProvider.Name,
-		"client_id":    identityProvider.ClientID,
-		"domain":       identityProvider.Domain,
-		"email_domain": identityProvider.EmailDomain,
+		"name":           storeIdp.Name,
+		"client_id":      storeIdp.ClientID,
+		"domain":         storeIdp.Domain,
+		"email_domain":   storeIdp.EmailDomain,
+		"scopes":         storeIdp.Scopes,
+		"claim_mappings": storeIdp.ClaimMappings,
 	}
 	if len(identityProvider.ClientSecret) != 0 {
 		updates["client_secret"] = identityProvider.ClientSecret
@@ -229,6 +299,10 @@ func mapIdentityProviderList(i IdentityProviders, keepClientSecrets bool) []*typ
 
 // mapIdentityProviderTo maps a store.IdentityProvider to a types.IdentityProvider
 func mapIdentityProviderTo(i *IdentityProvider, keepClientSecret bool) *types.IdentityProvider {
+	claimMappings := &types.ClaimMappings{
+		Version:  i.ClaimMappings.Version,
+		Mappings: i.ClaimMappings.Mappings,
+	}
 	result := &types.IdentityProvider{
 		ID:             i.ID,
 		OrganizationID: i.OrganizationID,
@@ -236,6 +310,8 @@ func mapIdentityProviderTo(i *IdentityProvider, keepClientSecret bool) *types.Id
 		ClientID:       i.ClientID,
 		EmailDomain:    i.EmailDomain,
 		Name:           i.Name,
+		Scopes:         i.Scopes,
+		ClaimMappings:  *claimMappings,
 	}
 	if keepClientSecret {
 		result.ClientSecret = i.ClientSecret
@@ -245,6 +321,10 @@ func mapIdentityProviderTo(i *IdentityProvider, keepClientSecret bool) *types.Id
 
 // mapIdentityProviderFrom maps a types.IdentityProvider into a store.IdentityProvider
 func mapIdentityProviderFrom(i *types.IdentityProvider) *IdentityProvider {
+	claimMappings := &ClaimMappings{
+		Version:  i.ClaimMappings.Version,
+		Mappings: i.ClaimMappings.Mappings,
+	}
 	return &IdentityProvider{
 		ID:             i.ID,
 		OrganizationID: i.OrganizationID,
@@ -253,5 +333,7 @@ func mapIdentityProviderFrom(i *types.IdentityProvider) *IdentityProvider {
 		ClientSecret:   i.ClientSecret,
 		EmailDomain:    i.EmailDomain,
 		Name:           i.Name,
+		Scopes:         i.Scopes,
+		ClaimMappings:  *claimMappings,
 	}
 }

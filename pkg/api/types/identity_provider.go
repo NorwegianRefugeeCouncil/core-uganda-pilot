@@ -18,6 +18,15 @@ type IdentityProvider struct {
 	// TODO: add unique constraint for email domains
 	// TODO: add support for multiple email domains for a single IdentityProvider
 	EmailDomain string `json:"emailDomain"`
+
+	Scopes string `json:"scopes"`
+
+	ClaimMappings ClaimMappings `json:"claimMappings"`
+}
+
+type ClaimMappings struct {
+	Version  string            `json:"Version"`
+	Mappings map[string]string `json:"Mappings"`
 }
 
 // IdentityProviderList represents a list of IdentityProvider
