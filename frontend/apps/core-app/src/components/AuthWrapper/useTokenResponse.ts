@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Platform } from 'react-native';
 import {
   CodeChallengeMethod,
-  DiscoveryDocument,
   exchangeCodeAsync,
   makeRedirectUri,
   ResponseType,

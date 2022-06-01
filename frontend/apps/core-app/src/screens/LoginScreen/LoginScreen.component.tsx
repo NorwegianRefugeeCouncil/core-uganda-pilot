@@ -22,7 +22,6 @@ export const LoginScreenComponent: React.FC<Props> = ({
         maxWidth="700px"
         height="100%"
         bg="red"
-        shadow="1px 1px red"
         zIndex={1}
       >
         <Logo size="65px" pb="55px" />
@@ -38,6 +37,7 @@ export const LoginScreenComponent: React.FC<Props> = ({
           variant="major"
           w="440px"
           isLoading={isLoading}
+          testID="login-button"
         >
           Login
         </Button>
