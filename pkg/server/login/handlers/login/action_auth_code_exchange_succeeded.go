@@ -30,11 +30,12 @@ func handleAuthCodeExchangeSucceeded(
 		}
 
 		l.Debug("finding user identifier for oidc provider", zap.String("subject", authRequest.Claims.Subject), zap.String("domain", idp.Domain))
-		identifier, err := loginStore.FindOidcIdentifier(authRequest.Claims.Subject, idp.Domain)
+		identifier, err := loginStore.FindOidcIdentifier(ctx, authRequest.Claims.Subject, idp.Domain)
 		if err != nil {
 			if meta.ReasonForError(err) == meta.StatusReasonNotFound {
 				l.Info("user identifier not found. creating new identity")
 				newIdentity, err := loginStore.CreateOidcIdentity(
+					ctx,
 					idp.Domain,
 					authRequest.Claims.Subject,
 					authRequest.AccessToken,
@@ -56,12 +57,13 @@ func handleAuthCodeExchangeSucceeded(
 					EmailVerified: authRequest.Claims.EmailVerified,
 				}
 
-				err2 := loginStore.CreateOidcIdentityProfile(newIdentityProfile)
-				if err2 != nil {
-					l.Error("failed to store identity profile", zap.Error(err2))
+				if err := loginStore.CreateOidcIdentityProfile(ctx, newIdentityProfile); err != nil {
+					l.Error("failed to store identity profile", zap.Error(err))
+					return err
 				}
 
 			} else {
+				l.Error("failed to get user identifier for oidc provider", zap.Error(err))
 				return err
 			}
 		}

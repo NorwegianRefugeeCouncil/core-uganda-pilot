@@ -135,16 +135,41 @@ func processOidcToken(
 		return nil, err
 	}
 
-	// unmarshal claims
+	userProfile, err := extractIdentityProfile(ctx, idToken, idp)
+
+	result := &ProcessedToken{
+		OriginalToken: token,
+		RawIDToken:    rawIDToken,
+		AccessToken:   token.AccessToken,
+		RefreshToken:  token.RefreshToken,
+		IDToken:       idToken,
+		Claims:        userProfile,
+	}
+
+	return result, nil
+}
+
+
+func extractIdentityProfile(
+	ctx context.Context,
+	idToken *oidc.IDToken,
+	idp *types.IdentityProvider,
+) (*authrequest.Claims, error){
+
+	l := logging.NewLogger(ctx)
+
 	var claimInft interface{}
 	if err := idToken.Claims(&claimInft); err != nil {
 		l.Error("failed to unmarshal claims from ID token", zap.Error(err))
 		return nil, err
 	}
+
 	var userProfile authrequest.Claims
 
-	var mappedClaimInft map[string]interface{}
-	mappedClaimInft, ok = claimInft.(map[string]interface{})
+	mappedClaimInft, ok := claimInft.(map[string]interface{})
+	if !ok {
+		l.Error("failed to cast claims into type map[string]interface{}")
+	}
 
 	subject, ok := mappedClaimInft[idp.ClaimMappings.Subject].(string)
 	if ok {
@@ -166,15 +191,5 @@ func processOidcToken(
 	if ok {
 		userProfile.EmailVerified = emailVerified
 	}
-
-	result := &ProcessedToken{
-		OriginalToken: token,
-		RawIDToken:    rawIDToken,
-		AccessToken:   token.AccessToken,
-		RefreshToken:  token.RefreshToken,
-		IDToken:       idToken,
-		Claims:        &userProfile,
-	}
-
-	return result, nil
+	return &userProfile, nil
 }

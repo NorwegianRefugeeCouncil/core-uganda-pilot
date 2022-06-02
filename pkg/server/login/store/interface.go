@@ -4,9 +4,11 @@ import (
 	"context"
 	"errors"
 	"github.com/nrc-no/core/pkg/api/meta"
+	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/store"
 	"github.com/nrc-no/core/pkg/utils/pointers"
 	uuid "github.com/satori/go.uuid"
+	"go.uber.org/zap"
 	"gorm.io/gorm"
 )
 
@@ -15,9 +17,9 @@ type Interface interface {
 	CreateAuthRequest(ctx context.Context, authRequest *AuthRequest) (*AuthRequest, error)
 	UpdateAuthRequest(ctx context.Context, authRequest *AuthRequest) (*AuthRequest, error)
 	GetIdentity(ctx context.Context, id string) (*Identity, error)
-	FindOidcIdentifier(identifier string, identityProviderId string) (*CredentialIdentifier, error)
-	CreateOidcIdentity(issuer string, identifier string, initialAccessToken string, initialRefreshToken string, initialIdToken string) (*Identity, error)
-	CreateOidcIdentityProfile(profile IdentityProfile) error
+	FindOidcIdentifier(ctx context.Context, identifier string, identityProviderId string) (*CredentialIdentifier, error)
+	CreateOidcIdentity(ctx context.Context, issuer string, identifier string, initialAccessToken string, initialRefreshToken string, initialIdToken string) (*Identity, error)
+	CreateOidcIdentityProfile(ctx context.Context, profile IdentityProfile) error
 }
 
 type loginStore struct {
@@ -93,6 +95,7 @@ func (l *loginStore) GetIdentity(ctx context.Context, id string) (*Identity, err
 }
 
 func (l *loginStore) CreateOidcIdentity(
+	ctx context.Context,
 	issuer string,
 	identifier string,
 	initialAccessToken string,
@@ -140,15 +143,19 @@ func (l *loginStore) CreateOidcIdentity(
 }
 
 func (l *loginStore) CreateOidcIdentityProfile(
+	ctx context.Context,
 	profile IdentityProfile,
 ) error {
+	logger := logging.NewLogger(ctx)
 
 	db, err := l.db.Get()
 	if err != nil {
+		logger.Error("failed to create database connection", zap.Error(err))
 		return err
 	}
 
 	if err := db.Create(&profile).Error; err != nil {
+		logger.Error("failed to create IdentityProfile in database", zap.Error(err))
 		return err
 	}
 
@@ -156,6 +163,7 @@ func (l *loginStore) CreateOidcIdentityProfile(
 }
 
 func (l *loginStore) FindOidcIdentifier(
+	ctx context.Context,
 	identifier string,
 	issuer string,
 ) (*CredentialIdentifier, error) {
