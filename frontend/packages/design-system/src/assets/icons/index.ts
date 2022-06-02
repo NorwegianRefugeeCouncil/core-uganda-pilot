@@ -27,6 +27,7 @@ export * from './Menu';
 export * from './Minus';
 export * from './More';
 export * from './Next';
+export * from './NRC';
 export * from './Notification';
 export * from './Plus';
 export * from './Protection';

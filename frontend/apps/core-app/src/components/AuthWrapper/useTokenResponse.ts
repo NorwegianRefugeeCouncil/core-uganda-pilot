@@ -10,6 +10,7 @@ import {
   useAutoDiscovery,
 } from 'expo-auth-session';
 import Constants from 'expo-constants';
+import { useEffect } from 'react';
 
 const getStoredTokenResponse = (): TokenResponse | undefined => {
   try {
@@ -37,10 +38,9 @@ const storeTokenResponse = (tokenResponse: TokenResponse) => {
   }
 };
 
-export const useTokenResponse = (): [
-  TokenResponse | undefined,
-  () => Promise<void>,
-] => {
+export const useTokenResponse = (
+  setDiscoveryLoading: React.Dispatch<React.SetStateAction<boolean>>,
+): [TokenResponse | undefined, () => Promise<void>] => {
   const [tokenResponse, setTokenResponse] = React.useState<
     TokenResponse | undefined
   >(getStoredTokenResponse());
@@ -57,6 +57,12 @@ export const useTokenResponse = (): [
 
   const discovery = useAutoDiscovery(Constants.manifest?.extra?.issuer);
   const clientId = Constants.manifest?.extra?.client_id;
+
+  useEffect(() => {
+    if (discovery) {
+      setDiscoveryLoading(false);
+    }
+  }, [JSON.stringify(discovery)]);
 
   const [request, response, promptAsync] = useAuthRequest(
     {

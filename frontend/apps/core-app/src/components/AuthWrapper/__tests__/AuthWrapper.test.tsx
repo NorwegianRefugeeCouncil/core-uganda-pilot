@@ -1,11 +1,11 @@
 import { Text } from 'react-native';
 import { fireEvent } from '@testing-library/react-native';
 import { TokenResponse } from 'expo-auth-session';
+import React, { useState } from 'react';
 
-import { render } from '../../testUtils/render';
-
-import * as hooks from './useTokenResponse';
-import { AuthWrapper } from './AuthWrapper';
+import { render } from '../../../testUtils/render';
+import * as hooks from '../useTokenResponse';
+import { AuthWrapper } from '../AuthWrapper';
 
 describe('Unauthenticated', () => {
   it('should render the login button', () => {
@@ -16,34 +16,15 @@ describe('Unauthenticated', () => {
       .spyOn(hooks, 'useTokenResponse')
       .mockImplementationOnce(() => [undefined, loginSpy]);
 
-    const { getByText } = render(
+    const { getByTestId } = render(
       <AuthWrapper onTokenChange={onTokenChangeMock}>
         <Text>Success</Text>
       </AuthWrapper>,
     );
 
-    const button = getByText('Login');
+    const button = getByTestId('login-button');
     expect(button).toBeTruthy();
     fireEvent.press(button);
-  });
-
-  it('should call "login" when the button is clicked', () => {
-    const onTokenChangeMock = jest.fn();
-    const loginSpy = jest.fn();
-
-    jest
-      .spyOn(hooks, 'useTokenResponse')
-      .mockImplementationOnce(() => [undefined, loginSpy]);
-
-    const { getByText } = render(
-      <AuthWrapper onTokenChange={onTokenChangeMock}>
-        <Text>Success</Text>
-      </AuthWrapper>,
-    );
-
-    const button = getByText('Login');
-    fireEvent.press(button);
-    expect(loginSpy).toHaveBeenCalled();
   });
 });
 
