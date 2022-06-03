@@ -3,10 +3,10 @@ package authnzapi
 import (
 	"context"
 	"github.com/nrc-no/core/pkg/server/authnzapi/handlers/clients"
-	"github.com/nrc-no/core/pkg/server/authnzapi/handlers/identity"
 	"github.com/nrc-no/core/pkg/server/authnzapi/handlers/identityprovider"
 	"github.com/nrc-no/core/pkg/server/authnzapi/handlers/organization"
 	"github.com/nrc-no/core/pkg/server/generic"
+	"github.com/nrc-no/core/pkg/server/login/handlers/identity"
 	"github.com/nrc-no/core/pkg/server/options"
 	"github.com/nrc-no/core/pkg/store"
 	"github.com/ory/hydra-client-go/client/admin"

@@ -23,7 +23,7 @@ func NewHandler(store store.IdentityProfileStore) *Handler {
 	h := &Handler{store: store}
 
 	ws := new(restful.WebService).
-		Path("/apis/admin.nrc.no/v1/identities").
+		Path("/apis/core.nrc.no/v1/identities").
 		Doc("identities.admin.nrc.no API")
 
 	h.webService = ws

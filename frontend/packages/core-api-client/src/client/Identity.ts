@@ -3,7 +3,7 @@ import {
   IdentityClientDefinition,
   IdentityGetRequest,
   IdentityGetResponse,
-} from '../types/client/Identity';
+} from '../types';
 
 import { BaseRESTClient } from './BaseRESTClient';
 
