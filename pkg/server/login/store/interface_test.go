@@ -1,6 +1,7 @@
 package store
 
 import (
+	"context"
 	"github.com/nrc-no/core/pkg/mocks"
 	"github.com/nrc-no/core/pkg/store"
 	"github.com/nrc-no/core/pkg/utils/pointers"
@@ -76,10 +77,11 @@ var identity3 = Identity{
 }
 
 func TestFindOidcIdentifier(t *testing.T) {
-
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	s, _ := getStore(t)
 
-	id, err := s.FindOidcIdentifier("identifier-one", "provider1")
+	id, err := s.FindOidcIdentifier(ctx, "identifier-one", "provider1")
 	if !assert.NoError(t, err) {
 		return
 	}
@@ -95,8 +97,10 @@ func TestFindOidcIdentifier(t *testing.T) {
 }
 
 func TestFindOidcIdentifierWhenUserHasMany(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	s, _ := getStore(t)
-	id, err := s.FindOidcIdentifier("identifier-two-b", "provider2")
+	id, err := s.FindOidcIdentifier(ctx, "identifier-two-b", "provider2")
 	if !assert.NoError(t, err) {
 		return
 	}
@@ -104,8 +108,10 @@ func TestFindOidcIdentifierWhenUserHasMany(t *testing.T) {
 }
 
 func TestFindOidcIdentifierWhenUserHasMultipleProviders(t *testing.T) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	s, _ := getStore(t)
-	id, err := s.FindOidcIdentifier("identifier-three-b", "provider3b")
+	id, err := s.FindOidcIdentifier(ctx, "identifier-three-b", "provider3b")
 	if !assert.NoError(t, err) {
 		return
 	}

@@ -18,7 +18,14 @@ type FormData = {
   organizationId: string;
   emailDomain: string;
   scopes: string;
-  claimMappings: { Version: string; Mappings: any };
+  claimMappings: {
+    version: string;
+    subject: string;
+    displayName: string;
+    fullName: string;
+    email: string;
+    emailVerified: string;
+  };
 };
 
 export const IdentityProviderEditor: FC<Props> = (props) => {
@@ -49,18 +56,18 @@ export const IdentityProviderEditor: FC<Props> = (props) => {
     setValue('emailDomain', data.emailDomain);
     setValue('clientSecret', '');
     setValue('scopes', data.scopes);
-    setValue(
-      'claimMappings.Mappings',
-      JSON.stringify(data.claimMappings.Mappings),
-    );
-    setVersion(data.claimMappings.Version);
+    setValue('claimMappings.subject', data.claimMappings.subject);
+    setValue('claimMappings.displayName', data.claimMappings.displayName);
+    setValue('claimMappings.fullName', data.claimMappings.fullName);
+    setValue('claimMappings.email', data.claimMappings.email);
+    setValue('claimMappings.emailVerified', data.claimMappings.emailVerified);
+    setVersion(data.claimMappings.version);
   };
 
   useEffect(() => {
     if (id) {
       apiClient.getIdentityProvider({ id }).then((resp) => {
         if (resp.response) {
-          console.log('RESP', resp.response);
           setData(resp.response);
         }
       });
@@ -81,8 +88,12 @@ export const IdentityProviderEditor: FC<Props> = (props) => {
         emailDomain: args.emailDomain,
         scopes: args.scopes,
         claimMappings: {
-          Version: newVersion,
-          Mappings: JSON.parse(args.claimMappings.Mappings),
+          version: newVersion,
+          subject: args.claimMappings.subject,
+          displayName: args.claimMappings.displayName,
+          fullName: args.claimMappings.fullName,
+          email: args.claimMappings.email,
+          emailVerified: args.claimMappings.emailVerified,
         },
       };
       let resp;
@@ -192,20 +203,110 @@ export const IdentityProviderEditor: FC<Props> = (props) => {
             {fieldErrors('scopes')}
           </div>
 
-          <div className="form-group mb-2">
-            <label className="form-label text-light">
-              Claim Mapping (Version: {version})
-            </label>
-            <textarea
-              {...register('claimMappings.Mappings', {
-                required: true,
-              })}
-              className={classNames(
-                'form-control form-control-darkula',
-                fieldClasses('claimMappings.Mappings'),
-              )}
-            />
+          <h6 className="text-light mt-5">
+            Claim Mapping, Current Version: {version}
+          </h6>
+          <p className="form-text text-muted mb-4">
+            Please use go template syntax:
+            <a
+              href="https://blog.gopheracademy.com/advent-2017/using-go-templates/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Examples
+            </a>
+          </p>
+
+          <div className="form-group row mb-3">
+            <div className="col-sm-2 text-light">
+              <label htmlFor="subject">Subject</label>
+            </div>
+            <div className="col-sm-10">
+              <input
+                {...register('claimMappings.subject', {
+                  required: true,
+                })}
+                id="subject"
+                className={classNames(
+                  'form-control form-control-darkula',
+                  fieldClasses('claimMappings.subject'),
+                )}
+              />
+            </div>
           </div>
+
+          <div className="form-group row mb-3">
+            <div className="col-sm-2 text-light">
+              <label htmlFor="displayName">Display Name</label>
+            </div>
+            <div className="col-sm-10">
+              <input
+                {...register('claimMappings.displayName', {
+                  required: true,
+                })}
+                id="displayName"
+                className={classNames(
+                  'form-control form-control-darkula',
+                  fieldClasses('claimMappings.displayName'),
+                )}
+              />
+            </div>
+          </div>
+
+          <div className="form-group row mb-3">
+            <div className="col-sm-2 text-light">
+              <label htmlFor="fullName">Full Name</label>
+            </div>
+            <div className="col-sm-10">
+              <input
+                {...register('claimMappings.fullName', {
+                  required: true,
+                })}
+                id="fullName"
+                className={classNames(
+                  'form-control form-control-darkula',
+                  fieldClasses('claimMappings.fullName'),
+                )}
+              />
+            </div>
+          </div>
+
+          <div className="form-group row mb-3">
+            <div className="col-sm-2 text-light">
+              <label htmlFor="email">Email</label>
+            </div>
+            <div className="col-sm-10">
+              <input
+                {...register('claimMappings.email', {
+                  required: true,
+                })}
+                id="email"
+                className={classNames(
+                  'form-control form-control-darkula',
+                  fieldClasses('claimMappings.email'),
+                )}
+              />
+            </div>
+          </div>
+
+          <div className="form-group row mb-3">
+            <div className="col-sm-2 text-light">
+              <label htmlFor="emailVerified">Email Verified</label>
+            </div>
+            <div className="col-sm-10">
+              <input
+                {...register('claimMappings.emailVerified', {
+                  required: true,
+                })}
+                id="emailVerified"
+                className={classNames(
+                  'form-control form-control-darkula',
+                  fieldClasses('claimMappings.emailVerified'),
+                )}
+              />
+            </div>
+          </div>
+
           {fieldErrors('claimMappings')}
 
           <button disabled={isSubmitting} className="btn btn-success mt-2">

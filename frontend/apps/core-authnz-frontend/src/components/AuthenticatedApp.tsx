@@ -10,7 +10,7 @@ import { Clients } from './clients/Clients';
 
 const AuthenticatedApp: FC = () => {
   return (
-    <div className="d-flex flex-column vh-100 vw-100 bg-dark">
+    <div className="d-flex flex-column min-vh-100 vw-100 bg-dark">
       <NavBar />
       <Switch>
         <Route path="/organizations/add" component={OrganizationEditor} />

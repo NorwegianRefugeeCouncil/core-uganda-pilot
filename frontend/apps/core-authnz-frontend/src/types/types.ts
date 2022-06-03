@@ -104,8 +104,12 @@ export class IdentityProvider {
   public scopes = '';
 
   public claimMappings = {
-    Version: '0',
-    Mappings: {},
+    version: '0',
+    subject: '',
+    displayName: '',
+    fullName: '',
+    email: '',
+    emailVerified: '',
   };
 }
 

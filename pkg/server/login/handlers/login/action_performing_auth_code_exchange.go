@@ -1,17 +1,21 @@
 package login
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"fmt"
 	"github.com/coreos/go-oidc/v3/oidc"
 	"github.com/looplab/fsm"
+	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/server/login/authrequest"
 	"github.com/nrc-no/core/pkg/store"
 	"go.uber.org/zap"
 	"golang.org/x/oauth2"
 	"net/http"
+	"strconv"
+	"text/template"
 )
 
 func handlePerformingAuthCodeExchange(
@@ -64,7 +68,7 @@ func handlePerformingAuthCodeExchange(
 		}
 
 		l.Debug("verifying token")
-		processedToken, err := processOidcToken(req.Context(), tokenFromExchange, verifier)
+		processedToken, err := processOidcToken(req.Context(), tokenFromExchange, verifier, idp)
 		if err != nil {
 			l.Error("failed to verify token", zap.Error(err))
 			return err
@@ -106,6 +110,7 @@ func processOidcToken(
 	ctx context.Context,
 	token *oauth2.Token,
 	verifier *oidc.IDTokenVerifier,
+	idp *types.IdentityProvider,
 ) (*ProcessedToken, error) {
 
 	l := logging.NewLogger(ctx)
@@ -133,12 +138,14 @@ func processOidcToken(
 		return nil, err
 	}
 
-	// unmarshal claims
-	var userProfile authrequest.Claims
-	if err := idToken.Claims(&userProfile); err != nil {
+
+	var claimInft interface{}
+	if err := idToken.Claims(&claimInft); err != nil {
 		l.Error("failed to unmarshal claims from ID token", zap.Error(err))
 		return nil, err
 	}
+
+	userProfile, err := extractIdentityProfileTemplateVersion(ctx, claimInft, idp)
 
 	result := &ProcessedToken{
 		OriginalToken: token,
@@ -146,8 +153,90 @@ func processOidcToken(
 		AccessToken:   token.AccessToken,
 		RefreshToken:  token.RefreshToken,
 		IDToken:       idToken,
-		Claims:        &userProfile,
+		Claims:        userProfile,
 	}
 
 	return result, nil
+}
+
+
+func extractIdentityProfileTemplateVersion(
+	ctx context.Context,
+	claimInft interface{},
+	idp *types.IdentityProvider,
+) (*authrequest.Claims, error){
+
+	l := logging.NewLogger(ctx)
+
+	var userProfile authrequest.Claims
+
+	mappedClaimInft, ok := claimInft.(map[string]interface{})
+	if !ok {
+		l.Error("failed to cast claims into type map[string]interface{}")
+		return nil, errors.New("failed to cast claims into type map[string]interface{}")
+	}
+
+	subjectTpl := template.New("")
+	subjectTplParsed, err := subjectTpl.Parse(idp.ClaimMappings.Subject)
+	if err != nil { return nil, err}
+	var subjectBuffer bytes.Buffer
+	if err := subjectTplParsed.Execute(&subjectBuffer, mappedClaimInft); err != nil {
+		l.Error("failed to execute template for subject claim", zap.Error(err))
+		return nil, err
+	}
+	subjectString := subjectBuffer.String()
+	if err != nil { return nil, err}
+	userProfile.Subject = subjectString
+
+	displayNameTpl := template.New("")
+	displayNameTplParsed, err := displayNameTpl.Parse(idp.ClaimMappings.DisplayName)
+	if err != nil { return nil, err}
+	var displayNameBuffer bytes.Buffer
+	if err := displayNameTplParsed.Execute(&displayNameBuffer, mappedClaimInft); err != nil {
+		l.Error("failed to execute template for displayName claim", zap.Error(err))
+		return nil, err
+	}
+	displayNameString := displayNameBuffer.String()
+	if err != nil { return nil, err}
+	userProfile.DisplayName = displayNameString
+
+	fullNameTpl := template.New("")
+	fullNameTplParsed, err := fullNameTpl.Parse(idp.ClaimMappings.FullName)
+	if err != nil { return nil, err}
+	var fullNameBuffer bytes.Buffer
+	if err := fullNameTplParsed.Execute(&fullNameBuffer, mappedClaimInft); err != nil {
+		l.Error("failed to execute template for FullName claim", zap.Error(err))
+		return nil, err
+	}
+	fullNameString := fullNameBuffer.String()
+	if err != nil { return nil, err}
+	userProfile.FullName = fullNameString
+
+	emailTpl := template.New("")
+	emailTplParsed, err := emailTpl.Parse(idp.ClaimMappings.Email)
+	if err != nil { return nil, err}
+	var emailBuffer bytes.Buffer
+	if err := emailTplParsed.Execute(&emailBuffer, mappedClaimInft); err != nil {
+		l.Error("failed to execute template for FullName claim", zap.Error(err))
+		return nil, err
+	}
+	emailString := emailBuffer.String()
+	if err != nil { return nil, err}
+	userProfile.Email = emailString
+
+	emailVerifiedTpl := template.New("")
+	emailVerifiedTplParsed, err := emailVerifiedTpl.Parse(idp.ClaimMappings.EmailVerified)
+	if err != nil { return nil, err}
+	var emailVerifiedBuffer bytes.Buffer
+	if err := emailVerifiedTplParsed.Execute(&emailVerifiedBuffer, mappedClaimInft); err != nil {
+		l.Error("failed to execute template for FullName claim", zap.Error(err))
+		return nil, err
+	}
+	emailVerifiedString := emailVerifiedBuffer.String()
+	emailVerifiedBool, _ := strconv.ParseBool(emailVerifiedString)
+	if err != nil { return nil, err}
+	userProfile.EmailVerified = emailVerifiedBool
+
+
+	return &userProfile, nil
 }

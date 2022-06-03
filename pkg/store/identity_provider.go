@@ -62,8 +62,12 @@ type IdentityProvider struct {
 }
 
 type ClaimMappings struct {
-	Version  string
-	Mappings map[string]string
+	Version       string
+	Subject       string
+	DisplayName   string
+	FullName      string
+	Email         string
+	EmailVerified string
 }
 
 func (c ClaimMappings) Value() (driver.Value, error) {
@@ -77,45 +81,10 @@ func (c *ClaimMappings) Scan(src interface{}) error {
 		return fmt.Errorf("failed to scan scan claims: value of type %T could not be converted to []byte", src)
 	}
 
-	var i interface{}
-	err := json.Unmarshal(source, &i)
+	err := json.Unmarshal(source, &c)
 	if err != nil {
 		return err
 	}
-
-	m, ok := i.(map[string]interface{})
-
-	if !ok {
-		return fmt.Errorf("failed to scan scan claims: value of type %T could not be converted to map[string]interface{}", i)
-	}
-
-	versionIntf, ok := m["Version"]
-	if ok {
-		versionStr, ok := versionIntf.(string)
-		if !ok {
-			return fmt.Errorf("version is not a string")
-		}
-		c.Version = versionStr
-	}
-
-	claimMappingsInft, ok := m["Mappings"]
-
-	c.Mappings = map[string]string{}
-
-	if ok {
-		claimMapping, ok := claimMappingsInft.(map[string]interface{})
-		if ok {
-
-			for key, elementIntf := range claimMapping {
-				claimStr, ok := elementIntf.(string)
-				if !ok {
-					return fmt.Errorf("claim mapping is not a string")
-				}
-				c.Mappings[key] = claimStr
-			}
-		}
-	}
-
 	return nil
 }
 
@@ -300,8 +269,12 @@ func mapIdentityProviderList(i IdentityProviders, keepClientSecrets bool) []*typ
 // mapIdentityProviderTo maps a store.IdentityProvider to a types.IdentityProvider
 func mapIdentityProviderTo(i *IdentityProvider, keepClientSecret bool) *types.IdentityProvider {
 	claimMappings := &types.ClaimMappings{
-		Version:  i.ClaimMappings.Version,
-		Mappings: i.ClaimMappings.Mappings,
+		Version: i.ClaimMappings.Version,
+		Subject       : i.ClaimMappings.Subject,
+		DisplayName   : i.ClaimMappings.DisplayName,
+		FullName      : i.ClaimMappings.FullName,
+		Email         : i.ClaimMappings.Email,
+		EmailVerified : i.ClaimMappings.EmailVerified,
 	}
 	result := &types.IdentityProvider{
 		ID:             i.ID,
@@ -322,8 +295,12 @@ func mapIdentityProviderTo(i *IdentityProvider, keepClientSecret bool) *types.Id
 // mapIdentityProviderFrom maps a types.IdentityProvider into a store.IdentityProvider
 func mapIdentityProviderFrom(i *types.IdentityProvider) *IdentityProvider {
 	claimMappings := &ClaimMappings{
-		Version:  i.ClaimMappings.Version,
-		Mappings: i.ClaimMappings.Mappings,
+		Version: i.ClaimMappings.Version,
+		Subject       : i.ClaimMappings.Subject,
+		DisplayName   : i.ClaimMappings.DisplayName,
+		FullName      : i.ClaimMappings.FullName,
+		Email         : i.ClaimMappings.Email,
+		EmailVerified : i.ClaimMappings.EmailVerified,
 	}
 	return &IdentityProvider{
 		ID:             i.ID,
