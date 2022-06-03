@@ -2,7 +2,7 @@ import * as React from 'react';
 import { RouteProp, useRoute } from '@react-navigation/native';
 
 import { RootParamList } from '../../navigation/types';
-import { formsClient } from '../../clients/formsClient';
+import { formsClient } from '../../clients';
 import config from '../../config';
 import { useAPICall } from '../../hooks/useAPICall';
 

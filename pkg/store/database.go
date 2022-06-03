@@ -142,7 +142,7 @@ func (d *databaseStore) Delete(ctx context.Context, databaseID string) error {
 
 // List implements DatabaseStore.List
 func (d *databaseStore) List(ctx context.Context) (*types.DatabaseList, error) {
-	ctx, db, l, done, err := actionContext(ctx, d.db, "database", "list")
+	ctx, db, l, done, err := actionContext(ctx, d.db, databaseStoreName, "list")
 	if err != nil {
 		return nil, err
 	}
@@ -172,7 +172,7 @@ func (d *databaseStore) List(ctx context.Context) (*types.DatabaseList, error) {
 
 // Create implements DatabaseStore.Create
 func (d *databaseStore) Create(ctx context.Context, database *types.Database) (*types.Database, error) {
-	ctx, db, l, done, err := actionContext(ctx, d.db, "database", "create")
+	ctx, db, l, done, err := actionContext(ctx, d.db, databaseStoreName, "create")
 	if err != nil {
 		return nil, err
 	}

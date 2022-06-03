@@ -1,7 +1,7 @@
 import { act, fireEvent, waitFor } from '@testing-library/react-native';
 import { FormDefinition, Record } from 'core-api-client';
 
-import { formsClient } from '../../../../clients/formsClient';
+import { formsClient } from '../../../../clients';
 import { render } from '../../../../testUtils/render';
 import { withFormContext } from '../../../../testUtils/withFormContext';
 import { ReferenceFieldInput } from '../ReferenceFieldInput.component';

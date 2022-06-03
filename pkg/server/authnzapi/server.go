@@ -6,6 +6,7 @@ import (
 	"github.com/nrc-no/core/pkg/server/authnzapi/handlers/identityprovider"
 	"github.com/nrc-no/core/pkg/server/authnzapi/handlers/organization"
 	"github.com/nrc-no/core/pkg/server/generic"
+	"github.com/nrc-no/core/pkg/server/login/handlers/identity"
 	"github.com/nrc-no/core/pkg/server/options"
 	"github.com/nrc-no/core/pkg/store"
 	"github.com/ory/hydra-client-go/client/admin"
@@ -50,6 +51,10 @@ func NewServer(options Options) (*Server, error) {
 	idpStore := store.NewIdentityProviderStore(options.StoreFactory)
 	idpHandler := identityprovider.NewHandler(idpStore)
 	container.Add(idpHandler.WebService())
+
+	identityStore := store.NewIdentityProfileStore(options.StoreFactory)
+	identityHandler := identity.NewHandler(identityStore)
+	container.Add(identityHandler.WebService())
 
 	s := &Server{
 		Server:  genericServer,

@@ -6,7 +6,7 @@ import { render } from '../../../testUtils/render';
 import { RecipientRegistrationScreenContainer } from '../RecipientRegistrationScreen.container';
 import * as hooks from '../../../hooks/useAPICall';
 import configuration from '../../../config';
-import { formsClient } from '../../../clients/formsClient';
+import { formsClient } from '../../../clients';
 import { routes } from '../../../constants/routes';
 
 const makeForm = (i: number): FormDefinition => ({

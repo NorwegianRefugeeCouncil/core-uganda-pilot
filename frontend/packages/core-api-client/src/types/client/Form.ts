@@ -1,4 +1,4 @@
-import { FormDefinition, FormDefinitionList } from '../model/Form';
+import { FormDefinition, FormDefinitionList } from '../model';
 
 import { DataOperation, PartialObjectWrapper, Response } from './utils';
 
