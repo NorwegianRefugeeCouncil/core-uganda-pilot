@@ -98,6 +98,7 @@ func TestExtractIdentityProfile(t *testing.T) {
 			claims: map[string]interface{}{
 				"SubjectFieldName": "subjectValue",
 			},
+			idp: idp,
 			expect: authrequest.Claims{
 				Subject: "subjectValue",
 				DisplayName: "<no value> <no value> <no value>",
@@ -110,6 +111,7 @@ func TestExtractIdentityProfile(t *testing.T) {
 		{
 			name: "fails if claims is not a map[string]interface{}",
 			claims: 3,
+			idp: idp,
 			wantErr: true,
 		},
 	}
