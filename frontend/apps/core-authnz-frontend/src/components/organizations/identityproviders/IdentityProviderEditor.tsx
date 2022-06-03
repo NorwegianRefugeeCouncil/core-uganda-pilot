@@ -203,11 +203,21 @@ export const IdentityProviderEditor: FC<Props> = (props) => {
             {fieldErrors('scopes')}
           </div>
 
-          <h6 className="text-light">
+          <h6 className="text-light mt-5">
             Claim Mapping, Current Version: {version}
           </h6>
+          <p className="form-text text-muted mb-4">
+            Please use go template syntax:
+            <a
+              href="https://blog.gopheracademy.com/advent-2017/using-go-templates/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Examples
+            </a>
+          </p>
 
-          <div className="form-group row">
+          <div className="form-group row mb-3">
             <div className="col-sm-2 text-light">
               <label htmlFor="subject">Subject</label>
             </div>
@@ -222,13 +232,10 @@ export const IdentityProviderEditor: FC<Props> = (props) => {
                   fieldClasses('claimMappings.subject'),
                 )}
               />
-              <small className="form-text text-muted">
-                Please use dot notation
-              </small>
             </div>
           </div>
 
-          <div className="form-group row">
+          <div className="form-group row mb-3">
             <div className="col-sm-2 text-light">
               <label htmlFor="displayName">Display Name</label>
             </div>
@@ -243,13 +250,10 @@ export const IdentityProviderEditor: FC<Props> = (props) => {
                   fieldClasses('claimMappings.displayName'),
                 )}
               />
-              <small className="form-text text-muted">
-                Please use dot notation
-              </small>
             </div>
           </div>
 
-          <div className="form-group row">
+          <div className="form-group row mb-3">
             <div className="col-sm-2 text-light">
               <label htmlFor="fullName">Full Name</label>
             </div>
@@ -264,13 +268,10 @@ export const IdentityProviderEditor: FC<Props> = (props) => {
                   fieldClasses('claimMappings.fullName'),
                 )}
               />
-              <small className="form-text text-muted">
-                Please use dot notation
-              </small>
             </div>
           </div>
 
-          <div className="form-group row">
+          <div className="form-group row mb-3">
             <div className="col-sm-2 text-light">
               <label htmlFor="email">Email</label>
             </div>
@@ -285,13 +286,10 @@ export const IdentityProviderEditor: FC<Props> = (props) => {
                   fieldClasses('claimMappings.email'),
                 )}
               />
-              <small className="form-text text-muted">
-                Please use dot notation
-              </small>
             </div>
           </div>
 
-          <div className="form-group row">
+          <div className="form-group row mb-3">
             <div className="col-sm-2 text-light">
               <label htmlFor="emailVerified">Email Verified</label>
             </div>
@@ -306,9 +304,6 @@ export const IdentityProviderEditor: FC<Props> = (props) => {
                   fieldClasses('claimMappings.emailVerified'),
                 )}
               />
-              <small className="form-text text-muted">
-                Please use dot notation
-              </small>
             </div>
           </div>
 

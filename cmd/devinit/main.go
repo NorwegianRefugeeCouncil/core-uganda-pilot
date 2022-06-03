@@ -332,11 +332,11 @@ func createIdentityProviders(factory store.Factory, err error, orgId string, env
 		EmailDomain:    "nrc.no",
 		Scopes:         "openid profile offline_access",
 		ClaimMappings:  types.ClaimMappings{
-			Subject:       "sub",
-			DisplayName:   "displayName",
-			FullName:      "fullName",
-			Email:         "email",
-			EmailVerified: "emailVerified",
+			Subject:       "{{.sub}}",
+			DisplayName:   "{{.displayName}}",
+			FullName:      "{{.fullName}}",
+			Email:         "{{.email}}",
+			EmailVerified: "{{.emailVerified}}",
 			Version: "0"},
 	}
 	if len(idps) == 0 {
