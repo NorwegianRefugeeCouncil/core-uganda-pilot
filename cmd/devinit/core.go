@@ -55,6 +55,10 @@ func (c *Config) makeCore() error {
 				"schemes":   []string{"https"},
 			},
 		},
+		"zanzibarClientConfig": map[string]interface{}{
+			"token": c.zanzibarToken,
+			"prefix": c.zanzibarConfig.Prefix,
+		},
 	}
 
 	yamlBytes, err := yaml.Marshal(coreConfig)

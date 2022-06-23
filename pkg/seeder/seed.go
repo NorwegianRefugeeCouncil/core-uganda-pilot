@@ -32,7 +32,7 @@ type Seed struct {
 	globalBeneficiaryRefField *types.FieldDefinition
 }
 
-func NewSeed(ctx context.Context, w client.Client) (*Seed, error) {
+func NewSeed(ctx context.Context, client client.Client) (*Seed, error) {
 
 	var seed = &Seed{}
 

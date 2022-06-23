@@ -7,7 +7,6 @@ import (
 	"github.com/nrc-no/core/pkg/api/types/validation"
 	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/utils"
-	client2 "github.com/nrc-no/core/pkg/zanzibar"
 	uuid "github.com/satori/go.uuid"
 	"go.uber.org/zap"
 	"log"
@@ -45,9 +44,7 @@ func (h *Handler) Create() http.HandlerFunc {
 			return
 		}
 
-		client := client2.NewZanzibarClient()
-
-		resp, err := client.WriteDB2UserRel(ctx, db.ID, "userId")
+		resp, err := h.zanzibarClient.WriteDB2UserRel(ctx, db.ID, "userId")
 		if err != nil {
 			log.Fatalf("failed to create relationship between database and creator: %s, %s", err, resp)
 			return

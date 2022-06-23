@@ -7,16 +7,20 @@ import (
 	"github.com/nrc-no/core/pkg/api/types"
 	"github.com/nrc-no/core/pkg/constants"
 	"github.com/nrc-no/core/pkg/store"
+	"github.com/nrc-no/core/pkg/zanzibar"
 	"net/http"
 )
 
 type Handler struct {
-	store      store.DatabaseStore
-	webService *restful.WebService
+	store          store.DatabaseStore
+	webService     *restful.WebService
+	zanzibarClient zanzibar.ZanzibarClient
 }
 
-func NewHandler(store store.DatabaseStore) *Handler {
+func NewHandler(store store.DatabaseStore, z zanzibar.ZanzibarClient) *Handler {
 	h := &Handler{store: store}
+
+	h.zanzibarClient = z
 
 	ws := new(restful.WebService).
 		Path("/apis/core.nrc.no/v1/databases").

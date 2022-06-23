@@ -9,6 +9,7 @@ import (
 	"github.com/nrc-no/core/pkg/server/generic"
 	"github.com/nrc-no/core/pkg/server/options"
 	"github.com/nrc-no/core/pkg/store"
+	client2 "github.com/nrc-no/core/pkg/zanzibar"
 )
 
 type Server struct {
@@ -19,6 +20,7 @@ type Server struct {
 type Options struct {
 	options.ServerOptions
 	StoreFactory store.Factory
+	ZanzibarClient client2.ZanzibarClient
 }
 
 func NewServer(options Options) (*Server, error) {
@@ -31,7 +33,7 @@ func NewServer(options Options) (*Server, error) {
 	container := genericServer.GoRestfulContainer
 
 	databaseStore := store.NewDatabaseStore(options.StoreFactory)
-	databaseHandler := database.NewHandler(databaseStore)
+	databaseHandler := database.NewHandler(databaseStore, options.ZanzibarClient)
 	container.Add(databaseHandler.WebService())
 
 	folderStore := store.NewFolderStore(options.StoreFactory)
