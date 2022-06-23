@@ -8,6 +8,7 @@ import (
 
 func (c *Config) makePostgres() error {
 	var err error
+
 	c.postgresRootPassword, err = getOrCreateRandomSecretStr(32, PostgresDir, "password")
 	if err != nil {
 		return err

@@ -1,4 +1,4 @@
-package client
+package zanzibar
 
 import (
 	"context"
@@ -12,10 +12,15 @@ type ZanzibarClient interface {
 	WriteDB2UserRel(ctx context.Context, databaseId string, userId string) (*pb.WriteRelationshipsResponse, error)
 }
 
-func NewZanzibarClient() *zanzibarClient {
+type ZanzibarClientConfig struct {
+	Token  string
+	Prefix string
+}
+
+func NewZanzibarClient(c ZanzibarClientConfig) *zanzibarClient {
 	client, err := authzed.NewClient(
 		"grpc.authzed.com:443",
-		grpcutil.WithBearerToken("tc_nrctest_default_token_e573a4e880dbb1219af014722b4e70802fdc53b01508ac19fc8e2b2f50edf94ef477c21779ebc823787c1809c30fc84e69d177dd424cda2738ffaafae8b9e8e4"),  // TODO get token from config
+		grpcutil.WithBearerToken(c.Token),  // TODO get token from config
 		grpcutil.WithSystemCerts(grpcutil.VerifyCA),
 	)
 	if err != nil {
@@ -24,12 +29,13 @@ func NewZanzibarClient() *zanzibarClient {
 
 	return &zanzibarClient{
 		z: client,
+		prefix: c.Prefix,
 	}
-
 }
 
 type zanzibarClient struct {
-	z *authzed.Client
+	z      *authzed.Client
+	prefix string
 }
 
 func (c *zanzibarClient) WriteDB2UserRel(ctx context.Context, databaseId string, userId string) (*pb.WriteRelationshipsResponse, error) {
@@ -39,12 +45,12 @@ func (c *zanzibarClient) WriteDB2UserRel(ctx context.Context, databaseId string,
 				Relationship: &pb.Relationship{
 					Relation: "creator",
 					Resource: &pb.ObjectReference{
-						ObjectType: "nrctest/database", // TODO get prefix from config
+						ObjectType: c.prefix + "/database", // TODO get prefix from config
 						ObjectId:   databaseId,
 					},
 					Subject: &pb.SubjectReference{
 						Object: &pb.ObjectReference{
-							ObjectType: "nrctest/user", // TODO get prefix from config
+							ObjectType: c.prefix + "/user", // TODO get prefix from config
 							ObjectId:   userId,
 						},
 					},
