@@ -12,7 +12,6 @@ import (
 	"github.com/nrc-no/core/pkg/server/options"
 	"github.com/nrc-no/core/pkg/store"
 	"github.com/nrc-no/core/pkg/utils/files"
-	client2 "github.com/nrc-no/core/pkg/zanzibar"
 	"github.com/ory/hydra-client-go/client"
 	"github.com/ory/hydra-client-go/client/admin"
 	"github.com/ory/hydra-client-go/models"
@@ -168,8 +167,8 @@ type Config struct {
 	rootCaKeyPath             string
 	rootCaPath                string
 	rootDir                   string
-	zanzibarToken  string
-	zanzibarConfig client2.ZanzibarClientConfig
+	zanzibarToken             string
+	zanzibarPrefix            string
 }
 
 func Init() error {

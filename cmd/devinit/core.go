@@ -55,9 +55,9 @@ func (c *Config) makeCore() error {
 				"schemes":   []string{"https"},
 			},
 		},
-		"zanzibarClientConfig": map[string]interface{}{
+		"zanzibar": map[string]interface{}{
 			"token": c.zanzibarToken,
-			"prefix": c.zanzibarConfig.Prefix,
+			"prefix": c.zanzibarPrefix,
 		},
 	}
 

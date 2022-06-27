@@ -3,7 +3,6 @@ package cmd
 import (
 	"context"
 	formsapiserver "github.com/nrc-no/core/pkg/server/formsapi"
-	client2 "github.com/nrc-no/core/pkg/zanzibar"
 	"github.com/spf13/cobra"
 )
 
@@ -16,13 +15,13 @@ var servePublicCmd = &cobra.Command{
 			return err
 		}
 
-		client := client2.NewZanzibarClient(coreOptions.ZanzibarClientConfig)
+		initZanzibarClient()
 
 		if err := serveFormsApi(ctx,
 			formsapiserver.Options{
 				ServerOptions: coreOptions.Serve.FormsApi,
 				StoreFactory:  factory,
-				ZanzibarClient: client,
+				ZanzibarClient: zanzibarClient,
 			}); err != nil {
 			return err
 		}

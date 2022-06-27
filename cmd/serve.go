@@ -6,6 +6,7 @@ import (
 	"github.com/nrc-no/core/pkg/logging"
 	"github.com/nrc-no/core/pkg/server/options"
 	"github.com/nrc-no/core/pkg/store"
+	client2 "github.com/nrc-no/core/pkg/zanzibar"
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -20,6 +21,7 @@ var osSignal = make(chan os.Signal)
 var doneSignal = make(chan struct{})
 var ctx = context.Background()
 var factory store.Factory
+var zanzibarClient client2.ZanzibarClient
 
 // serveCmd represents the serve command
 var serveCmd = &cobra.Command{
@@ -79,6 +81,13 @@ func initStoreFactory() error {
 	}
 	factory = f
 	return nil
+}
+
+func initZanzibarClient() {
+	zanzibarClient = client2.NewZanzibarClient(client2.ZanzibarClientConfig{
+		Token:  coreOptions.Zanzibar.Token,
+		Prefix: coreOptions.Zanzibar.Prefix,
+	})
 }
 
 func init() {

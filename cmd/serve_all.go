@@ -5,7 +5,6 @@ import (
 	"github.com/nrc-no/core/pkg/server/authnzbouncer"
 	formsapiserver "github.com/nrc-no/core/pkg/server/formsapi"
 	"github.com/nrc-no/core/pkg/server/login"
-	client2 "github.com/nrc-no/core/pkg/zanzibar"
 	"github.com/spf13/cobra"
 )
 
@@ -18,13 +17,13 @@ var serveAllCmd = &cobra.Command{
 			return err
 		}
 
-		client := client2.NewZanzibarClient(coreOptions.ZanzibarClientConfig)
+		initZanzibarClient()
 
 		if err := serveFormsApi(ctx,
 			formsapiserver.Options{
-				ServerOptions: coreOptions.Serve.FormsApi,
-				StoreFactory:  factory,
-				ZanzibarClient: client,
+				ServerOptions:  coreOptions.Serve.FormsApi,
+				StoreFactory:   factory,
+				ZanzibarClient: zanzibarClient,
 			}); err != nil {
 			return err
 		}

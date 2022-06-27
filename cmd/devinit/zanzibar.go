@@ -1,9 +1,5 @@
 package devinit
 
-import (
-	"github.com/nrc-no/core/pkg/zanzibar"
-)
-
 func (c *Config) makeZanzibarConfig() error {
 
 	var err error
@@ -12,15 +8,9 @@ func (c *Config) makeZanzibarConfig() error {
 		return err
 	}
 
-	var prefixErr error
-	prefix, prefixErr := getOrCreateRandomSecretStr(32, ZanzibarDir, "prefix")
-	if prefixErr != nil {
-		return prefixErr
-	}
-
-	c.zanzibarConfig = zanzibar.ZanzibarClientConfig{
-		Token: c.zanzibarToken,
-		Prefix: prefix,
+	c.zanzibarPrefix, err = getOrCreateRandomSecretStr(32, ZanzibarDir, "prefix")
+	if err != nil {
+		return err
 	}
 
 	return nil

@@ -1,7 +1,6 @@
 package options
 
 import (
-	"github.com/nrc-no/core/pkg/zanzibar"
 	"github.com/ory/hydra-client-go/client"
 	"github.com/ory/hydra-client-go/client/admin"
 	"github.com/ory/hydra-client-go/client/public"
@@ -101,9 +100,14 @@ type HydraOptions struct {
 }
 
 type Options struct {
-	Serve                   ServeOptions `mapstructure:"serve"`
-	DSN                     string       `mapstructure:"dsn"`
-	Log                     LogOptions   `mapstructure:"log"`
-	Hydra                   HydraOptions `mapstructure:"hydra"`
-	ZanzibarClientConfig    zanzibar.ZanzibarClientConfig `mapstructure:"zanzibarClientConfig"`
+	Serve    ServeOptions    `mapstructure:"serve"`
+	DSN      string          `mapstructure:"dsn"`
+	Log      LogOptions      `mapstructure:"log"`
+	Hydra    HydraOptions    `mapstructure:"hydra"`
+	Zanzibar ZanzibarOptions `mapstructure:"zanzibar"`
+}
+
+type ZanzibarOptions struct {
+	Token  string `mapstructure:"token"`
+	Prefix string `mapstructure:"prefix"`
 }
