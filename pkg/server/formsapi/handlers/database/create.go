@@ -9,6 +9,7 @@ import (
 	"github.com/nrc-no/core/pkg/utils"
 	uuid "github.com/satori/go.uuid"
 	"go.uber.org/zap"
+	"log"
 	"net/http"
 )
 
@@ -40,6 +41,12 @@ func (h *Handler) Create() http.HandlerFunc {
 		if err != nil {
 			l.Error("failed to store database", zap.Error(err))
 			utils.ErrorResponse(w, err)
+			return
+		}
+
+		resp, err := h.zanzibarClient.WriteDB2UserRel(ctx, db.ID, "userId")
+		if err != nil {
+			log.Fatalf("failed to create relationship between database and creator: %s, %s", err, resp)
 			return
 		}
 

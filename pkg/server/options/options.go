@@ -100,8 +100,14 @@ type HydraOptions struct {
 }
 
 type Options struct {
-	Serve ServeOptions `mapstructure:"serve"`
-	DSN   string       `mapstructure:"dsn"`
-	Log   LogOptions   `mapstructure:"log"`
-	Hydra HydraOptions `mapstructure:"hydra"`
+	Serve    ServeOptions    `mapstructure:"serve"`
+	DSN      string          `mapstructure:"dsn"`
+	Log      LogOptions      `mapstructure:"log"`
+	Hydra    HydraOptions    `mapstructure:"hydra"`
+	Zanzibar ZanzibarOptions `mapstructure:"zanzibar"`
+}
+
+type ZanzibarOptions struct {
+	Token  string `mapstructure:"token"`
+	Prefix string `mapstructure:"prefix"`
 }

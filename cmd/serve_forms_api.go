@@ -14,10 +14,14 @@ var servePublicCmd = &cobra.Command{
 		if err := initStoreFactory(); err != nil {
 			return err
 		}
+
+		initZanzibarClient()
+
 		if err := serveFormsApi(ctx,
 			formsapiserver.Options{
 				ServerOptions: coreOptions.Serve.FormsApi,
 				StoreFactory:  factory,
+				ZanzibarClient: zanzibarClient,
 			}); err != nil {
 			return err
 		}

@@ -61,7 +61,7 @@ func (c *client) GetFolder(ctx context.Context, id string, into *types.Folder) e
 }
 
 func (c *client) ListFolders(ctx context.Context, into *types.FolderList) error {
-	return c.c.Get().Path(fmt.Sprintf("/apis/core.nrc.no/v1/folders")).Do(ctx).Into(into)
+	return c.c.Get().Path("/apis/core.nrc.no/v1/folders").Do(ctx).Into(into)
 }
 
 func (c *client) DeleteFolder(ctx context.Context, id string) error {
