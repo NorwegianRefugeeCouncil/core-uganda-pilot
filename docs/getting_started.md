@@ -9,6 +9,7 @@
     - When you start the tunnels for the first time, you will see 2 URLs that correspond to your tunnel URI. Open the
       links, and approve the dialog that will be presented to you. Otherwise all calls through the tunnels will fail.
       This has to be done every ~1 week as they are reset.
+    > Be sure to follow the instructions to generate the password for each of the 2 URLs.
 - **Add the generated CA Certificate to your trust store**
     - Fedora: `sudo cp certs/ca.crt /etc/pki/ca-trust/source/anchors/nrc_core_dev.crt && sudo update-ca-trust`
     - Ubuntu: `sudo cp certs/ca.crt /usr/local/share/ca-certificates/nrc_core_dev.crt && sudo update-ca-certificates`
@@ -22,14 +23,16 @@
         - trust for identifying websites
         - Do the same sort of thing in firefox if you use that
 - Start docker resources `make up`
-- If you are running on MAC
+- If you are running on MAC, open a new terminal:
   - `make proxy-local`
+  > This may require you to install `envoy`: `brew install envoy`
 - Migrate the database `make migrate`
 - Create initial configuration `make bootstrap`
-- Start the server `make serve`
-- Start the pwa frontend `make serve-pwa`
-- Start the admin frontend `make serve-admin`
-- Open the browser http://localhost:3000
+- Start the server `make serve` (open in a new terminal)
+- Optional: If you would like to add some predefined data into your instance, run `make seed`
+- Start the pwa frontend `make serve-pwa` (open in a new terminal)
+- Start the admin frontend `make serve-admin` (This is currently not implemented)
+- Open the browser http://localhost:3000. This should display a white page with a `login` button. Click `login` and it will display a popup window to login.
     - Authenticate with \<whatever\>`@nrc.no` (any email ending with `nrc.no`)
     - Click `Login with Norwegian Refugee Council`
     - Put any password (there is no password verification for this development oidc-provider)
