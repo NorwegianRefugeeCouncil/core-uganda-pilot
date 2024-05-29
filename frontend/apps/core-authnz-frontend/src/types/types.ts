@@ -35,11 +35,19 @@ export interface Client
 
 export type IdentityProviderList = { items: IdentityProvider[] };
 
-export type TokenEndpointAuthMethod = 'client_secret_post' | 'client_secret_basic' | 'private_key_jwt' | 'none';
+export type TokenEndpointAuthMethod =
+  | 'client_secret_post'
+  | 'client_secret_basic'
+  | 'private_key_jwt'
+  | 'none';
 
 export type ResponseType = 'code' | 'token' | 'id_token';
 
-export type GrantType = 'authorization_code' | 'refresh_token' | 'client_credentials' | 'implicit';
+export type GrantType =
+  | 'authorization_code'
+  | 'refresh_token'
+  | 'client_credentials'
+  | 'implicit';
 
 export class OAuth2Client {
   public id = '';
@@ -60,7 +68,8 @@ export class OAuth2Client {
 
   public allowedCorsOrigins: string[] = [];
 
-  public tokenEndpointAuthMethod: TokenEndpointAuthMethod = 'client_secret_basic';
+  public tokenEndpointAuthMethod: TokenEndpointAuthMethod =
+    'client_secret_basic';
 }
 
 export type OAuth2ClientList = {
@@ -91,6 +100,13 @@ export class IdentityProvider {
   public clientSecret = '';
 
   public emailDomain = '';
+
+  public scopes = '';
+
+  public claimMappings = {
+    Version: '0',
+    Mappings: {},
+  };
 }
 
 export type Session = {

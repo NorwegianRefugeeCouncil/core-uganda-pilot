@@ -10,12 +10,11 @@ services:
       - ../creds/envoy/tls.crt:/var/run/tls.crt
       - ../certs/ca.crt:/var/run/ca.crt
     network_mode: host
+    restart: on-failure
     command:
       - /usr/local/bin/envoy
       - -c
       - /etc/envoy.yaml
-      - -l
-      - debug
 
   oidc:
     image: node:16
