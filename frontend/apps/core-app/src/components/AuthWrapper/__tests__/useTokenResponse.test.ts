@@ -2,7 +2,7 @@ import { renderHook } from '@testing-library/react-hooks';
 import { waitFor } from '@testing-library/react-native';
 import * as expoAuthSession from 'expo-auth-session';
 
-import { useTokenResponse } from './useTokenResponse';
+import { useTokenResponse } from '../useTokenResponse';
 
 jest.useFakeTimers();
 jest.spyOn(window, 'setInterval');
@@ -53,7 +53,7 @@ describe('Success', () => {
       .mockResolvedValue(fakeTokenResponse);
     exchangeCodeAsyncSpy.mockClear();
 
-    const { waitForNextUpdate } = renderHook(() => useTokenResponse());
+    const { waitForNextUpdate } = renderHook(() => useTokenResponse(jest.fn()));
 
     expect(useAutoDiscoverySpy).toHaveBeenCalledTimes(1);
     // issuer defined in core/frontend/app.json
@@ -124,7 +124,7 @@ describe('Success', () => {
       .mockResolvedValue(fakeTokenResponse);
     exchangeCodeAsyncSpy.mockClear();
 
-    const { result } = renderHook(() => useTokenResponse());
+    const { result } = renderHook(() => useTokenResponse(jest.fn()));
     await waitFor(() => expect(result.current[0]).toEqual(fakeTokenResponse));
   });
 
@@ -164,7 +164,9 @@ describe('Success', () => {
       .mockResolvedValue(fakeTokenResponse);
     exchangeCodeAsyncSpy.mockClear();
 
-    const { result, waitForNextUpdate } = renderHook(() => useTokenResponse());
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useTokenResponse(jest.fn()),
+    );
 
     result.current[1]();
     expect(promptAsyncMock).toHaveBeenCalledTimes(1);
@@ -222,7 +224,9 @@ describe('Success', () => {
       .mockResolvedValue(fakeTokenResponse);
     exchangeCodeAsyncSpy.mockClear();
 
-    const { result, waitForNextUpdate } = renderHook(() => useTokenResponse());
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useTokenResponse(jest.fn()),
+    );
 
     expect(useAutoDiscoverySpy).toHaveBeenCalledTimes(1);
     // issuer defined in core/frontend/app.json
@@ -318,7 +322,7 @@ describe('Failure', () => {
         .mockResolvedValue(fakeTokenResponse);
       exchangeCodeAsyncSpy.mockClear();
 
-      const { result } = renderHook(() => useTokenResponse());
+      const { result } = renderHook(() => useTokenResponse(jest.fn()));
 
       expect(useAutoDiscoverySpy).toHaveBeenCalledTimes(1);
       // issuer defined in core/frontend/app.json
@@ -376,7 +380,7 @@ describe('Failure', () => {
         .mockResolvedValue(fakeTokenResponse);
       exchangeCodeAsyncSpy.mockClear();
 
-      const { result } = renderHook(() => useTokenResponse());
+      const { result } = renderHook(() => useTokenResponse(jest.fn()));
 
       expect(useAutoDiscoverySpy).toHaveBeenCalledTimes(1);
       // issuer defined in core/frontend/app.json
@@ -400,7 +404,7 @@ describe('Failure', () => {
       expect(result.current[0]).toBe(undefined);
     });
 
-    it('should not set the token respone if exchange codes fails', () => {
+    it('should not set the token response if exchange codes fails', () => {
       const fakeTokenResponse = new expoAuthSession.TokenResponse({
         accessToken: 'fakeToken',
       });
@@ -438,7 +442,7 @@ describe('Failure', () => {
         });
       exchangeCodeAsyncSpy.mockClear();
 
-      const { result } = renderHook(() => useTokenResponse());
+      const { result } = renderHook(() => useTokenResponse(jest.fn()));
 
       expect(useAutoDiscoverySpy).toHaveBeenCalledTimes(1);
       // issuer defined in core/frontend/app.json
@@ -523,7 +527,9 @@ describe('Failure', () => {
       .mockResolvedValue(fakeTokenResponse);
     exchangeCodeAsyncSpy.mockClear();
 
-    const { result, waitForNextUpdate } = renderHook(() => useTokenResponse());
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useTokenResponse(jest.fn()),
+    );
 
     expect(useAutoDiscoverySpy).toHaveBeenCalledTimes(1);
     // issuer defined in core/frontend/app.json

@@ -30,6 +30,7 @@ export const iconMap = {
   minus: icons.Minus,
   more: icons.More,
   next: icons.Next,
+  nrc: icons.NRC,
   notification: icons.Notification,
   plus: icons.Plus,
   protection: icons.Protection,

@@ -4,6 +4,7 @@ import tokens from '../tokens';
 
 import Button from './Button';
 import Icon from './Icon';
+import Logo from './Logo';
 import Input from './Input';
 import Text from './Text';
 import FormControlErrorMessage from './FormControlErrorMessage';
@@ -30,6 +31,7 @@ export default extendTheme({
     Input,
     Link,
     Text,
+    Logo,
   },
   space: {
     nrc_1: tokens.spacing.spacing5,
