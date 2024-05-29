@@ -6,6 +6,13 @@ import (
 	"crypto/x509"
 	"encoding/json"
 	"fmt"
+	"math/rand"
+	"os"
+	"os/exec"
+	"path"
+	"path/filepath"
+	"time"
+
 	"github.com/dustinkirkland/golang-petname"
 	"github.com/manifoldco/promptui"
 	"github.com/nrc-no/core/pkg/api/types"
@@ -18,12 +25,6 @@ import (
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 	"gopkg.in/yaml.v3"
-	"math/rand"
-	"os"
-	"os/exec"
-	"path"
-	"path/filepath"
-	"time"
 )
 
 var (
@@ -38,6 +39,7 @@ var (
 	CoreFormsApiDir      string
 	CoreAuthnzApiDir     string
 	CoreAuthnzBouncerDir string
+	CoreDataDir          string
 	LoginDir             string
 	RedisDir             string
 	PostgresDir          string
@@ -128,6 +130,8 @@ type Config struct {
 	coreAdminFrontendTlsKey   *rsa.PrivateKey
 	coreApiBlockKey           string
 	coreApiHashKey            string
+	coreDataTlsKey            *rsa.PrivateKey
+	coreDataTlsCert           *x509.Certificate
 	coreFormsApiTlsCert       *x509.Certificate
 	coreFormsApiTlsKey        *rsa.PrivateKey
 	coreAppFrontendClientId   string
@@ -257,6 +261,7 @@ func createConfig() (*Config, error) {
 		config.makeIdp,
 		config.makeLogin,
 		config.makeHydra,
+		config.makeCoreDB,
 		config.makeCoreFormsApi,
 		config.makeCoreAuthnzApi,
 		config.makeAppFrontend,
@@ -462,4 +467,5 @@ func init() {
 	CoreFormsApiDir = path.Join(CoreDir, "forms_api")
 	CoreAuthnzApiDir = path.Join(CoreDir, "authnz_api")
 	CoreAuthnzBouncerDir = path.Join(CoreDir, "authnz_bouncer")
+	CoreDataDir = path.Join(CoreDir, "data")
 }
