@@ -17,18 +17,16 @@ export const RecipientProfileScreenComponent: React.FC<Props> = ({
   data,
   isLoading,
   error,
-}) => {
-  return (
-    <ScrollView width="100%">
-      <Styles.Container width="100%" maxWidth="1180px" marginX="auto">
-        {isLoading && <Skeleton h="20" p="4" />}
-        {error && (
-          <Text variant="heading" color="signalDanger">
-            {error}
-          </Text>
-        )}
-        {!isLoading && <RecipientViewer data={data} />}
-      </Styles.Container>
-    </ScrollView>
-  );
-};
+}) => (
+  <ScrollView width="100%">
+    <Styles.Container width="100%" maxWidth="1180px" marginX="auto">
+      {isLoading && !error && <Skeleton h="20" p="4" />}
+      {error && (
+        <Text variant="body" color="signalDanger">
+          {error}
+        </Text>
+      )}
+      {!isLoading && !error && <RecipientViewer data={data} />}
+    </Styles.Container>
+  </ScrollView>
+);

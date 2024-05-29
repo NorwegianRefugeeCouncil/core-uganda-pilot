@@ -320,11 +320,11 @@ exports[`should match the snapshot a single selected value 1`] = `
         "backgroundColor": "#FF7602",
         "borderRadius": 3,
         "flexDirection": "row",
-        "height": 50,
+        "height": "nrc_10",
         "justifyContent": "center",
         "paddingBottom": 8,
-        "paddingLeft": 50,
-        "paddingRight": 50,
+        "paddingLeft": "nrc_10",
+        "paddingRight": "nrc_10",
         "paddingTop": 8,
       }
     }
@@ -722,7 +722,7 @@ exports[`should match the snapshot a single selected value 1`] = `
                             "fontWeight": undefined,
                             "letterSpacing": 0,
                             "lineHeight": 23,
-                            "marginLeft": 10,
+                            "marginLeft": "nrc_2",
                             "textAlign": "auto",
                             "textDecorationLine": undefined,
                           }
@@ -860,7 +860,7 @@ exports[`should match the snapshot a single selected value 1`] = `
                             "fontWeight": undefined,
                             "letterSpacing": 0,
                             "lineHeight": 23,
-                            "marginLeft": 10,
+                            "marginLeft": "nrc_2",
                             "textAlign": "auto",
                             "textDecorationLine": undefined,
                           }
@@ -998,7 +998,7 @@ exports[`should match the snapshot a single selected value 1`] = `
                             "fontWeight": undefined,
                             "letterSpacing": 0,
                             "lineHeight": 23,
-                            "marginLeft": 10,
+                            "marginLeft": "nrc_2",
                             "textAlign": "auto",
                             "textDecorationLine": undefined,
                           }
@@ -1067,11 +1067,11 @@ exports[`should match the snapshot a single selected value 1`] = `
                     "borderStyle": "solid",
                     "borderWidth": 1,
                     "flexDirection": "row",
-                    "height": 50,
+                    "height": "nrc_10",
                     "justifyContent": "center",
                     "paddingBottom": 8,
-                    "paddingLeft": 50,
-                    "paddingRight": 50,
+                    "paddingLeft": "nrc_10",
+                    "paddingRight": "nrc_10",
                     "paddingTop": 8,
                   }
                 }
@@ -1150,11 +1150,11 @@ exports[`should match the snapshot a single selected value 1`] = `
                     "backgroundColor": "#24303E",
                     "borderRadius": 3,
                     "flexDirection": "row",
-                    "height": 50,
+                    "height": "nrc_10",
                     "justifyContent": "center",
                     "paddingBottom": 8,
-                    "paddingLeft": 50,
-                    "paddingRight": 50,
+                    "paddingLeft": "nrc_10",
+                    "paddingRight": "nrc_10",
                     "paddingTop": 8,
                   }
                 }
@@ -1525,11 +1525,11 @@ exports[`should match the snapshot multiple selected values 1`] = `
         "backgroundColor": "#FF7602",
         "borderRadius": 3,
         "flexDirection": "row",
-        "height": 50,
+        "height": "nrc_10",
         "justifyContent": "center",
         "paddingBottom": 8,
-        "paddingLeft": 50,
-        "paddingRight": 50,
+        "paddingLeft": "nrc_10",
+        "paddingRight": "nrc_10",
         "paddingTop": 8,
       }
     }
@@ -1927,7 +1927,7 @@ exports[`should match the snapshot multiple selected values 1`] = `
                             "fontWeight": undefined,
                             "letterSpacing": 0,
                             "lineHeight": 23,
-                            "marginLeft": 10,
+                            "marginLeft": "nrc_2",
                             "textAlign": "auto",
                             "textDecorationLine": undefined,
                           }
@@ -2065,7 +2065,7 @@ exports[`should match the snapshot multiple selected values 1`] = `
                             "fontWeight": undefined,
                             "letterSpacing": 0,
                             "lineHeight": 23,
-                            "marginLeft": 10,
+                            "marginLeft": "nrc_2",
                             "textAlign": "auto",
                             "textDecorationLine": undefined,
                           }
@@ -2203,7 +2203,7 @@ exports[`should match the snapshot multiple selected values 1`] = `
                             "fontWeight": undefined,
                             "letterSpacing": 0,
                             "lineHeight": 23,
-                            "marginLeft": 10,
+                            "marginLeft": "nrc_2",
                             "textAlign": "auto",
                             "textDecorationLine": undefined,
                           }
@@ -2272,11 +2272,11 @@ exports[`should match the snapshot multiple selected values 1`] = `
                     "borderStyle": "solid",
                     "borderWidth": 1,
                     "flexDirection": "row",
-                    "height": 50,
+                    "height": "nrc_10",
                     "justifyContent": "center",
                     "paddingBottom": 8,
-                    "paddingLeft": 50,
-                    "paddingRight": 50,
+                    "paddingLeft": "nrc_10",
+                    "paddingRight": "nrc_10",
                     "paddingTop": 8,
                   }
                 }
@@ -2355,11 +2355,11 @@ exports[`should match the snapshot multiple selected values 1`] = `
                     "backgroundColor": "#24303E",
                     "borderRadius": 3,
                     "flexDirection": "row",
-                    "height": 50,
+                    "height": "nrc_10",
                     "justifyContent": "center",
                     "paddingBottom": 8,
-                    "paddingLeft": 50,
-                    "paddingRight": 50,
+                    "paddingLeft": "nrc_10",
+                    "paddingRight": "nrc_10",
                     "paddingTop": 8,
                   }
                 }
@@ -2730,11 +2730,11 @@ exports[`should match the snapshot no selected value 1`] = `
         "backgroundColor": "#FF7602",
         "borderRadius": 3,
         "flexDirection": "row",
-        "height": 50,
+        "height": "nrc_10",
         "justifyContent": "center",
         "paddingBottom": 8,
-        "paddingLeft": 50,
-        "paddingRight": 50,
+        "paddingLeft": "nrc_10",
+        "paddingRight": "nrc_10",
         "paddingTop": 8,
       }
     }
@@ -3132,7 +3132,7 @@ exports[`should match the snapshot no selected value 1`] = `
                             "fontWeight": undefined,
                             "letterSpacing": 0,
                             "lineHeight": 23,
-                            "marginLeft": 10,
+                            "marginLeft": "nrc_2",
                             "textAlign": "auto",
                             "textDecorationLine": undefined,
                           }
@@ -3270,7 +3270,7 @@ exports[`should match the snapshot no selected value 1`] = `
                             "fontWeight": undefined,
                             "letterSpacing": 0,
                             "lineHeight": 23,
-                            "marginLeft": 10,
+                            "marginLeft": "nrc_2",
                             "textAlign": "auto",
                             "textDecorationLine": undefined,
                           }
@@ -3408,7 +3408,7 @@ exports[`should match the snapshot no selected value 1`] = `
                             "fontWeight": undefined,
                             "letterSpacing": 0,
                             "lineHeight": 23,
-                            "marginLeft": 10,
+                            "marginLeft": "nrc_2",
                             "textAlign": "auto",
                             "textDecorationLine": undefined,
                           }
@@ -3477,11 +3477,11 @@ exports[`should match the snapshot no selected value 1`] = `
                     "borderStyle": "solid",
                     "borderWidth": 1,
                     "flexDirection": "row",
-                    "height": 50,
+                    "height": "nrc_10",
                     "justifyContent": "center",
                     "paddingBottom": 8,
-                    "paddingLeft": 50,
-                    "paddingRight": 50,
+                    "paddingLeft": "nrc_10",
+                    "paddingRight": "nrc_10",
                     "paddingTop": 8,
                   }
                 }
@@ -3560,11 +3560,11 @@ exports[`should match the snapshot no selected value 1`] = `
                     "backgroundColor": "#24303E",
                     "borderRadius": 3,
                     "flexDirection": "row",
-                    "height": 50,
+                    "height": "nrc_10",
                     "justifyContent": "center",
                     "paddingBottom": 8,
-                    "paddingLeft": 50,
-                    "paddingRight": 50,
+                    "paddingLeft": "nrc_10",
+                    "paddingRight": "nrc_10",
                     "paddingTop": 8,
                   }
                 }

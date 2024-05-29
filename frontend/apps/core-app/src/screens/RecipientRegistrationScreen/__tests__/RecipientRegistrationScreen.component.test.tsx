@@ -1,11 +1,11 @@
 import { fireEvent, waitFor } from '@testing-library/react-native';
-import { FormType, FormWithRecord } from 'core-api-client';
+import { FormWithRecord } from 'core-api-client';
 import { Recipient } from 'core-api-client/src/types/client/Recipient';
 
-import { formsClient } from '../../../clients/formsClient';
 import { render } from '../../../testUtils/render';
 import * as ReactHookFormTransformer from '../../../utils/ReactHookFormTransformer';
 import { RecipientRegistrationScreenComponent } from '../RecipientRegistrationScreen.component';
+import { makeFormWithRecord } from '../../../testUtils/mockData';
 
 jest.mock('../../../components/Recipient/RecipientEditor', () => {
   const { View, Text } = jest.requireActual('react-native');
@@ -28,33 +28,6 @@ jest.mock('../../../components/Recipient/RecipientViewer', () => {
     ),
   };
 });
-
-const makeFormWithRecord = (i: number): FormWithRecord<Recipient> => {
-  const form = {
-    id: `form-id-${i}`,
-    code: 'form-code',
-    databaseId: 'database-id',
-    folderId: 'folder-id',
-    name: `form-name-${i}`,
-    formType: FormType.DefaultFormType,
-    fields: [
-      {
-        id: `field-id-${i}`,
-        name: `field-name-${i}`,
-        code: '',
-        description: '',
-        required: false,
-        key: false,
-        fieldType: { text: {} },
-      },
-    ],
-  };
-
-  return {
-    form,
-    record: formsClient.Record.buildDefaultRecord(form),
-  };
-};
 
 afterEach(() => {
   jest.clearAllMocks();

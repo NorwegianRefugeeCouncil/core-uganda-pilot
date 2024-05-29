@@ -64,11 +64,11 @@ exports[`should match the snapshot 1`] = `
             "900": "#164e63",
           },
           "flexDirection": "row",
-          "height": 50,
+          "height": "nrc_10",
           "justifyContent": "center",
           "paddingBottom": 8,
-          "paddingLeft": 50,
-          "paddingRight": 50,
+          "paddingLeft": "nrc_10",
+          "paddingRight": "nrc_10",
           "paddingTop": 8,
         }
       }

@@ -112,8 +112,9 @@ exports[`GlobalTableFilterContainer should match the snapshot 1`] = `
           Object {},
         ]
       }
+      testID="recipient-list-table-filter"
       underlineColorAndroid="transparent"
-      value=""
+      value="filter"
     />
   </View>
 </RNCSafeAreaProvider>

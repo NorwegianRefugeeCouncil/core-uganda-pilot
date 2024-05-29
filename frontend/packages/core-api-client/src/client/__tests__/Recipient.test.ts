@@ -7,6 +7,11 @@ import {
   RecordGetResponse,
 } from '../../types';
 import { Recipient } from '../../types/client/Recipient';
+import {
+  makeField,
+  makeForm as mF,
+  makeRecord,
+} from '../../testUtils/mockData';
 
 afterEach(() => {
   jest.clearAllMocks();
@@ -728,6 +733,103 @@ describe('Recipient', () => {
         await expect(recipientClient.getRecipientForms()).rejects.toThrowError(
           'error',
         );
+      });
+    });
+  });
+
+  describe('list', () => {
+    const textfield1 = makeField(1, false, false, { text: {} });
+    const textfield2 = makeField(2, false, false, { text: {} });
+    const form = mF(1, FormType.DefaultFormType, [textfield1, textfield2]);
+    const record1 = makeRecord(1, form);
+    const record2 = makeRecord(2, form);
+
+    const listSpy = jest.spyOn(client.Record, 'list');
+
+    describe('success', () => {
+      beforeEach(() => {
+        listSpy.mockReset();
+      });
+
+      it('should return all recipients', async () => {
+        listSpy.mockResolvedValueOnce({
+          response: { items: [record1, record2] },
+          request: {
+            formId: form.id,
+            databaseId: form.databaseId,
+          },
+          error: undefined,
+          status: 'Yay',
+          success: true,
+          statusCode: 200,
+        });
+
+        const getSpy = jest
+          .spyOn(client.Recipient, 'get')
+          .mockResolvedValueOnce([{ form, record: record1 }])
+          .mockResolvedValueOnce([{ form, record: record2 }]);
+
+        const result = await client.Recipient.list({
+          formId: form.id,
+          databaseId: form.databaseId,
+        });
+
+        expect(listSpy).toHaveBeenCalledWith({
+          formId: form.id,
+          databaseId: form.databaseId,
+          fetchSubforms: false,
+        });
+        expect(result).toEqual([
+          [{ form, record: record1 }],
+          [{ form, record: record2 }],
+        ]);
+        getSpy.mockClear();
+        getSpy.mockReset();
+      });
+    });
+
+    describe('error', () => {
+      it('should return an error if request unsuccessful', async () => {
+        listSpy.mockResolvedValueOnce({
+          response: undefined,
+          request: {
+            formId: form.id,
+            databaseId: form.databaseId,
+          },
+          error: 'Error Message',
+          status: 'Nope',
+          success: false,
+          statusCode: 500,
+        });
+
+        try {
+          await client.Recipient.list({
+            formId: form.id,
+            databaseId: form.databaseId,
+          });
+        } catch (e) {
+          expect(listSpy).toHaveBeenCalledWith({
+            formId: form.id,
+            databaseId: form.databaseId,
+            fetchSubforms: false,
+          });
+          expect(e).toEqual(new Error('Error Message'));
+        }
+      });
+
+      it('should return an error if request unsuccessful', async () => {
+        listSpy.mockImplementationOnce(() => {
+          throw new Error('Error Message');
+        });
+
+        try {
+          await client.Recipient.list({
+            formId: form.id,
+            databaseId: form.databaseId,
+          });
+        } catch (e) {
+          expect(e).toEqual(new Error('Error Message'));
+        }
       });
     });
   });

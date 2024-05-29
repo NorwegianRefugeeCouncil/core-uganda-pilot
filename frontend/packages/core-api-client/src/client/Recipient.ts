@@ -1,6 +1,7 @@
 import {
   FieldDefinition,
   FieldValue,
+  FormLookup,
   FormWithRecord,
   RecordLookup,
   Record,
@@ -10,7 +11,6 @@ import {
 import {
   Recipient,
   RecipientClientDefinition,
-  RecipientList,
 } from '../types/client/Recipient';
 import { Validation } from '..';
 import * as Tree from '../utils/tree';
@@ -67,8 +67,23 @@ export class RecipientClient implements RecipientClientDefinition {
     );
   };
 
-  public list = (): Promise<RecipientList> => {
-    return Promise.resolve({ items: [] });
+  public list = async ({
+    formId,
+    databaseId,
+  }: FormLookup): Promise<FormWithRecord<Recipient>[][]> => {
+    const response = await this.recordClient.list({
+      formId,
+      databaseId,
+      fetchSubforms: false,
+    });
+    if (!response.response) {
+      throw new Error(response.error);
+    }
+    return Promise.all(
+      response.response?.items.map((item) => {
+        return this.get({ formId, databaseId, recordId: item.id });
+      }),
+    );
   };
 
   public get = async ({
@@ -133,7 +148,7 @@ export class RecipientClient implements RecipientClientDefinition {
       throw new Error(formResponse.error);
     }
 
-    const recipeintForms = formResponse.response.items
+    const recipientForms = formResponse.response.items
       .filter((f) => f.formType === FormType.RecipientFormType)
       .map((f) => {
         const referenceKey = f.fields.find(
@@ -145,7 +160,7 @@ export class RecipientClient implements RecipientClientDefinition {
         };
       });
 
-    const tree = Tree.createDataTree(recipeintForms, 'id', 'parentId');
+    const tree = Tree.createDataTree(recipientForms, 'id', 'parentId');
     const leaves = Tree.getLeafNodes(tree);
     return leaves.map((l) => {
       const { parentId: _, childNodes: __, ...f } = l;

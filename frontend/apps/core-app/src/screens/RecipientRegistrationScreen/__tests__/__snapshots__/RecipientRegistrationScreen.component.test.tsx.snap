@@ -42,7 +42,7 @@ exports[`should match the snapshot edit mode 1`] = `
       >
         <View>
           <Text>
-            [{"form":{"id":"form-id-1","code":"form-code","databaseId":"database-id","folderId":"folder-id","name":"form-name-1","formType":"default","fields":[{"id":"field-id-1","name":"field-name-1","code":"","description":"","required":false,"key":false,"fieldType":{"text":{}}}]},"record":{"id":"","databaseId":"database-id","formId":"form-id-1","values":[{"fieldId":"field-id-1","value":""}]}},{"form":{"id":"form-id-2","code":"form-code","databaseId":"database-id","folderId":"folder-id","name":"form-name-2","formType":"default","fields":[{"id":"field-id-2","name":"field-name-2","code":"","description":"","required":false,"key":false,"fieldType":{"text":{}}}]},"record":{"id":"","databaseId":"database-id","formId":"form-id-2","values":[{"fieldId":"field-id-2","value":""}]}},{"form":{"id":"form-id-3","code":"form-code","databaseId":"database-id","folderId":"folder-id","name":"form-name-3","formType":"default","fields":[{"id":"field-id-3","name":"field-name-3","code":"","description":"","required":false,"key":false,"fieldType":{"text":{}}}]},"record":{"id":"","databaseId":"database-id","formId":"form-id-3","values":[{"fieldId":"field-id-3","value":""}]}}]
+            [{"form":{"id":"form-1","code":"","name":"form-name-1","databaseId":"database-id","folderId":"folder-id","formType":"default","fields":[{"id":"field-1","name":"field-name-1","description":"description-1","code":"","required":false,"key":false,"fieldType":{"text":{}}}]},"record":{"id":"record-1","values":[{"value":"value-field-1","fieldId":"field-1"}],"formId":"form-1","databaseId":"database-id"}},{"form":{"id":"form-2","code":"","name":"form-name-2","databaseId":"database-id","folderId":"folder-id","formType":"default","fields":[{"id":"field-2","name":"field-name-2","description":"description-2","code":"","required":false,"key":false,"fieldType":{"text":{}}}]},"record":{"id":"record-2","values":[{"value":"value-field-2","fieldId":"field-2"}],"formId":"form-2","databaseId":"database-id"}},{"form":{"id":"form-3","code":"","name":"form-name-3","databaseId":"database-id","folderId":"folder-id","formType":"default","fields":[{"id":"field-3","name":"field-name-3","description":"description-3","code":"","required":false,"key":false,"fieldType":{"text":{}}}]},"record":{"id":"record-3","values":[{"value":"value-field-3","fieldId":"field-3"}],"formId":"form-3","databaseId":"database-id"}}]
           </Text>
         </View>
         <View
@@ -94,11 +94,11 @@ exports[`should match the snapshot edit mode 1`] = `
                 "borderStyle": "solid",
                 "borderWidth": 1,
                 "flexDirection": "row",
-                "height": 50,
+                "height": "nrc_10",
                 "justifyContent": "center",
                 "paddingBottom": 8,
-                "paddingLeft": 50,
-                "paddingRight": 50,
+                "paddingLeft": "nrc_10",
+                "paddingRight": "nrc_10",
                 "paddingTop": 8,
               }
             }
@@ -177,11 +177,11 @@ exports[`should match the snapshot edit mode 1`] = `
                 "backgroundColor": "#FF7602",
                 "borderRadius": 3,
                 "flexDirection": "row",
-                "height": 50,
+                "height": "nrc_10",
                 "justifyContent": "center",
                 "paddingBottom": 8,
-                "paddingLeft": 50,
-                "paddingRight": 50,
+                "paddingLeft": "nrc_10",
+                "paddingRight": "nrc_10",
                 "paddingTop": 8,
               }
             }
@@ -300,7 +300,7 @@ exports[`should match the snapshot review mode 1`] = `
       >
         <View>
           <Text>
-            [{"form":{"id":"form-id-1","code":"form-code","databaseId":"database-id","folderId":"folder-id","name":"form-name-1","formType":"default","fields":[{"id":"field-id-1","name":"field-name-1","code":"","description":"","required":false,"key":false,"fieldType":{"text":{}}}]},"record":{"id":"","databaseId":"database-id","formId":"form-id-1","values":[{"fieldId":"field-id-1","value":""}]}},{"form":{"id":"form-id-2","code":"form-code","databaseId":"database-id","folderId":"folder-id","name":"form-name-2","formType":"default","fields":[{"id":"field-id-2","name":"field-name-2","code":"","description":"","required":false,"key":false,"fieldType":{"text":{}}}]},"record":{"id":"","databaseId":"database-id","formId":"form-id-2","values":[{"fieldId":"field-id-2","value":""}]}},{"form":{"id":"form-id-3","code":"form-code","databaseId":"database-id","folderId":"folder-id","name":"form-name-3","formType":"default","fields":[{"id":"field-id-3","name":"field-name-3","code":"","description":"","required":false,"key":false,"fieldType":{"text":{}}}]},"record":{"id":"","databaseId":"database-id","formId":"form-id-3","values":[{"fieldId":"field-id-3","value":""}]}}]
+            [{"form":{"id":"form-1","code":"","name":"form-name-1","databaseId":"database-id","folderId":"folder-id","formType":"default","fields":[{"id":"field-1","name":"field-name-1","description":"description-1","code":"","required":false,"key":false,"fieldType":{"text":{}}}]},"record":{"id":"record-1","values":[{"value":"value-field-1","fieldId":"field-1"}],"formId":"form-1","databaseId":"database-id"}},{"form":{"id":"form-2","code":"","name":"form-name-2","databaseId":"database-id","folderId":"folder-id","formType":"default","fields":[{"id":"field-2","name":"field-name-2","description":"description-2","code":"","required":false,"key":false,"fieldType":{"text":{}}}]},"record":{"id":"record-2","values":[{"value":"value-field-2","fieldId":"field-2"}],"formId":"form-2","databaseId":"database-id"}},{"form":{"id":"form-3","code":"","name":"form-name-3","databaseId":"database-id","folderId":"folder-id","formType":"default","fields":[{"id":"field-3","name":"field-name-3","description":"description-3","code":"","required":false,"key":false,"fieldType":{"text":{}}}]},"record":{"id":"record-3","values":[{"value":"value-field-3","fieldId":"field-3"}],"formId":"form-3","databaseId":"database-id"}}]
           </Text>
         </View>
         <View
@@ -352,11 +352,11 @@ exports[`should match the snapshot review mode 1`] = `
                 "borderStyle": "solid",
                 "borderWidth": 1,
                 "flexDirection": "row",
-                "height": 50,
+                "height": "nrc_10",
                 "justifyContent": "center",
                 "paddingBottom": 8,
-                "paddingLeft": 50,
-                "paddingRight": 50,
+                "paddingLeft": "nrc_10",
+                "paddingRight": "nrc_10",
                 "paddingTop": 8,
               }
             }
@@ -435,11 +435,11 @@ exports[`should match the snapshot review mode 1`] = `
                 "backgroundColor": "#FF7602",
                 "borderRadius": 3,
                 "flexDirection": "row",
-                "height": 50,
+                "height": "nrc_10",
                 "justifyContent": "center",
                 "paddingBottom": 8,
-                "paddingLeft": 50,
-                "paddingRight": 50,
+                "paddingLeft": "nrc_10",
+                "paddingRight": "nrc_10",
                 "paddingTop": 8,
               }
             }

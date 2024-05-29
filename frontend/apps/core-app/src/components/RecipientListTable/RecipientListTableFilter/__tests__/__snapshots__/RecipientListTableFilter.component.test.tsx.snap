@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`GlobalTableFilterComponent should match the snapshot 1`] = `
+exports[`RecipientListTableFilterComponent should match the snapshot 1`] = `
 <RNCSafeAreaProvider
   onInsetsChange={[Function]}
   style={
@@ -112,6 +112,7 @@ exports[`GlobalTableFilterComponent should match the snapshot 1`] = `
           Object {},
         ]
       }
+      testID="recipient-list-table-filter"
       underlineColorAndroid="transparent"
       value="test"
     />

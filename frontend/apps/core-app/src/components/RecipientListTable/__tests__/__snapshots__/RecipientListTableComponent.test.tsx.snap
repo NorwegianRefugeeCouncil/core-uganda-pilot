@@ -1,0 +1,709 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`RecipientListTableComponent should match the snapshot data 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    Array [
+      Object {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    dataSet={Object {}}
+    style={
+      Object {
+        "marginBottom": 60,
+      }
+    }
+  >
+    <View
+      dataSet={Object {}}
+      style={Object {}}
+    >
+      <View
+        dataSet={Object {}}
+        style={
+          Object {
+            "alignItems": "center",
+            "flexDirection": "row",
+            "justifyContent": "flex-start",
+          }
+        }
+      >
+        <Text
+          dataSet={Object {}}
+          level="2"
+          style={
+            Object {
+              "backgroundColor": undefined,
+              "color": "#000000",
+              "fontFamily": "Roboto_500Medium",
+              "fontSize": 28,
+              "fontStyle": undefined,
+              "fontWeight": undefined,
+              "letterSpacing": 0,
+              "lineHeight": 34,
+              "textAlign": "auto",
+              "textDecorationLine": undefined,
+            }
+          }
+        >
+          title
+        </Text>
+        <View
+          colorScheme="coolGray"
+          dataSet={Object {}}
+          style={
+            Object {
+              "alignItems": "center",
+              "backgroundColor": "#24303E",
+              "borderColor": "transparent",
+              "borderRadius": 4,
+              "borderWidth": 1,
+              "height": 20,
+              "marginLeft": 10,
+              "marginRight": 10,
+              "paddingBottom": 2,
+              "paddingLeft": 8,
+              "paddingRight": 8,
+              "paddingTop": 2,
+              "width": 28,
+            }
+          }
+        >
+          <Text
+            dataSet={Object {}}
+            level="5"
+            style={
+              Object {
+                "backgroundColor": undefined,
+                "color": "#fff",
+                "fontFamily": "Roboto_500Medium",
+                "fontSize": 14,
+                "fontStyle": undefined,
+                "fontWeight": undefined,
+                "letterSpacing": 0,
+                "lineHeight": 17,
+                "textAlign": "auto",
+                "textDecorationLine": undefined,
+              }
+            }
+          >
+            1
+          </Text>
+        </View>
+      </View>
+    </View>
+    <RCTScrollView
+      contentContainerStyle={
+        Object {
+          "flexGrow": 1,
+        }
+      }
+      dataSet={Object {}}
+      horizontal={true}
+      style={Object {}}
+    >
+      <View>
+        <View
+          dataSet={Object {}}
+          style={
+            Object {
+              "width": "100%",
+            }
+          }
+        >
+          <View
+            dataSet={Object {}}
+            style={
+              Object {
+                "backgroundColor": "#F6F6F7",
+                "borderBottomColor": "#404040",
+                "borderBottomWidth": 1,
+                "flexDirection": "row",
+              }
+            }
+          >
+            <View
+              dataSet={Object {}}
+              style={
+                Object {
+                  "alignItems": "center",
+                  "flexDirection": "row",
+                  "flexGrow": 1,
+                  "justifyContent": "space-between",
+                  "paddingBottom": 8,
+                  "paddingLeft": 8,
+                  "paddingRight": 8,
+                  "paddingTop": 8,
+                }
+              }
+            >
+              <div>
+                box
+              </div>
+              <View
+                dataSet={Object {}}
+                style={Object {}}
+              />
+              <View
+                _text={
+                  Object {
+                    "color": "lightText",
+                  }
+                }
+                accessibilityRole="button"
+                accessible={true}
+                collapsable={false}
+                colorScheme="secondary"
+                dataSet={Object {}}
+                focusable={true}
+                onBlur={[Function]}
+                onClick={[Function]}
+                onFocus={[Function]}
+                onHoverIn={[Function]}
+                onHoverOut={[Function]}
+                onResponderGrant={[Function]}
+                onResponderMove={[Function]}
+                onResponderRelease={[Function]}
+                onResponderTerminate={[Function]}
+                onResponderTerminationRequest={[Function]}
+                onStartShouldSetResponder={[Function]}
+                style={
+                  Object {
+                    "backgroundColor": "transparent",
+                    "borderRadius": 4,
+                    "paddingBottom": 4,
+                    "paddingLeft": 4,
+                    "paddingRight": 4,
+                    "paddingTop": 4,
+                  }
+                }
+                testID="recipient-table-sort-button"
+              >
+                <RNSVGSvgView
+                  accessibilityRole="image"
+                  align="xMidYMid"
+                  bbHeight={20}
+                  bbWidth={20}
+                  color={4280690214}
+                  dataSet={Object {}}
+                  fill="currentColor"
+                  focusable={false}
+                  meetOrSlice={0}
+                  minX={0}
+                  minY={0}
+                  stroke=""
+                  style={
+                    Array [
+                      Object {
+                        "backgroundColor": "transparent",
+                        "borderWidth": 0,
+                      },
+                      Object {
+                        "color": "#262626",
+                        "height": 20,
+                        "width": 20,
+                      },
+                      Object {
+                        "flex": 0,
+                        "height": 20,
+                        "width": 20,
+                      },
+                    ]
+                  }
+                  testID="sort-icon-arrowDown"
+                  tintColor={4280690214}
+                  vbHeight={20}
+                  vbWidth={20}
+                >
+                  <RNSVGGroup
+                    fill={
+                      Array [
+                        2,
+                      ]
+                    }
+                    propList={
+                      Array [
+                        "fill",
+                        "stroke",
+                      ]
+                    }
+                    stroke={null}
+                  >
+                    <RNSVGGroup>
+                      <RNSVGPath
+                        d="M14.59 6.29492L10 10.8749L5.41 6.29492L4 7.70492L10 13.7049L16 7.70492L14.59 6.29492Z"
+                      />
+                    </RNSVGGroup>
+                  </RNSVGGroup>
+                </RNSVGSvgView>
+              </View>
+            </View>
+          </View>
+          <View
+            dataSet={Object {}}
+            style={Object {}}
+          >
+            <RCTScrollView
+              contentContainerStyle={
+                Array [
+                  Object {},
+                  Object {
+                    "dataSet": Object {},
+                  },
+                ]
+              }
+              data={
+                Array [
+                  Object {
+                    "cells": Array [
+                      Object {
+                        "column": "col1",
+                        "getCellProps": [MockFunction],
+                        "render": [MockFunction] {
+                          "calls": Array [
+                            Array [
+                              Object {
+                                "$$typeof": Symbol(react.memo),
+                                "compare": null,
+                                "type": Object {
+                                  "$$typeof": Symbol(react.forward_ref),
+                                  "render": [Function],
+                                },
+                              },
+                              Object {
+                                "children": "val1",
+                                "level": "2",
+                                "variant": "body",
+                              },
+                            ],
+                          ],
+                          "results": Array [
+                            Object {
+                              "type": "return",
+                              "value": <div>
+                                box
+                              </div>,
+                            },
+                          ],
+                        },
+                        "row": "row1",
+                        "value": "val1",
+                      },
+                      Object {
+                        "column": "col2",
+                        "getCellProps": [MockFunction],
+                        "render": [MockFunction] {
+                          "calls": Array [
+                            Array [
+                              Object {
+                                "$$typeof": Symbol(react.memo),
+                                "compare": null,
+                                "type": Object {
+                                  "$$typeof": Symbol(react.forward_ref),
+                                  "render": [Function],
+                                },
+                              },
+                              Object {
+                                "children": "val2",
+                                "level": "2",
+                                "variant": "body",
+                              },
+                            ],
+                          ],
+                          "results": Array [
+                            Object {
+                              "type": "return",
+                              "value": <div>
+                                box
+                              </div>,
+                            },
+                          ],
+                        },
+                        "row": "row1",
+                        "value": "val2",
+                      },
+                    ],
+                    "id": "row1",
+                    "values": Object {
+                      "col1": "sdf",
+                      "col2": "sadf",
+                      "recordId": "recordId",
+                    },
+                  },
+                ]
+              }
+              dataSet={Object {}}
+              disableVirtualization={false}
+              getItem={[Function]}
+              getItemCount={[Function]}
+              horizontal={false}
+              initialNumToRender={10}
+              keyExtractor={[Function]}
+              maxToRenderPerBatch={10}
+              onContentSizeChange={[Function]}
+              onEndReachedThreshold={2}
+              onLayout={[Function]}
+              onMomentumScrollEnd={[Function]}
+              onScroll={[Function]}
+              onScrollBeginDrag={[Function]}
+              onScrollEndDrag={[Function]}
+              removeClippedSubviews={false}
+              renderItem={[Function]}
+              scrollEventThrottle={50}
+              stickyHeaderIndices={Array []}
+              style={Object {}}
+              updateCellsBatchingPeriod={50}
+              viewabilityConfigCallbackPairs={Array []}
+              windowSize={21}
+            >
+              <View>
+                <View
+                  onLayout={[Function]}
+                  style={null}
+                >
+                  <View
+                    _text={
+                      Object {
+                        "color": "darkText",
+                      }
+                    }
+                    accessible={true}
+                    collapsable={false}
+                    dataSet={Object {}}
+                    focusable={true}
+                    onBlur={[Function]}
+                    onClick={[Function]}
+                    onFocus={[Function]}
+                    onHoverIn={[Function]}
+                    onHoverOut={[Function]}
+                    onResponderGrant={[Function]}
+                    onResponderMove={[Function]}
+                    onResponderRelease={[Function]}
+                    onResponderTerminate={[Function]}
+                    onResponderTerminationRequest={[Function]}
+                    onStartShouldSetResponder={[Function]}
+                    style={
+                      Object {
+                        "backgroundColor": "#fff",
+                      }
+                    }
+                    testID="recipient-list-table-row-row1"
+                  >
+                    <View
+                      dataSet={Object {}}
+                      style={
+                        Object {
+                          "flexDirection": "row",
+                        }
+                      }
+                    >
+                      <View
+                        dataSet={Object {}}
+                        style={
+                          Object {
+                            "borderBottomColor": "#C7C7C7",
+                            "borderBottomWidth": 1,
+                            "flexGrow": 1,
+                            "paddingBottom": 8,
+                            "paddingLeft": 8,
+                            "paddingRight": 8,
+                            "paddingTop": 8,
+                          }
+                        }
+                      >
+                        <div>
+                          box
+                        </div>
+                      </View>
+                      <View
+                        dataSet={Object {}}
+                        style={Object {}}
+                      />
+                      <View
+                        dataSet={Object {}}
+                        style={
+                          Object {
+                            "borderBottomColor": "#C7C7C7",
+                            "borderBottomWidth": 1,
+                            "flexGrow": 1,
+                            "paddingBottom": 8,
+                            "paddingLeft": 8,
+                            "paddingRight": 8,
+                            "paddingTop": 8,
+                          }
+                        }
+                      >
+                        <div>
+                          box
+                        </div>
+                      </View>
+                    </View>
+                  </View>
+                </View>
+              </View>
+            </RCTScrollView>
+          </View>
+        </View>
+      </View>
+    </RCTScrollView>
+  </View>
+</RNCSafeAreaProvider>
+`;
+
+exports[`RecipientListTableComponent should match the snapshot error 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    Array [
+      Object {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    dataSet={Object {}}
+    style={
+      Object {
+        "marginBottom": 60,
+      }
+    }
+  >
+    <View
+      dataSet={Object {}}
+      style={Object {}}
+    >
+      <View
+        dataSet={Object {}}
+        style={
+          Object {
+            "alignItems": "center",
+            "flexDirection": "row",
+            "justifyContent": "flex-start",
+          }
+        }
+      >
+        <Text
+          dataSet={Object {}}
+          level="2"
+          style={
+            Object {
+              "backgroundColor": undefined,
+              "color": "#000000",
+              "fontFamily": "Roboto_500Medium",
+              "fontSize": 28,
+              "fontStyle": undefined,
+              "fontWeight": undefined,
+              "letterSpacing": 0,
+              "lineHeight": 34,
+              "textAlign": "auto",
+              "textDecorationLine": undefined,
+            }
+          }
+        >
+          title
+        </Text>
+        <View
+          colorScheme="coolGray"
+          dataSet={Object {}}
+          style={
+            Object {
+              "alignItems": "center",
+              "backgroundColor": "#24303E",
+              "borderColor": "transparent",
+              "borderRadius": 4,
+              "borderWidth": 1,
+              "height": 20,
+              "marginLeft": 10,
+              "marginRight": 10,
+              "paddingBottom": 2,
+              "paddingLeft": 8,
+              "paddingRight": 8,
+              "paddingTop": 2,
+              "width": 28,
+            }
+          }
+        >
+          <Text
+            dataSet={Object {}}
+            level="5"
+            style={
+              Object {
+                "backgroundColor": undefined,
+                "color": "#fff",
+                "fontFamily": "Roboto_500Medium",
+                "fontSize": 14,
+                "fontStyle": undefined,
+                "fontWeight": undefined,
+                "letterSpacing": 0,
+                "lineHeight": 17,
+                "textAlign": "auto",
+                "textDecorationLine": undefined,
+              }
+            }
+          >
+            1
+          </Text>
+        </View>
+      </View>
+    </View>
+    <Text
+      dataSet={Object {}}
+      level="1"
+      style={
+        Object {
+          "backgroundColor": undefined,
+          "color": "#000000",
+          "fontFamily": "Roboto_400Regular",
+          "fontSize": 18,
+          "fontStyle": undefined,
+          "fontWeight": undefined,
+          "letterSpacing": 0,
+          "lineHeight": 26,
+          "textAlign": "auto",
+          "textDecorationLine": undefined,
+        }
+      }
+    >
+      error message
+    </Text>
+  </View>
+</RNCSafeAreaProvider>
+`;
+
+exports[`RecipientListTableComponent should match the snapshot loading 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    Array [
+      Object {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    dataSet={Object {}}
+    style={
+      Object {
+        "marginBottom": 60,
+      }
+    }
+  >
+    <View
+      dataSet={Object {}}
+      style={Object {}}
+    >
+      <View
+        dataSet={Object {}}
+        style={
+          Object {
+            "alignItems": "center",
+            "flexDirection": "row",
+            "justifyContent": "flex-start",
+          }
+        }
+      >
+        <Text
+          dataSet={Object {}}
+          level="2"
+          style={
+            Object {
+              "backgroundColor": undefined,
+              "color": "#000000",
+              "fontFamily": "Roboto_500Medium",
+              "fontSize": 28,
+              "fontStyle": undefined,
+              "fontWeight": undefined,
+              "letterSpacing": 0,
+              "lineHeight": 34,
+              "textAlign": "auto",
+              "textDecorationLine": undefined,
+            }
+          }
+        >
+          title
+        </Text>
+        <View
+          colorScheme="coolGray"
+          dataSet={Object {}}
+          style={
+            Object {
+              "alignItems": "center",
+              "backgroundColor": "#24303E",
+              "borderColor": "transparent",
+              "borderRadius": 4,
+              "borderWidth": 1,
+              "height": 20,
+              "marginLeft": 10,
+              "marginRight": 10,
+              "paddingBottom": 2,
+              "paddingLeft": 8,
+              "paddingRight": 8,
+              "paddingTop": 2,
+              "width": 28,
+            }
+          }
+        >
+          <Text
+            dataSet={Object {}}
+            level="5"
+            style={
+              Object {
+                "backgroundColor": undefined,
+                "color": "#fff",
+                "fontFamily": "Roboto_500Medium",
+                "fontSize": 14,
+                "fontStyle": undefined,
+                "fontWeight": undefined,
+                "letterSpacing": 0,
+                "lineHeight": 17,
+                "textAlign": "auto",
+                "textDecorationLine": undefined,
+              }
+            }
+          >
+            1
+          </Text>
+        </View>
+      </View>
+    </View>
+    <View
+      dataSet={Object {}}
+      fadeDuration={0.1}
+      speed={1}
+      style={
+        Object {
+          "backgroundColor": "transparent",
+          "height": 40,
+          "overflow": "hidden",
+          "paddingBottom": 16,
+          "paddingLeft": 16,
+          "paddingRight": 16,
+          "paddingTop": 16,
+          "width": "100%",
+        }
+      }
+    >
+      <View
+        style={
+          Object {
+            "backgroundColor": "#e5e5e5",
+            "height": "100%",
+            "opacity": 0,
+            "width": "100%",
+          }
+        }
+      />
+    </View>
+  </View>
+</RNCSafeAreaProvider>
+`;

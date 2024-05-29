@@ -1,0 +1,373 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`RecipientTableHeaderCell should match the snapshot sorted, ascending 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    Array [
+      Object {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    dataSet={Object {}}
+    style={
+      Object {
+        "alignItems": "center",
+        "flexDirection": "row",
+        "flexGrow": 1,
+        "justifyContent": "space-between",
+        "paddingBottom": 8,
+        "paddingLeft": 8,
+        "paddingRight": 8,
+        "paddingTop": 8,
+      }
+    }
+  >
+    <View
+      _text={
+        Object {
+          "color": "lightText",
+        }
+      }
+      accessibilityRole="button"
+      accessible={true}
+      collapsable={false}
+      colorScheme="secondary"
+      dataSet={Object {}}
+      focusable={true}
+      onBlur={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onHoverIn={[Function]}
+      onHoverOut={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        Object {
+          "backgroundColor": "transparent",
+          "borderRadius": 4,
+          "paddingBottom": 4,
+          "paddingLeft": 4,
+          "paddingRight": 4,
+          "paddingTop": 4,
+        }
+      }
+      testID="recipient-table-sort-button"
+    >
+      <RNSVGSvgView
+        accessibilityRole="image"
+        align="xMidYMid"
+        bbHeight={20}
+        bbWidth={20}
+        color={4280690214}
+        dataSet={Object {}}
+        fill="currentColor"
+        focusable={false}
+        meetOrSlice={0}
+        minX={0}
+        minY={0}
+        stroke=""
+        style={
+          Array [
+            Object {
+              "backgroundColor": "transparent",
+              "borderWidth": 0,
+            },
+            Object {
+              "color": "#262626",
+              "height": 20,
+              "width": 20,
+            },
+            Object {
+              "flex": 0,
+              "height": 20,
+              "width": 20,
+            },
+          ]
+        }
+        testID="sort-icon-arrowUp"
+        tintColor={4280690214}
+        vbHeight={20}
+        vbWidth={20}
+      >
+        <RNSVGGroup
+          fill={
+            Array [
+              2,
+            ]
+          }
+          propList={
+            Array [
+              "fill",
+              "stroke",
+            ]
+          }
+          stroke={null}
+        >
+          <RNSVGGroup>
+            <RNSVGPath
+              d="M5.41 13.7051L10 9.12508L14.59 13.7051L16 12.2951L10 6.29508L4 12.2951L5.41 13.7051Z"
+            />
+          </RNSVGGroup>
+        </RNSVGGroup>
+      </RNSVGSvgView>
+    </View>
+  </View>
+</RNCSafeAreaProvider>
+`;
+
+exports[`RecipientTableHeaderCell should match the snapshot sorted, descending 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    Array [
+      Object {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    dataSet={Object {}}
+    style={
+      Object {
+        "alignItems": "center",
+        "flexDirection": "row",
+        "flexGrow": 1,
+        "justifyContent": "space-between",
+        "paddingBottom": 8,
+        "paddingLeft": 8,
+        "paddingRight": 8,
+        "paddingTop": 8,
+      }
+    }
+  >
+    <View
+      _text={
+        Object {
+          "color": "lightText",
+        }
+      }
+      accessibilityRole="button"
+      accessible={true}
+      collapsable={false}
+      colorScheme="secondary"
+      dataSet={Object {}}
+      focusable={true}
+      onBlur={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onHoverIn={[Function]}
+      onHoverOut={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        Object {
+          "backgroundColor": "transparent",
+          "borderRadius": 4,
+          "paddingBottom": 4,
+          "paddingLeft": 4,
+          "paddingRight": 4,
+          "paddingTop": 4,
+        }
+      }
+      testID="recipient-table-sort-button"
+    >
+      <RNSVGSvgView
+        accessibilityRole="image"
+        align="xMidYMid"
+        bbHeight={20}
+        bbWidth={20}
+        color={4280690214}
+        dataSet={Object {}}
+        fill="currentColor"
+        focusable={false}
+        meetOrSlice={0}
+        minX={0}
+        minY={0}
+        stroke=""
+        style={
+          Array [
+            Object {
+              "backgroundColor": "transparent",
+              "borderWidth": 0,
+            },
+            Object {
+              "color": "#262626",
+              "height": 20,
+              "width": 20,
+            },
+            Object {
+              "flex": 0,
+              "height": 20,
+              "width": 20,
+            },
+          ]
+        }
+        testID="sort-icon-more"
+        tintColor={4280690214}
+        vbHeight={20}
+        vbWidth={20}
+      >
+        <RNSVGGroup
+          fill={
+            Array [
+              2,
+            ]
+          }
+          propList={
+            Array [
+              "fill",
+              "stroke",
+            ]
+          }
+          stroke={null}
+        >
+          <RNSVGGroup>
+            <RNSVGPath
+              d="M9.99981 5C11.3599 5 12.4728 3.875 12.4728 2.5C12.4728 1.125 11.3599 0 9.99981 0C8.63968 0 7.52686 1.125 7.52686 2.5C7.52686 3.875 8.63968 5 9.99981 5ZM9.99981 7.49976C8.63968 7.49976 7.52686 8.62476 7.52686 9.99976C7.52686 11.3748 8.63968 12.4998 9.99981 12.4998C11.3599 12.4998 12.4728 11.3748 12.4728 9.99976C12.4728 8.62476 11.3599 7.49976 9.99981 7.49976ZM9.99981 15.0001C8.63968 15.0001 7.52686 16.1251 7.52686 17.5001C7.52686 18.8751 8.63968 20.0001 9.99981 20.0001C11.3599 20.0001 12.4728 18.8751 12.4728 17.5001C12.4728 16.1251 11.3599 15.0001 9.99981 15.0001Z"
+            />
+          </RNSVGGroup>
+        </RNSVGGroup>
+      </RNSVGSvgView>
+    </View>
+  </View>
+</RNCSafeAreaProvider>
+`;
+
+exports[`RecipientTableHeaderCell should match the snapshot unsorted 1`] = `
+<RNCSafeAreaProvider
+  onInsetsChange={[Function]}
+  style={
+    Array [
+      Object {
+        "flex": 1,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    dataSet={Object {}}
+    style={
+      Object {
+        "alignItems": "center",
+        "flexDirection": "row",
+        "flexGrow": 1,
+        "justifyContent": "space-between",
+        "paddingBottom": 8,
+        "paddingLeft": 8,
+        "paddingRight": 8,
+        "paddingTop": 8,
+      }
+    }
+  >
+    <View
+      _text={
+        Object {
+          "color": "lightText",
+        }
+      }
+      accessibilityRole="button"
+      accessible={true}
+      collapsable={false}
+      colorScheme="secondary"
+      dataSet={Object {}}
+      focusable={true}
+      onBlur={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onHoverIn={[Function]}
+      onHoverOut={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        Object {
+          "backgroundColor": "transparent",
+          "borderRadius": 4,
+          "paddingBottom": 4,
+          "paddingLeft": 4,
+          "paddingRight": 4,
+          "paddingTop": 4,
+        }
+      }
+      testID="recipient-table-sort-button"
+    >
+      <RNSVGSvgView
+        accessibilityRole="image"
+        align="xMidYMid"
+        bbHeight={20}
+        bbWidth={20}
+        color={4280690214}
+        dataSet={Object {}}
+        fill="currentColor"
+        focusable={false}
+        meetOrSlice={0}
+        minX={0}
+        minY={0}
+        stroke=""
+        style={
+          Array [
+            Object {
+              "backgroundColor": "transparent",
+              "borderWidth": 0,
+            },
+            Object {
+              "color": "#262626",
+              "height": 20,
+              "width": 20,
+            },
+            Object {
+              "flex": 0,
+              "height": 20,
+              "width": 20,
+            },
+          ]
+        }
+        testID="sort-icon-arrowDown"
+        tintColor={4280690214}
+        vbHeight={20}
+        vbWidth={20}
+      >
+        <RNSVGGroup
+          fill={
+            Array [
+              2,
+            ]
+          }
+          propList={
+            Array [
+              "fill",
+              "stroke",
+            ]
+          }
+          stroke={null}
+        >
+          <RNSVGGroup>
+            <RNSVGPath
+              d="M14.59 6.29492L10 10.8749L5.41 6.29492L4 7.70492L10 13.7049L16 7.70492L14.59 6.29492Z"
+            />
+          </RNSVGGroup>
+        </RNSVGGroup>
+      </RNSVGSvgView>
+    </View>
+  </View>
+</RNCSafeAreaProvider>
+`;

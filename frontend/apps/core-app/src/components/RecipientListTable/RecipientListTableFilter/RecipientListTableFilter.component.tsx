@@ -18,6 +18,7 @@ export const RecipientListTableFilterComponent: React.FC<Props> = ({
         placeholder="Search"
         value={value || ''}
         onChangeText={onChange}
+        testID="recipient-list-table-filter"
       />
     </FormControl>
   );

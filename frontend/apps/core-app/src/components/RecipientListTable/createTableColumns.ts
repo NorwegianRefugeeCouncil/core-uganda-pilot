@@ -1,22 +1,31 @@
-import { FormWithRecord, Record } from 'core-api-client';
+import { FormWithRecord } from 'core-api-client';
 import { Column } from 'react-table';
+import { Recipient } from 'core-api-client/src/types/client/Recipient';
 
 import { RecipientListTableEntry } from './types';
 
 export const createTableColumns = (
-  data: FormWithRecord<Record>[][],
+  recipientWithForm: FormWithRecord<Recipient>[] | null,
 ): Column<RecipientListTableEntry>[] => {
-  return data[0].reduce(
-    (allColumns: Column<RecipientListTableEntry>[], formWithRecord) => {
-      const columnsPerForm = formWithRecord.form.fields
-        .filter((f) => !f.key)
-        .map(({ name, id }) => ({
-          Header: name,
-          accessor: id,
-        }));
+  if (!recipientWithForm) {
+    return [];
+  }
 
-      return [...allColumns, ...columnsPerForm];
+  const initColumn: Column<RecipientListTableEntry> = {
+    Header: 'recordId',
+    accessor: 'recordId',
+    hidden: true,
+  };
+
+  return recipientWithForm.reduce(
+    (allColumns: Column<RecipientListTableEntry>[], formWithRecord) => {
+      const columns = formWithRecord.form.fields.map(({ name, id, key }) => ({
+        Header: name,
+        accessor: id,
+        hidden: key,
+      }));
+      return allColumns.concat(columns);
     },
-    [],
+    [initColumn],
   );
 };

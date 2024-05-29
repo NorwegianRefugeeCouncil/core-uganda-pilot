@@ -4,7 +4,7 @@ import { fireEvent, waitFor } from '@testing-library/react-native';
 import { render } from '../../../../testUtils/render';
 import { RecipientListTableFilterComponent } from '../RecipientListTableFilter.component';
 
-describe('GlobalTableFilterComponent', () => {
+describe('RecipientListTableFilterComponent', () => {
   it('should match the snapshot', () => {
     const { toJSON } = render(
       <RecipientListTableFilterComponent onChange={jest.fn()} value="test" />,
