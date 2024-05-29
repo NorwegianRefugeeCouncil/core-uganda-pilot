@@ -1,4 +1,4 @@
-FROM golang:1.16 AS builder
+FROM golang:1.18 AS builder
 
 ARG git_tag
 ARG git_commit
@@ -21,7 +21,7 @@ RUN CGO_ENABLED=1 \
     go build -o main .
 
 # Build a small image
-FROM golang:1.16
+FROM golang:1.18
 
 COPY --from=builder /go/src/github.com/nrc-no/core/main /core
 
