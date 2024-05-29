@@ -15,6 +15,7 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"strings"
 	"time"
 )
 
@@ -207,7 +208,12 @@ func genServerCert(
 
 func getOrCreateRandomSecretStr(length int, filePaths ...string) (string, error) {
 	secretBytes, err := getOrCreateRandomSecret(length, filePaths...)
-	return string(secretBytes), err
+	if err != nil {
+		return "", err
+	}
+	secretStr := string(secretBytes)
+	secretStr = strings.Trim(secretStr, "\n")
+	return secretStr, nil
 }
 
 func getOrCreateRandomSecret(length int, filePaths ...string) ([]byte, error) {

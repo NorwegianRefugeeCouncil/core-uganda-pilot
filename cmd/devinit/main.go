@@ -38,6 +38,7 @@ var (
 	CoreFormsApiDir      string
 	CoreAuthnzApiDir     string
 	CoreAuthnzBouncerDir string
+	ZanzibarDir          string
 	LoginDir             string
 	RedisDir             string
 	PostgresDir          string
@@ -166,6 +167,8 @@ type Config struct {
 	rootCaKeyPath             string
 	rootCaPath                string
 	rootDir                   string
+	zanzibarToken             string
+	zanzibarPrefix            string
 }
 
 func Init() error {
@@ -268,6 +271,7 @@ func createConfig() (*Config, error) {
 		config.makePostgresInit,
 		config.makePostgres,
 		config.makeHydraInit,
+		config.makeZanzibarConfig,
 	}
 
 	for _, f := range funcs {
@@ -456,6 +460,7 @@ func init() {
 	OIDCDir = path.Join(CredsDir, "oidc")
 	IDPDir = path.Join(CredsDir, "nrc_idp")
 	CoreDir = path.Join(CredsDir, "core")
+	ZanzibarDir = path.Join(CredsDir, "zanzibar")
 	LoginDir = path.Join(CoreDir, "login")
 	CoreAppFrontendDir = path.Join(CoreDir, "app_frontend")
 	CoreAdminFrontendDir = path.Join(CoreDir, "admin_frontend")

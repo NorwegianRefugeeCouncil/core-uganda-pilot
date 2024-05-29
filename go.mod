@@ -3,6 +3,8 @@ module github.com/nrc-no/core
 go 1.16
 
 require (
+	github.com/authzed/authzed-go v0.6.0
+	github.com/authzed/grpcutil v0.0.0-20220104222419-f813f77722e5
 	github.com/boj/redistore v0.0.0-20180917114910-cd5dcc76aeff
 	github.com/cheekybits/is v0.0.0-20150225183255-68e9c0620927 // indirect
 	github.com/coreos/go-oidc/v3 v3.0.0
